@@ -10,9 +10,6 @@
 let indexSlide = 0;
 let slideInterval;
 
-// Store dark key
-const DARK_KEY = 'levantra-dark-mode';
-
 // =============================================
 // SLIDER IMPLEMENTATION
 // =============================================
@@ -55,17 +52,16 @@ function resetInterval() {
                 resetInterval();
             });
         });
-
         updateSlider();
         resetInterval();
     }
 })();
 
 // =============================================
-// MOBILE MENU
+// HAMBURGER MENU
 // =============================================
 
-function toggleMenu() {
+function toggleHamburgerMenu() {
     const navLinks = document.querySelector('.nav-links');
     const hamburger = document.querySelector('.hamburger');
     const blackOverlay = document.querySelector('.black-overlay');
@@ -75,7 +71,7 @@ function toggleMenu() {
     if (blackOverlay) blackOverlay.classList.toggle('active');
 }
 
-function closeMenu() {
+function closeHamburgerMenu() {
     const navLinks = document.querySelector('.nav-links');
     const hamburger = document.querySelector('.hamburger');
     const blackOverlay = document.querySelector('.black-overlay');
@@ -89,52 +85,17 @@ function closeMenu() {
 // SETTINGS
 // =============================================
 
-const themeSelect = document.getElementById('themeSelect');
-const langSelect = document.getElementById('langSelect');
-const overlay = document.getElementById('loadingOverlay');
+// Settings logic is now separated into js/settings.js.
 
-function applyTheme(theme) {
-    if (theme === 'system') {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.body.classList.toggle('dark-mode', prefersDark);
-    } else {
-        document.body.classList.toggle('dark-mode', theme === 'dark');
-    }
-}
+// =============================================
+// GOOGLE
+// =============================================
 
-const savedTheme = localStorage.getItem('theme') || 'system';
-const savedLang = localStorage.getItem('lang') || 'id';
-
-themeSelect.value = savedTheme;
-langSelect.value = savedLang;
-applyTheme(savedTheme);
-
-themeSelect.addEventListener('change', (e) => {
-    const theme = e.target.value;
-    localStorage.setItem('theme', theme);
-    applyTheme(theme);
-});
-
-langSelect.addEventListener('change', (e) => {
-    localStorage.setItem('lang', e.target.value);
-    overlay.classList.add('show');
-
-    setTimeout(() => {
-        window.location.reload();
-    }, 600);
-});
-
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (localStorage.getItem('theme') === 'system') applyTheme('system');
-});
+// Google auth logic is now separated into js/google-auth.js.
 
 // =============================================
 // EXPORT FUNCTIONS TO WINDOW
 // =============================================
 
-// Sidebar functions
-window.toggleMenu = toggleMenu;
-window.closeMenu = closeMenu;
-
-// Dark mode functions
-window.toggleDarkMode = toggleDarkMode;
+window.toggleHamburgerMenu = toggleHamburgerMenu;
+window.closeHamburgerMenu = closeHamburgerMenu;

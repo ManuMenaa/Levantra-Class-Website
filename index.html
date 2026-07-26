@@ -9,6 +9,7 @@
     <meta name="keyword" content="LEVANTRA, kelas XI.7, web kelas, siswa, toska, sma negeri 2 kuta selatan, perangkat kelas, kelas XII.7">
     <meta name="author" content="LEVANTRA Class, inimanumenaa">
     <meta name="robots" content="index, follow">
+    <meta name="google-client-id" content="459223542825-cvsht81ca5sggr5ahogfj19aifooc4su.apps.googleusercontent.com">
     <meta name="language" content="Indonesian, English">
 
     <meta property="og:type" content="website">
@@ -28,6 +29,8 @@
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <link rel="preload" href="css/style.css" as="style">
     <link rel="preload" href="img/LevantraLogo.jpg" as="image">
     <link rel="preload" href="img/moment1.avif" as="image">
@@ -41,27 +44,41 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="black-overlay" onclick="closeMenu()"></div>
+    <div class="black-overlay" onclick="closeHamburgerMenu()"></div>
     <nav>
         <div class="logo-container">
             <img src="img/LevantraLogo.jpg" alt="Levantra Logo" class="logo-img" width="50" height="50">
             <span class="logo-text">LEVANTRA</span>
         </div>
         <ul class="nav-links">
-            <li><a href="#beranda" onclick="closeMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
-            <li><a href="#perangkat" onclick="closeMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Perangkat</a></li>
-            <li><a href="#siswa" onclick="closeMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
-            <li><a href="#jadwal" onclick="closeMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
-            <li><a href="#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
-            <li><a href="#momen" onclick="closeMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
-            <li class="settings-btn">
-                <a href="settings.html" title="Settings">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                </a>
+            <li><a href="#beranda" onclick="closeHamburgerMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
+            <li><a href="#perangkat" onclick="closeHamburgerMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Perangkat</a></li>
+            <li><a href="#siswa" onclick="closeHamburgerMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
+            <li><a href="#jadwal" onclick="closeHamburgerMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
+            <li><a href="#kas" onclick="closeHamburgerMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
+            <li><a href="#momen" onclick="closeHamburgerMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
+            <li class="account-menu-wrapper">
+                <button class="account-menu-toggle" onclick="toggleAccountMenu(event)">
+                    <i class="fa-brands fa-google"></i>
+                    <span>Akun</span>
+                </button>
+                <div id="accountMenu" class="account-menu">
+                    <a href="#" onclick="event.stopPropagation(); startGoogleAuth('login'); return false;">
+                        <i class="fa-solid fa-right-to-bracket"></i>Masuk
+                    </a>
+                    <a href="#" onclick="event.stopPropagation(); startGoogleAuth('signup'); return false;">
+                        <i class="fa-solid fa-user-plus"></i>Daftar
+                    </a>
+                    <a href="settings.html" onclick="closeAccountMenu()">
+                        <i class="fa-solid fa-gear"></i>Settings
+                    </a>
+                    <a href="#" onclick="event.stopPropagation(); handleGoogleSignOut(); return false;">
+                        <i class="fa-solid fa-right-from-bracket"></i>Keluar
+                    </a>
+                </div>
             </li>
         </ul>
-        <div class="hamburger" onclick="toggleMenu()">
+        <div class="hamburger" onclick="toggleHamburgerMenu()">
             <span></span>
             <span></span>
             <span></span>
@@ -72,6 +89,12 @@
         <div class="hero-content">
             <h1>LEARN, VISION, TRIUMPH</h1>
             <p>Generasi Hebat Menuju Indonesia Emas 2045</p>
+            <div class="auth-card">
+                <h3>Masuk dengan Google</h3>
+                <p>Gunakan akun Google Anda untuk mengakses fitur akun LEVANTRA.</p>
+                <div id="googleSignInButton"></div>
+                <p id="authStatus" class="auth-status">Belum masuk. Klik tombol di bawah untuk lanjut.</p>
+            </div>
             <div class="slider-container">
                 <img src="img/moment1.avif" alt="Slide 1" class="slide-item">
                 <img src="img/moment2.avif" alt="Slide 2" class="slide-item">
@@ -161,6 +184,7 @@
         <h2 class="section-title">Momen</h2>
     </section>
 
-    <script src="js/app.js" defer></script>
+    <script src="js/google-auth.js" async defer></script>
+    <script src="js/app.js" async defer></script>
 </body>
 </html>
