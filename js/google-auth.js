@@ -1,10 +1,11 @@
 /**
- * LEVANTRA - Google Authentication
+ * LEVANTRA - Firebase Authentication
  */
 
-const googleClientIdMeta = document.querySelector('meta[name="google-client-id"]');
-const googleClientId = window.LEVANTRA_GOOGLE_CLIENT_ID || (googleClientIdMeta ? googleClientIdMeta.getAttribute('content') : '459223542825-pj8gsh9kve5lngr8bq3j1jjcku7v7894.apps.googleusercontent.com');
-let googleAuthReady = false;
+const firebaseConfigMeta = document.querySelector('meta[name="firebase-config"]');
+const firebaseConfig = window.LEVANTRA_FIREBASE_CONFIG || (firebaseConfigMeta ? JSON.parse(firebaseConfigMeta.getAttribute('content') || '{}') : null);
+let firebaseAuthReady = false;
+let firebaseAuthInstance = null;
 
 function getAccountMenu() {
     return document.getElementById('accountMenu');
@@ -31,21 +32,18 @@ function escapeHtml(value) {
         .replace(/'/g, '&#39;');
 }
 
-function isGoogleConfigured() {
-    return Boolean(googleClientId && !googleClientId.includes('YOUR_GOOGLE_CLIENT_ID') && !googleClientId.includes('your-google-client-id'));
-}
-
-function parseJwt(token) {
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map((char) => {
-            return '%' + ('00' + char.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-    } catch (error) {
-        return null;
-    }
+function isFirebaseConfigured() {
+    return Boolean(
+        firebaseConfig &&
+        firebaseConfig.apiKey &&
+        firebaseConfig.apiKey !== 'YOUR_FIREBASE_API_KEY' &&
+        firebaseConfig.authDomain &&
+        firebaseConfig.authDomain !== 'YOUR_PROJECT_ID.firebaseapp.com' &&
+        firebaseConfig.projectId &&
+        firebaseConfig.projectId !== 'YOUR_PROJECT_ID' &&
+        firebaseConfig.appId &&
+        firebaseConfig.appId !== 'YOUR_FIREBASE_APP_ID'
+    );
 }
 
 function showToast(message) {
@@ -109,34 +107,18 @@ function renderGoogleSignInButton() {
     const buttonContainer = getGoogleSignInButtonContainer();
     if (!buttonContainer) return;
 
-    console.debug('renderGoogleSignInButton: googleAuthReady=', googleAuthReady, 'googleClientId=', googleClientId);
-    if (!ensureGoogleClientInitialized()) {
-        console.warn('renderGoogleSignInButton: Google client not initialized yet.');
-        return;
-    }
-
     buttonContainer.innerHTML = '';
-    try {
-        window.google.accounts.id.renderButton(buttonContainer, {
-            theme: 'outline',
-            size: 'large',
-            type: 'standard',
-            text: 'signin_with',
-            shape: 'pill',
-            logo_alignment: 'left'
-        });
-    } catch (e) {
-        console.error('renderButton failed', e);
-    }
 
-    // If for any reason renderButton produced no visible button, provide a fallback
-    if (!buttonContainer.querySelector('button')) {
-        const fallback = document.createElement('button');
-        fallback.className = 'upload-btn';
-        fallback.type = 'button';
-        fallback.textContent = 'Masuk dengan Google';
-        fallback.addEventListener('click', () => startGoogleAuth('login'));
-        buttonContainer.appendChild(fallback);
+    const button = document.createElement('button');
+    button.className = 'upload-btn';
+    button.type = 'button';
+    button.innerHTML = '<i class="fa-brands fa-google"></i> Masuk dengan Google';
+    button.addEventListener('click', () => startGoogleAuth('login'));
+    buttonContainer.appendChild(button);
+
+    if (!isFirebaseConfigured()) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fa-solid fa-circle-info"></i> Konfigurasi Firebase diperlukan';
     }
 }
 
@@ -327,7 +309,7 @@ function updateUploadAccess(user = getCurrentGoogleUser()) {
         status.textContent = 'Akun Anda siap. Pilih foto atau video untuk diunggah.';
         status.classList.add('active');
     } else {
-        status.textContent = 'Login Google dulu untuk mengunggah foto atau video.';
+        status.textContent = 'Masuk dengan Google lewat Firebase dulu untuk mengunggah foto atau video.';
         status.classList.remove('active');
     }
 }
@@ -341,7 +323,7 @@ async function handleMediaUploadSelection(event) {
 
     const user = getCurrentGoogleUser();
     if (!user || !user.name) {
-        showToast('Login Google dulu untuk mengunggah foto atau video.');
+        showToast('Masuk dengan Google lewat Firebase dulu untuk mengunggah foto atau video.');
         input.value = '';
         return;
     }
@@ -407,7 +389,7 @@ function bindUploadEvents() {
     button.addEventListener('click', () => {
         const user = getCurrentGoogleUser();
         if (!user || !user.name) {
-            showToast('Login Google dulu untuk mengunggah foto atau video.');
+            showToast('Masuk dengan Google lewat Firebase dulu untuk mengunggah foto atau video.');
             return;
         }
         input.click();
@@ -429,48 +411,48 @@ function persistGoogleUser(user) {
     updateUploadAccess(user);
 }
 
-function ensureGoogleClientInitialized() {
-    if (!window.google || !window.google.accounts) {
+function initializeFirebaseAuth() {
+    if (!window.firebase || !window.firebase.auth) {
         return false;
     }
 
-    if (googleAuthReady) {
+    if (firebaseAuthInstance) {
         renderGoogleSignInButton();
         return true;
     }
 
-    if (!isGoogleConfigured()) {
+    if (!isFirebaseConfigured()) {
+        renderGoogleSignInButton();
         return false;
     }
 
-    window.google.accounts.id.initialize({
-        client_id: googleClientId,
-        callback: handleCredentialResponse,
-        ux_mode: 'popup',
-        auto_select: false
-    });
-
-    googleAuthReady = true;
-    renderGoogleSignInButton();
-    return true;
+    try {
+        const app = window.firebase.apps.length ? window.firebase.app() : window.firebase.initializeApp(firebaseConfig);
+        firebaseAuthInstance = window.firebase.auth(app);
+        firebaseAuthInstance.onAuthStateChanged(handleFirebaseAuthStateChanged);
+        firebaseAuthReady = true;
+        renderGoogleSignInButton();
+        return true;
+    } catch (error) {
+        console.error('Firebase initialization failed', error);
+        return false;
+    }
 }
 
-function handleCredentialResponse(response) {
-    const profile = parseJwt(response.credential);
-    if (!profile) {
-        showToast('Gagal membaca data akun Google.');
-        return;
-    }
+function buildFirebaseUser(user) {
+    if (!user) return null;
 
-    const user = {
-        name: profile.name || profile.given_name || 'Google User',
-        email: profile.email || '',
-        picture: profile.picture || '',
-        credential: response.credential
+    return {
+        name: user.displayName || user.email?.split('@')[0] || 'Pengguna Firebase',
+        email: user.email || '',
+        picture: user.photoURL || '',
+        uid: user.uid || '',
+        provider: 'firebase'
     };
+}
 
-    persistGoogleUser(user);
-    showToast(`Halo, ${user.name}!`);
+function handleFirebaseAuthStateChanged(user) {
+    persistGoogleUser(buildFirebaseUser(user));
 }
 
 function startGoogleAuth(action = 'login') {
@@ -481,46 +463,53 @@ function startGoogleAuth(action = 'login') {
         buttonContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    if (!window.google || !window.google.accounts) {
-        showToast('Menghubungkan ke Google, silakan tunggu sebentar...');
-
-        const googleScript = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
-        if (googleScript) {
-            googleScript.addEventListener('load', () => {
-                if (ensureGoogleClientInitialized()) {
-                    try {
-                        window.google.accounts.id.prompt();
-                    } catch (error) {
-                        showToast('Tidak bisa membuka popup login Google. Coba klik tombol Google di atas.');
-                    }
-                }
-            }, { once: true });
+    if (!initializeFirebaseAuth()) {
+        if (isFirebaseConfigured()) {
+            showToast('Firebase Authentication belum siap. Coba refresh halaman lalu klik lagi.');
+        } else {
+            showToast('Firebase belum dikonfigurasi. Tambahkan konfigurasi Firebase untuk mengaktifkan login.');
         }
         return;
     }
 
-    if (!ensureGoogleClientInitialized()) {
-        showToast('Google login belum siap. Coba refresh halaman lalu klik lagi.');
-        return;
-    }
+    const provider = new window.firebase.auth.GoogleAuthProvider();
+    provider.addScope('profile');
+    provider.addScope('email');
 
-    try {
-        window.google.accounts.id.prompt((notification) => {
-            if (notification && (notification.isNotDisplayed?.() || notification.isSkippedMoment?.())) {
-                showToast(`${action === 'signup' ? 'Daftar' : 'Masuk'} dibatalkan atau belum tersedia. Silakan coba lagi.`);
-            }
+    firebaseAuthInstance.signInWithPopup(provider)
+        .then((result) => {
+            const user = buildFirebaseUser(result.user);
+            persistGoogleUser(user);
+            showToast(`Halo, ${user.name}!`);
+        })
+        .catch((error) => {
+            console.error('Firebase sign-in failed', error);
+            const message = error.code === 'auth/popup-closed-by-user'
+                ? 'Login dibatalkan.'
+                : error.code === 'auth/popup-blocked'
+                    ? 'Popup diblokir. Izinkan popup browser lalu coba lagi.'
+                    : 'Gagal masuk dengan Google melalui Firebase.';
+            showToast(message);
         });
-    } catch (error) {
-        showToast('Tidak bisa membuka popup login Google. Coba klik tombol Google di atas.');
-    }
 }
 
 function handleGoogleSignOut() {
-    localStorage.removeItem('googleUser');
-    updateAuthButton(null);
-    updateAuthStatus(null);
-    updateUploadAccess(null);
-    showToast('Berhasil keluar dari akun Google.');
+    if (firebaseAuthInstance) {
+        firebaseAuthInstance.signOut()
+            .then(() => {
+                persistGoogleUser(null);
+                showToast('Berhasil keluar dari akun Firebase.');
+                closeAccountMenu();
+            })
+            .catch((error) => {
+                console.error('Firebase sign-out failed', error);
+                showToast('Gagal keluar dari akun Firebase.');
+            });
+        return;
+    }
+
+    persistGoogleUser(null);
+    showToast('Berhasil keluar dari akun Firebase.');
     closeAccountMenu();
 }
 
@@ -553,18 +542,8 @@ function initializeGoogleAuth() {
     }
 
     renderUploadedMedia();
-
-    if (window.google && window.google.accounts) {
-        ensureGoogleClientInitialized();
-        return;
-    }
-
-    const googleScript = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
-    if (googleScript) {
-        googleScript.addEventListener('load', ensureGoogleClientInitialized);
-    } else {
-        window.addEventListener('load', ensureGoogleClientInitialized);
-    }
+    renderGoogleSignInButton();
+    initializeFirebaseAuth();
 }
 
 function registerGoogleAuthHandlers() {

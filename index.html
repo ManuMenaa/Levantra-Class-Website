@@ -7,7 +7,7 @@
 
     <meta name="description" content="Web resmi LEVANTRA class yang digunakan untuk informasi perangkat, siswa, jadwal, kas dan juga momen selama di LEVANTRA">
     <meta name="keyword" content="LEVANTRA, kelas XI.7, web kelas, siswa, toska, sma negeri 2 kuta selatan, perangkat kelas, kelas XII.7">
-    <meta name="google-client-id" content="459223542825-pj8gsh9kve5lngr8bq3j1jjcku7v7894.apps.googleusercontent.com">
+    <meta name="firebase-config" content='{"apiKey":"AIzaSyBPryRiNFu2-Ovea1pVGlqcHV24TVHtodU","authDomain":"levantra-dfb73.firebaseapp.com","projectId":"levantra-dfb73","storageBucket":"levantra-dfb73.firebasestorage.app","messagingSenderId":"645372711659","appId":"1:645372711659:web:ed8a396c29d29e5c22a4ae","measurementId":"G-M2VGWYN9LW"}'>
     <meta name="author" content="LEVANTRA Class, inimanumenaa">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian, English">
@@ -29,7 +29,19 @@
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
 
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+    <script>
+        window.LEVANTRA_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyBPryRiNFu2-Ovea1pVGlqcHV24TVHtodU",
+            authDomain: "levantra-dfb73.firebaseapp.com",
+            projectId: "levantra-dfb73",
+            storageBucket: "levantra-dfb73.firebasestorage.app",
+            messagingSenderId: "645372711659",
+            appId: "1:645372711659:web:ed8a396c29d29e5c22a4ae",
+            measurementId: "G-M2VGWYN9LW"
+        };
+    </script>
 
     <link rel="preload" href="css/style.css" as="style">
     <link rel="preload" href="img/LevantraLogo.jpg" as="image">
