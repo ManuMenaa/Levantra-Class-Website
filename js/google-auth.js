@@ -460,20 +460,43 @@ function handleCredentialResponse(response) {
 function startGoogleAuth(action = 'login') {
     closeAccountMenu();
 
-    if (!ensureGoogleClientInitialized()) {
-        if (!window.google || !window.google.accounts) {
-            showToast('Login Google belum siap, coba lagi sebentar.');
-        } else {
-            showToast('Tambahkan Client ID Google yang valid di meta tag untuk mengaktifkan login.');
+    const buttonContainer = getGoogleSignInButtonContainer();
+    if (buttonContainer) {
+        buttonContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    if (!window.google || !window.google.accounts) {
+        showToast('Menghubungkan ke Google, silakan tunggu sebentar...');
+
+        const googleScript = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+        if (googleScript) {
+            googleScript.addEventListener('load', () => {
+                if (ensureGoogleClientInitialized()) {
+                    try {
+                        window.google.accounts.id.prompt();
+                    } catch (error) {
+                        showToast('Tidak bisa membuka popup login Google. Coba klik tombol Google di atas.');
+                    }
+                }
+            }, { once: true });
         }
         return;
     }
 
-    window.google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            showToast(`${action === 'signup' ? 'Daftar' : 'Masuk'} dibatalkan atau belum tersedia. Silakan coba lagi.`);
-        }
-    });
+    if (!ensureGoogleClientInitialized()) {
+        showToast('Google login belum siap. Coba refresh halaman lalu klik lagi.');
+        return;
+    }
+
+    try {
+        window.google.accounts.id.prompt((notification) => {
+            if (notification && (notification.isNotDisplayed?.() || notification.isSkippedMoment?.())) {
+                showToast(`${action === 'signup' ? 'Daftar' : 'Masuk'} dibatalkan atau belum tersedia. Silakan coba lagi.`);
+            }
+        });
+    } catch (error) {
+        showToast('Tidak bisa membuka popup login Google. Coba klik tombol Google di atas.');
+    }
 }
 
 function handleGoogleSignOut() {
