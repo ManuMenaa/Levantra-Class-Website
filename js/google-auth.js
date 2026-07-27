@@ -109,19 +109,35 @@ function renderGoogleSignInButton() {
     const buttonContainer = getGoogleSignInButtonContainer();
     if (!buttonContainer) return;
 
+    console.debug('renderGoogleSignInButton: googleAuthReady=', googleAuthReady, 'googleClientId=', googleClientId);
     if (!ensureGoogleClientInitialized()) {
+        console.warn('renderGoogleSignInButton: Google client not initialized yet.');
         return;
     }
 
     buttonContainer.innerHTML = '';
-    window.google.accounts.id.renderButton(buttonContainer, {
-        theme: 'outline',
-        size: 'large',
-        type: 'standard',
-        text: 'signin_with',
-        shape: 'pill',
-        logo_alignment: 'left'
-    });
+    try {
+        window.google.accounts.id.renderButton(buttonContainer, {
+            theme: 'outline',
+            size: 'large',
+            type: 'standard',
+            text: 'signin_with',
+            shape: 'pill',
+            logo_alignment: 'left'
+        });
+    } catch (e) {
+        console.error('renderButton failed', e);
+    }
+
+    // If for any reason renderButton produced no visible button, provide a fallback
+    if (!buttonContainer.querySelector('button')) {
+        const fallback = document.createElement('button');
+        fallback.className = 'upload-btn';
+        fallback.type = 'button';
+        fallback.textContent = 'Masuk dengan Google';
+        fallback.addEventListener('click', () => startGoogleAuth('login'));
+        buttonContainer.appendChild(fallback);
+    }
 }
 
 function getCurrentGoogleUser() {
