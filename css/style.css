@@ -510,6 +510,14 @@ nav {
   box-shadow: var(--shadow-sm);
 }
 
+.upload-card #googleSignInButton {
+  min-height: 44px;
+  margin: 0.5rem 0 0.8rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 .auth-card h3 {
   font-size: 1.05rem;
   margin-bottom: 0.35rem;

@@ -3,7 +3,7 @@
  */
 
 const googleClientIdMeta = document.querySelector('meta[name="google-client-id"]');
-const googleClientId = window.LEVANTRA_GOOGLE_CLIENT_ID || (googleClientIdMeta ? googleClientIdMeta.getAttribute('content') : '');
+const googleClientId = window.LEVANTRA_GOOGLE_CLIENT_ID || (googleClientIdMeta ? googleClientIdMeta.getAttribute('content') : '459223542825-pj8gsh9kve5lngr8bq3j1jjcku7v7894.apps.googleusercontent.com');
 let googleAuthReady = false;
 
 function getAccountMenu() {

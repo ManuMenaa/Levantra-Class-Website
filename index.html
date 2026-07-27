@@ -7,6 +7,7 @@
 
     <meta name="description" content="Web resmi LEVANTRA class yang digunakan untuk informasi perangkat, siswa, jadwal, kas dan juga momen selama di LEVANTRA">
     <meta name="keyword" content="LEVANTRA, kelas XI.7, web kelas, siswa, toska, sma negeri 2 kuta selatan, perangkat kelas, kelas XII.7">
+    <meta name="google-client-id" content="459223542825-pj8gsh9kve5lngr8bq3j1jjcku7v7894.apps.googleusercontent.com">
     <meta name="author" content="LEVANTRA Class, inimanumenaa">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian, English">
@@ -181,6 +182,9 @@
             <p>Login Google dulu sebelum mengunggah foto atau video ke halaman ini.</p>
 
             <input id="mediaUpload" type="file" accept="image/*,video/*" hidden>
+            <p id="authStatus" class="auth-status">Belum masuk. Klik tombol di bawah untuk lanjut.</p>
+            <div id="googleSignInButton"></div>
+
             <button id="uploadMediaButton" class="upload-btn" type="button" disabled>
                 <i class="fa-solid fa-upload"></i> Upload Foto / Video
             </button>
