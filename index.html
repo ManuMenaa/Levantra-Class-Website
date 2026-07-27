@@ -9,7 +9,6 @@
     <meta name="keyword" content="LEVANTRA, kelas XI.7, web kelas, siswa, toska, sma negeri 2 kuta selatan, perangkat kelas, kelas XII.7">
     <meta name="author" content="LEVANTRA Class, inimanumenaa">
     <meta name="robots" content="index, follow">
-    <meta name="google-client-id" content="459223542825-cvsht81ca5sggr5ahogfj19aifooc4su.apps.googleusercontent.com">
     <meta name="language" content="Indonesian, English">
 
     <meta property="og:type" content="website">
@@ -89,12 +88,6 @@
         <div class="hero-content">
             <h1>LEARN, VISION, TRIUMPH</h1>
             <p>Generasi Hebat Menuju Indonesia Emas 2045</p>
-            <div class="auth-card">
-                <h3>Masuk dengan Google</h3>
-                <p>Gunakan akun Google Anda untuk mengakses fitur akun LEVANTRA.</p>
-                <div id="googleSignInButton"></div>
-                <p id="authStatus" class="auth-status">Belum masuk. Klik tombol di bawah untuk lanjut.</p>
-            </div>
             <div class="slider-container">
                 <img src="img/moment1.avif" alt="Slide 1" class="slide-item">
                 <img src="img/moment2.avif" alt="Slide 2" class="slide-item">
@@ -181,7 +174,21 @@
     </section>
 
     <section id="momen" class="section">
-        <h2 class="section-title">Momen</h2>
+        <h2 class="section-title"><i class="fa-solid fa-camera"></i>Momen</h2>
+
+        <div class="upload-card">
+            <h3>Bagikan momen kelas</h3>
+            <p>Login Google dulu sebelum mengunggah foto atau video ke halaman ini.</p>
+
+            <input id="mediaUpload" type="file" accept="image/*,video/*" hidden>
+            <button id="uploadMediaButton" class="upload-btn" type="button" disabled>
+                <i class="fa-solid fa-upload"></i> Upload Foto / Video
+            </button>
+
+            <p id="uploadStatus" class="upload-status">Silakan login Google terlebih dahulu.</p>
+            <div id="uploadPreview" class="upload-preview"></div>
+            <div id="momenGallery" class="momen-gallery"></div>
+        </div>
     </section>
 
     <script src="js/google-auth.js" async defer></script>

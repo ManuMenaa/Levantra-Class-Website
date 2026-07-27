@@ -124,15 +124,293 @@ function renderGoogleSignInButton() {
     });
 }
 
+function getCurrentGoogleUser() {
+    const savedUser = localStorage.getItem('googleUser');
+    if (!savedUser) return null;
+
+    try {
+        return JSON.parse(savedUser);
+    } catch (error) {
+        localStorage.removeItem('googleUser');
+        return null;
+    }
+}
+
+function getUploadButton() {
+    return document.getElementById('uploadMediaButton');
+}
+
+function getUploadInput() {
+    return document.getElementById('mediaUpload');
+}
+
+function getUploadStatusElement() {
+    return document.getElementById('uploadStatus');
+}
+
+function getUploadPreviewElement() {
+    return document.getElementById('uploadPreview');
+}
+
+function getMomenGalleryElement() {
+    return document.getElementById('momenGallery');
+}
+
+function getStoredUploads() {
+    const stored = localStorage.getItem('levantraUploads');
+    if (!stored) return [];
+
+    try {
+        return JSON.parse(stored);
+    } catch (error) {
+        localStorage.removeItem('levantraUploads');
+        return [];
+    }
+}
+
+function saveStoredUploads(items) {
+    localStorage.setItem('levantraUploads', JSON.stringify(items));
+}
+
+function renderUploadedMedia() {
+    const gallery = getMomenGalleryElement();
+    if (!gallery) return;
+
+    const uploads = getStoredUploads();
+    if (!uploads.length) {
+        gallery.innerHTML = '<p class="upload-empty">Belum ada foto atau video yang diunggah.</p>';
+        return;
+    }
+
+    gallery.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    uploads.slice().reverse().forEach((item) => {
+        const card = document.createElement('article');
+        card.className = 'momen-item';
+
+        if (item.type && item.type.startsWith('image/')) {
+            const image = document.createElement('img');
+            image.src = item.dataUrl;
+            image.alt = item.name;
+            card.appendChild(image);
+        } else if (item.type && item.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = item.dataUrl;
+            video.controls = true;
+            video.preload = 'metadata';
+            card.appendChild(video);
+        }
+
+        const meta = document.createElement('div');
+        meta.className = 'momen-item-meta';
+        meta.innerHTML = `
+            <strong>${escapeHtml(item.name)}</strong>
+            <p>Diunggah oleh ${escapeHtml(item.uploader || 'Pengguna')}</p>
+            <p>${escapeHtml(new Date(item.uploadedAt).toLocaleString('id-ID'))}</p>
+        `;
+        card.appendChild(meta);
+
+        const actions = document.createElement('div');
+        actions.className = 'momen-item-actions';
+
+        const likeButton = document.createElement('button');
+        likeButton.className = `momen-action-btn${item.liked ? ' active' : ''}`;
+        likeButton.type = 'button';
+        likeButton.innerHTML = `<i class="fa-solid fa-heart"></i> ${item.likes || 0}`;
+        likeButton.addEventListener('click', () => {
+            const uploads = getStoredUploads();
+            const target = uploads.find((entry) => entry.id === item.id);
+            if (target) {
+                target.likes = (target.likes || 0) + (target.liked ? -1 : 1);
+                target.liked = !target.liked;
+                saveStoredUploads(uploads);
+                renderUploadedMedia();
+            }
+        });
+        actions.appendChild(likeButton);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'momen-delete-btn';
+        deleteButton.type = 'button';
+        deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i> Hapus';
+        deleteButton.addEventListener('click', () => {
+            const remaining = getStoredUploads().filter((entry) => entry.id !== item.id);
+            saveStoredUploads(remaining);
+            renderUploadedMedia();
+            showToast('Postingan berhasil dihapus.');
+        });
+        actions.appendChild(deleteButton);
+
+        card.appendChild(actions);
+
+        const commentsSection = document.createElement('div');
+        commentsSection.className = 'momen-comments';
+
+        const commentList = document.createElement('div');
+        commentList.className = 'momen-comment-list';
+        (item.comments || []).forEach((comment) => {
+            const commentItem = document.createElement('div');
+            commentItem.className = 'momen-comment-item';
+            commentItem.textContent = comment;
+            commentList.appendChild(commentItem);
+        });
+        commentsSection.appendChild(commentList);
+
+        const commentForm = document.createElement('form');
+        commentForm.className = 'momen-comment-form';
+        const commentInput = document.createElement('input');
+        commentInput.type = 'text';
+        commentInput.placeholder = 'Tulis komentar...';
+        commentInput.maxLength = 120;
+        const commentSubmit = document.createElement('button');
+        commentSubmit.type = 'submit';
+        commentSubmit.textContent = 'Kirim';
+        commentForm.appendChild(commentInput);
+        commentForm.appendChild(commentSubmit);
+        commentForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const value = commentInput.value.trim();
+            if (!value) return;
+
+            const uploads = getStoredUploads();
+            const target = uploads.find((entry) => entry.id === item.id);
+            if (target) {
+                target.comments = target.comments || [];
+                target.comments.push(`${getCurrentGoogleUser()?.name || 'Pengguna'}: ${value}`);
+                saveStoredUploads(uploads);
+                renderUploadedMedia();
+            }
+        });
+        commentsSection.appendChild(commentForm);
+        card.appendChild(commentsSection);
+
+        fragment.appendChild(card);
+    });
+
+    gallery.appendChild(fragment);
+}
+
+function updateUploadAccess(user = getCurrentGoogleUser()) {
+    const button = getUploadButton();
+    const input = getUploadInput();
+    const status = getUploadStatusElement();
+    const preview = getUploadPreviewElement();
+
+    if (!button || !input || !status) return;
+
+    const canUpload = Boolean(user && user.name);
+    button.disabled = !canUpload;
+    input.disabled = !canUpload;
+
+    if (preview) {
+        preview.innerHTML = '';
+    }
+
+    if (canUpload) {
+        status.textContent = 'Akun Anda siap. Pilih foto atau video untuk diunggah.';
+        status.classList.add('active');
+    } else {
+        status.textContent = 'Login Google dulu untuk mengunggah foto atau video.';
+        status.classList.remove('active');
+    }
+}
+
+async function handleMediaUploadSelection(event) {
+    const input = event.target;
+    const preview = getUploadPreviewElement();
+    const file = input.files && input.files[0];
+
+    if (!file) return;
+
+    const user = getCurrentGoogleUser();
+    if (!user || !user.name) {
+        showToast('Login Google dulu untuk mengunggah foto atau video.');
+        input.value = '';
+        return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        showToast('Ukuran file terlalu besar. Maksimal 10 MB.');
+        input.value = '';
+        return;
+    }
+
+    const fileType = file.type.startsWith('video/') ? 'Video' : 'Foto';
+    const previewMessage = `Mengunggah ${fileType.toLowerCase()}...`;
+
+    if (preview) {
+        preview.innerHTML = `<strong>${escapeHtml(previewMessage)}</strong>`;
+    }
+
+    try {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const uploads = getStoredUploads();
+            uploads.push({
+                id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                name: file.name,
+                type: file.type,
+                dataUrl: reader.result,
+                uploader: user.name,
+                email: user.email || '',
+                uploadedAt: new Date().toISOString(),
+                likes: 0,
+                liked: false,
+                comments: []
+            });
+
+            saveStoredUploads(uploads);
+            renderUploadedMedia();
+
+            if (preview) {
+                preview.innerHTML = `<strong>${escapeHtml(fileType)} berhasil ditambahkan.</strong> ${escapeHtml(file.name)}`;
+            }
+
+            showToast(`${fileType} "${file.name}" berhasil ditambahkan ke momen.`);
+            input.value = '';
+        };
+
+        reader.onerror = () => {
+            showToast('Gagal membaca file. Coba lagi.');
+            input.value = '';
+        };
+
+        reader.readAsDataURL(file);
+    } catch (error) {
+        showToast('Gagal mengunggah file.');
+    }
+}
+
+function bindUploadEvents() {
+    const button = getUploadButton();
+    const input = getUploadInput();
+
+    if (!button || !input) return;
+
+    button.addEventListener('click', () => {
+        const user = getCurrentGoogleUser();
+        if (!user || !user.name) {
+            showToast('Login Google dulu untuk mengunggah foto atau video.');
+            return;
+        }
+        input.click();
+    });
+
+    input.addEventListener('change', handleMediaUploadSelection);
+}
+
 function persistGoogleUser(user) {
     if (!user) {
         localStorage.removeItem('googleUser');
         updateAuthButton(null);
+        updateUploadAccess(null);
         return;
     }
     localStorage.setItem('googleUser', JSON.stringify(user));
     updateAuthButton(user);
     updateAuthStatus(user);
+    updateUploadAccess(user);
 }
 
 function ensureGoogleClientInitialized() {
@@ -202,6 +480,7 @@ function handleGoogleSignOut() {
     localStorage.removeItem('googleUser');
     updateAuthButton(null);
     updateAuthStatus(null);
+    updateUploadAccess(null);
     showToast('Berhasil keluar dari akun Google.');
     closeAccountMenu();
 }
@@ -224,19 +503,17 @@ function closeAccountMenu() {
 }
 
 function initializeGoogleAuth() {
-    const savedUser = localStorage.getItem('googleUser');
+    const savedUser = getCurrentGoogleUser();
     if (savedUser) {
-        try {
-            const parsedUser = JSON.parse(savedUser);
-            updateAuthButton(parsedUser);
-            updateAuthStatus(parsedUser);
-        } catch (error) {
-            localStorage.removeItem('googleUser');
-            updateAuthStatus(null);
-        }
+        updateAuthButton(savedUser);
+        updateAuthStatus(savedUser);
+        updateUploadAccess(savedUser);
     } else {
         updateAuthStatus(null);
+        updateUploadAccess(null);
     }
+
+    renderUploadedMedia();
 
     if (window.google && window.google.accounts) {
         ensureGoogleClientInitialized();
@@ -261,6 +538,7 @@ function registerGoogleAuthHandlers() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeGoogleAuth();
+    bindUploadEvents();
     registerGoogleAuthHandlers();
 });
 

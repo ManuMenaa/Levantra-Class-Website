@@ -1,6 +1,20 @@
 /**
  * LEVANTRA - Unified App JS
+ * Features:
+ * - Slider implementation
+ * - Hamburger menu toggle
+ * - Settings logic (in settings.js)
+ * - Google auth logic (in google-auth.js)
  */
+
+// =============================================
+// INITIALIZATION
+// =============================================
+
+// =============================================
+// AUTHENTICATION
+// =============================================
+
 
 // =============================================
 // CONFIGURATION & GLOBAL STATE
