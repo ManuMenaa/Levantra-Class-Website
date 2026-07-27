@@ -127,6 +127,7 @@ function getCurrentGoogleUser() {
     if (!savedUser) return null;
 
     try {
+
         return JSON.parse(savedUser);
     } catch (error) {
         localStorage.removeItem('googleUser');
@@ -402,6 +403,7 @@ function persistGoogleUser(user) {
     if (!user) {
         localStorage.removeItem('googleUser');
         updateAuthButton(null);
+        updateAuthStatus(null);
         updateUploadAccess(null);
         return;
     }
@@ -409,6 +411,33 @@ function persistGoogleUser(user) {
     updateAuthButton(user);
     updateAuthStatus(user);
     updateUploadAccess(user);
+}
+
+function getFirebaseAuthErrorMessage(error) {
+    const code = error?.code;
+    const message = error?.message || '';
+
+    if (code === 'auth/unauthorized-domain') {
+        return 'Domain website belum diizinkan oleh Firebase Authentication. Tambahkan domain ini di Firebase Console > Authentication > Settings > Authorized domains.';
+    }
+
+    if (code === 'auth/operation-not-allowed') {
+        return 'Provider Google belum diaktifkan di Firebase Authentication. Aktifkan Google di Authentication > Sign-in method.';
+    }
+
+    if (code === 'auth/popup-blocked') {
+        return 'Popup diblokir browser. Izinkan popup lalu coba lagi.';
+    }
+
+    if (code === 'auth/popup-closed-by-user') {
+        return 'Login dibatalkan.';
+    }
+
+    if (message) {
+        return message;
+    }
+
+    return 'Gagal masuk dengan Google melalui Firebase.';
 }
 
 function initializeFirebaseAuth() {
@@ -475,6 +504,7 @@ function startGoogleAuth(action = 'login') {
     const provider = new window.firebase.auth.GoogleAuthProvider();
     provider.addScope('profile');
     provider.addScope('email');
+    provider.setCustomParameters({ prompt: 'select_account' });
 
     firebaseAuthInstance.signInWithPopup(provider)
         .then((result) => {
@@ -484,12 +514,19 @@ function startGoogleAuth(action = 'login') {
         })
         .catch((error) => {
             console.error('Firebase sign-in failed', error);
-            const message = error.code === 'auth/popup-closed-by-user'
-                ? 'Login dibatalkan.'
-                : error.code === 'auth/popup-blocked'
-                    ? 'Popup diblokir. Izinkan popup browser lalu coba lagi.'
-                    : 'Gagal masuk dengan Google melalui Firebase.';
-            showToast(message);
+            const fallbackMessage = getFirebaseAuthErrorMessage(error);
+
+            if (error?.code === 'auth/popup-blocked' || error?.code === 'auth/popup-closed-by-user') {
+                showToast(fallbackMessage);
+                return;
+            }
+
+            if (error?.code === 'auth/unauthorized-domain') {
+                showToast(fallbackMessage);
+                return;
+            }
+
+            showToast(fallbackMessage);
         });
 }
 
