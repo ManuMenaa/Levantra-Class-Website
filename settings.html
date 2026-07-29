@@ -73,16 +73,16 @@
                     <span>Akun</span>
                 </button>
                 <div id="accountMenu" class="account-menu">
-                    <a href="#" onclick="event.stopPropagation(); startGoogleAuth('login'); return false;">
+                    <a href="#" onclick="event.stopPropagation(); login(); return false;">
                         <i class="fa-solid fa-right-to-bracket"></i>Masuk
                     </a>
-                    <a href="#" onclick="event.stopPropagation(); startGoogleAuth('signup'); return false;">
+                    <a href="#" onclick="event.stopPropagation(); login(); return false;">
                         <i class="fa-solid fa-user-plus"></i>Daftar
                     </a>
                     <a href="settings.html" onclick="closeAccountMenu()">
                         <i class="fa-solid fa-gear"></i>Settings
                     </a>
-                    <a href="#" onclick="event.stopPropagation(); handleGoogleSignOut(); return false;">
+                    <a href="#" onclick="event.stopPropagation(); logout(); return false;">
                         <i class="fa-solid fa-right-from-bracket"></i>Keluar
                     </a>
                 </div>
@@ -124,7 +124,6 @@
         </div>
     </section>
 
-    <script src="js/google-auth.js" async defer></script>
     <script src="js/settings.js" async defer></script>
     <script src="js/app.js" async defer></script>
 </body>

@@ -1,9 +1,19 @@
 /*
-   ======================================
-   LEVANTRA WEBSITE DESIGN
-   Used for website aethetic & visibility
-   ======================================
-*/
+  * LEVANTRA - Unified CSS
+  * Features:
+  * - Root variables for colors, spacing, and typography
+  * - Dark mode support
+  * - Reset and base styles
+  * - Navigation and hamburger menu styles
+  * - Account menu and toast notifications
+  * - Upload card and gallery styles
+  * - Authentication card styles
+  * - Settings page styles
+  * - Hero section with slider implementation
+  * - Section base styles
+  * - Profile card styles for leaders and staff
+  * - Responsive design adjustments
+  */
 
 /* ===== ROOT VARIABLES ===== */
 :root {
@@ -248,7 +258,7 @@ nav {
   border: none;
   background: transparent;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 600;
   cursor: pointer;
   padding: var(--spacing-sm) var(--spacing-md);
@@ -262,14 +272,6 @@ nav {
   background: var(--primary-gold);
   box-shadow: var(--shadow-sm);
   outline: none;
-}
-
-.account-menu-toggle span {
-  display: inline-block;
-  max-width: 110px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .account-avatar {
@@ -302,12 +304,8 @@ nav {
 }
 
 .account-menu a {
-  /* display: flex; */
-  /* align-items: center; */
-  /* gap: 8px; */
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  /* color: var(--text-primary); */
 }
 
 .account-menu a:hover {
