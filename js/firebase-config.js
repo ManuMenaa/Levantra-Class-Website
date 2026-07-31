@@ -9,26 +9,24 @@ const firebaseConfig = {
     measurementId: "G-BZZQRLXJMH"
 };
 
-window.LEVANTRA_FIREBASE_CONFIG = firebaseConfig;
-window.firebaseConfig = firebaseConfig;
-
 // Check if Firebase is available and initialize it
-if (typeof firebase !== 'undefined') {
+if (typeof firebase === 'undefined') {
     try {
-        if (!firebase.apps || firebase.apps.length === 0) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
 
-        window.firebase = firebase;
-        window.firebaseApp = firebase.apps[0] || firebase.app();
+        // Initialize Services
         window.auth = firebase.auth();
+        window.firebaseAvailable = true;
         console.log("Firebase initialized successfully.");
 
-        // Dispatch an event to notify that Firebase has been initialized
-        document.dispatchEvent(new Event('firebaseInitialized'));
+        // Dispatch an event to notify that Firebase is ready
+        document.dispatchEvent(new Event('firebaseReady'));
     } catch (error) {
-        console.error("Error initializing Firebase:", error);
+        console.error("Firebase initialization error:", error);
+        window.firebaseAvailable = false;
     }
 } else {
-    console.error("Firebase SDK is not loaded.");
+    console.error("Firebase is not loaded.");
+    window.firebaseAvailable = false;
 }

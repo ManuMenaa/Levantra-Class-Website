@@ -29,20 +29,6 @@
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
 
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
-    <script>
-        window.LEVANTRA_FIREBASE_CONFIG = {
-            apiKey: "AIzaSyBPryRiNFu2-Ovea1pVGlqcHV24TVHtodU",
-            authDomain: "levantra-dfb73.firebaseapp.com",
-            projectId: "levantra-dfb73",
-            storageBucket: "levantra-dfb73.firebasestorage.app",
-            messagingSenderId: "645372711659",
-            appId: "1:645372711659:web:ed8a396c29d29e5c22a4ae",
-            measurementId: "G-M2VGWYN9LW"
-        };
-    </script>
-
     <link rel="preload" href="css/style.css" as="style">
     <link rel="preload" href="img/LevantraLogo.jpg" as="image">
 
@@ -54,41 +40,38 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="black-overlay" onclick="closeHamburgerMenu()"></div>
+    <div class="black-overlay" onclick="closeMenu()"></div>
     <nav>
         <div class="logo-container">
             <img src="img/LevantraLogo.jpg" alt="Levantra Logo" class="logo-img" width="50" height="50">
             <span class="logo-text">LEVANTRA</span>
         </div>
         <ul class="nav-links">
-            <li><a href="index.html#beranda" onclick="closeHamburgerMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
-            <li><a href="index.html#perangkat" onclick="closeHamburgerMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Perangkat</a></li>
-            <li><a href="index.html#siswa" onclick="closeHamburgerMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
-            <li><a href="index.html#jadwal" onclick="closeHamburgerMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
-            <li><a href="index.html#kas" onclick="closeHamburgerMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
-            <li><a href="index.html#momen" onclick="closeHamburgerMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
+            <li><a href="index.html#beranda" onclick="closeMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
+            <li><a href="index.html#perangkat" onclick="closeMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Perangkat</a></li>
+            <li><a href="index.html#siswa" onclick="closeMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
+            <li><a href="index.html#jadwal" onclick="closeMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
+            <li><a href="index.html#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
+            <li><a href="index.html#momen" onclick="closeMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
             <li class="account-menu-wrapper">
-                <button class="account-menu-toggle" onclick="toggleAccountMenu(event)">
+                <button class="account-menu-toggle" onclick="toggleMenu()">
                     <i class="fa-brands fa-google"></i>
                     <span>Akun</span>
                 </button>
                 <div id="accountMenu" class="account-menu">
-                    <a href="#" onclick="event.stopPropagation(); login(); return false;">
+                    <a href="#" onclick="login()">
                         <i class="fa-solid fa-right-to-bracket"></i>Masuk
                     </a>
-                    <a href="#" onclick="event.stopPropagation(); login(); return false;">
-                        <i class="fa-solid fa-user-plus"></i>Daftar
-                    </a>
-                    <a href="settings.html" onclick="closeAccountMenu()">
+                    <a href="settings.html">
                         <i class="fa-solid fa-gear"></i>Settings
                     </a>
-                    <a href="#" onclick="event.stopPropagation(); logout(); return false;">
+                    <a href="#" onclick="logout()">
                         <i class="fa-solid fa-right-from-bracket"></i>Keluar
                     </a>
                 </div>
             </li>
         </ul>
-        <div class="hamburger" onclick="toggleHamburgerMenu()">
+        <div class="hamburger" onclick="toggleMenu()">
             <span></span>
             <span></span>
             <span></span>
@@ -123,6 +106,9 @@
             <span>Menerapkan perubahan...</span>
         </div>
     </section>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 
     <script src="js/settings.js" async defer></script>
     <script src="js/app.js" async defer></script>

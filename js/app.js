@@ -8,32 +8,42 @@
  */
 
 // =============================================
+// CONFIGURATION & GLOBAL STATE
+// =============================================
+
+// Global state
+let indexSlide = 0;
+let slideInterval;
+
+// =============================================
 // INITIALIZATION
 // =============================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('LEVANTRA App initializing...');
+
+    // Check Firebase availability
+    const CheckFirebase = () => {
+        if (window.firebaseAvailable && window.auth) {
+            console.log('LEVANTRA App initialized');
+        }
+    }
 });
 
-function initApp() {
-    // Initialize Firebase
-    if (typeof firebase === 'undefined') {
-        console.warn('Firebase SDK not found. auth will not be available.');
-        return;
-    }
-
-    try {
-        if (!window.firebase.apps || !window.firebase.apps.length) {
-            window.firebase.initializeApp(firebaseConfig);
-        }
-        window.auth = window.firebase.auth();
-        window.auth.onAuthStateChanged((user) => {
-            persistFirebaseUser(user);
+(function initSlider() {
+    const slides = document.querySelectorAll('.slide-item');
+    if (slides.length > 0) {
+        slides.forEach((slide, i) => {
+            slide.addEventListener('click', () => {
+                indexSlide = i;
+                updateSlider();
+                resetInterval();
+            });
         });
-    } catch (err) {
-        console.error('Firebase init error', err);
+        updateSlider();
+        resetInterval();
     }
-}
+})();
 
 // =============================================
 // AUTHENTICATION
@@ -89,19 +99,7 @@ function updateAccountUI(user) {
 }
 
 function login() {
-    // close account menu if open
-    if (typeof closeAccountMenu === 'function') closeAccountMenu();
-
-    if (!window.auth || typeof window.auth.signInWithPopup !== 'function') {
-        alert('Firebase Authentication belum siap. Coba refresh halaman lalu klik Masuk lagi.');
-        return;
-    }
-
     const provider = new window.firebase.auth.GoogleAuthProvider();
-    provider.addScope('profile');
-    provider.addScope('email');
-    provider.setCustomParameters({ prompt: 'select_account' });
-
     window.auth.signInWithPopup(provider)
         .then((result) => {
             console.log('Login successful:', result.user?.email);
@@ -113,17 +111,8 @@ function login() {
 }
 
 function logout() {
-    if (!window.auth || typeof window.auth.signOut !== 'function') {
-        console.warn('Firebase auth is not available for logout.');
-        localStorage.removeItem('firebaseUser');
-        updateAccountUI(null);
-        return;
-    }
-
     window.auth.signOut()
         .then(() => {
-            localStorage.removeItem('firebaseUser');
-            updateAccountUI(null);
             console.log('Logout successful');
         })
         .catch((error) => {
@@ -131,14 +120,6 @@ function logout() {
             alert('Logout failed: ' + (error.message || error.code || 'Unknown error'));
         });
 }
-
-// =============================================
-// CONFIGURATION & GLOBAL STATE
-// =============================================
-
-// Global state
-let indexSlide = 0;
-let slideInterval;
 
 // =============================================
 // SLIDER IMPLEMENTATION
@@ -172,21 +153,6 @@ function resetInterval() {
     slideInterval = setInterval(nextSlide, 4000);
 }
 
-(function initSlider() {
-    const slides = document.querySelectorAll('.slide-item');
-    if (slides.length > 0) {
-        slides.forEach((slide, i) => {
-            slide.addEventListener('click', () => {
-                indexSlide = i;
-                updateSlider();
-                resetInterval();
-            });
-        });
-        updateSlider();
-        resetInterval();
-    }
-})();
-
 // =============================================
 // GLOBAL MENU
 // =============================================
@@ -209,10 +175,14 @@ function closeMenu() {
     const navLinks = document.querySelector('.nav-links');
     const hamburger = document.querySelector('.hamburger');
     const blackOverlay = document.querySelector('.black-overlay');
+    const accountToggle = document.querySelector('.account-menu-toggle');
+    const accountMenu = document.querySelector('.account-menu');
 
     if (navLinks) navLinks.classList.remove('active');
     if (hamburger) hamburger.classList.remove('active');
     if (blackOverlay) blackOverlay.classList.remove('active');
+    if (accountToggle) accountToggle.classList.remove('active');
+    if (accountMenu) accountMenu.classList.remove('active');
 }
 
 // =============================================
@@ -233,22 +203,3 @@ window.logout = logout;
 window.toggleMenu = toggleMenu;
 window.closeMenu = closeMenu;
 
-// Backwards-compatible account menu helpers (used by settings.html and older templates)
-function toggleAccountMenu(event) {
-    const accountMenu = document.getElementById('accountMenu');
-    if (!accountMenu) return;
-    if (event && typeof event.preventDefault === 'function') {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    accountMenu.classList.toggle('active');
-}
-
-function closeAccountMenu() {
-    const accountMenu = document.getElementById('accountMenu');
-    if (!accountMenu) return;
-    accountMenu.classList.remove('active');
-}
-
-window.toggleAccountMenu = toggleAccountMenu;
-window.closeAccountMenu = closeAccountMenu;
