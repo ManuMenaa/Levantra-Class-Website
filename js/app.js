@@ -22,12 +22,14 @@ let slideInterval;
 document.addEventListener('DOMContentLoaded', function() {
     console.log('LEVANTRA App initializing...');
 
-    // Check Firebase availability
-    const CheckFirebase = () => {
+    const checkFirebase = () => {
         if (window.firebaseAvailable && window.auth) {
             console.log('LEVANTRA App initialized');
         }
-    }
+    };
+
+    checkFirebase();
+    document.addEventListener('firebaseReady', checkFirebase, { once: true });
 });
 
 (function initSlider() {
@@ -49,60 +51,18 @@ document.addEventListener('DOMContentLoaded', function() {
 // AUTHENTICATION
 // =============================================
 
-function buildFirebaseUser(user) {
-    if (!user) return null;
-    return {
-        name: user.displayName || user.email?.split('@')[0] || 'Pengguna',
-        email: user.email || '',
-        picture: user.photoURL || '',
-        uid: user.uid || ''
-    };
-}
-
-function persistFirebaseUser(user) {
-    if (!user) {
-        localStorage.removeItem('firebaseUser');
-        updateAccountUI(null);
+function login() {
+    if (!window.auth) {
+        console.error('Firebase auth is not ready.');
+        alert('Login Google belum siap. Silakan refresh halaman dan coba lagi.');
         return;
     }
-    const u = buildFirebaseUser(user);
-    localStorage.setItem('firebaseUser', JSON.stringify(u));
-    updateAccountUI(u);
-}
 
-function updateAccountUI(user) {
-    const accountToggle = document.querySelector('.account-menu-toggle');
-    if (!accountToggle) return;
-
-    const label = accountToggle.querySelector('span');
-    let avatar = accountToggle.querySelector('.account-avatar');
-
-    if (user && user.name) {
-        if (label) label.textContent = user.name.split(' ')[0];
-        if (user.picture) {
-            if (!avatar) {
-                avatar = document.createElement('img');
-                avatar.className = 'account-avatar';
-                avatar.width = 28;
-                avatar.height = 28;
-                accountToggle.insertBefore(avatar, label);
-            }
-            avatar.src = user.picture;
-            avatar.alt = user.name;
-        } else if (avatar) {
-            avatar.remove();
-        }
-    } else {
-        if (label) label.textContent = 'Akun';
-        if (avatar) avatar.remove();
-    }
-}
-
-function login() {
-    const provider = new window.firebase.auth.GoogleAuthProvider();
+    const provider = new firebase.auth.GoogleAuthProvider();
     window.auth.signInWithPopup(provider)
         .then((result) => {
             console.log('Login successful:', result.user?.email);
+            alert('Login berhasil sebagai ' + result.user?.email);
         })
         .catch((error) => {
             console.error('Login failed:', error);
