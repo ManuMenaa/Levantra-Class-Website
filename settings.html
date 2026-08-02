@@ -9,37 +9,37 @@
     <meta name="keyword" content="LEVANTRA, kelas XI.7, web kelas, siswa, toska, sma negeri 2 kuta selatan, perangkat kelas, kelas XII.7">
     <meta name="author" content="LEVANTRA Class, inimanumenaa">
     <meta name="robots" content="index, follow">
-    <meta name="firebase-config" content='{"apiKey":"AIzaSyBPryRiNFu2-Ovea1pVGlqcHV24TVHtodU","authDomain":"levantra-dfb73.firebaseapp.com","projectId":"levantra-dfb73","storageBucket":"levantra-dfb73.firebasestorage.app","messagingSenderId":"645372711659","appId":"1:645372711659:web:ed8a396c29d29e5c22a4ae","measurementId":"G-M2VGWYN9LW"}'>
-    <meta name="language" content="Indonesian">
+    <meta name="language" content="Indonesian, English">
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://levantra.com/">
-    <meta property="og:title" content="LEVANTRA Class">
-    <meta property="og:description" content="Website resmi LEVANTRA class">
+    <meta property="og:url" content="https://levantra.vercel.app/settings.html">
+    <meta property="og:title" content="Levantra Settings">
+    <meta property="og:description" content="Levantra website settings">
     <meta property="og:image" content="img/LevantraLogo.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://levantra.com/">
-    <meta property="twitter:title" content="LEVANTRA Class">
-    <meta property="twitter:description" content="Website resmi LEVANTRA class">
+    <meta property="twitter:url" content="https://levantra.vercel.app/settings.html">
+    <meta property="twitter:title" content="Levantra Settins">
+    <meta property="twitter:description" content="Levantra website settings">
     <meta property="twitter:image" content="img/LevantraLogo.jpg">
 
     <link rel="icon" type="image/jpeg" href="img/LevantraLogo.jpg">
     <link rel="apple-touch-icon" href="img/LevantraLogo.jpg">
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
+    <link rel="preconnect" href="https://www.gstatic.com/" crossorigin="">
 
     <link rel="preload" href="css/style.css" as="style">
     <link rel="preload" href="img/LevantraLogo.jpg" as="image">
 
-    <title>Settings</title>
+    <title>Levantra Settings</title>
 
     <link rel="stylesheet" href="css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
-
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
     <div class="black-overlay" onclick="closeMenu()"></div>
     <nav>
         <div class="logo-container">
@@ -54,18 +54,17 @@
             <li><a href="index.html#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
             <li><a href="index.html#momen" onclick="closeMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
             <li class="account-menu-wrapper">
-                <button class="account-menu-toggle" onclick="toggleMenu()">
-                    <i class="fa-brands fa-google"></i>
-                    <span>Akun</span>
+                <button id="accountButton" class="account-menu-toggle" onclick="toggleMenu()">
+                    <i id="accountIcon" class="fa-regular fa-circle-user"></i>
                 </button>
                 <div id="accountMenu" class="account-menu">
-                    <a onclick="login()">
+                    <a id="loginMenuItem" onclick="login(); closeMenu()">
                         <i class="fa-solid fa-right-to-bracket"></i>Masuk
                     </a>
                     <a href="settings.html">
                         <i class="fa-solid fa-gear"></i>Settings
                     </a>
-                    <a onclick="logout()">
+                    <a id="logoutMenuItem" onclick="logout(); closeMenu()" hidden>
                         <i class="fa-solid fa-right-from-bracket"></i>Keluar
                     </a>
                 </div>
@@ -110,7 +109,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 
-    <script src="js/settings.js" async defer></script>
-    <script src="js/app.js" async defer></script>
+    <script src="js/firebase-config.js" defer></script>
+    <script src="js/app.js" defer></script>
 </body>
 </html>

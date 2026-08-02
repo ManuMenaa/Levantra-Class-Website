@@ -12,24 +12,28 @@
     <meta name="language" content="Indonesian, English">
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://levantra.netlify.app/">
-    <meta property="og:title" content="LEVANTRA Class">
-    <meta property="og:description" content="Website resmi LEVANTRA class">
+    <meta property="og:url" content="https://levantra.vercel.app/">
+    <meta property="og:title" content="Levantra Class">
+    <meta property="og:description" content="Website resmi Levantra Class">
     <meta property="og:image" content="img/LevantraLogo.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://levantra.netlify.app/">
-    <meta property="twitter:title" content="LEVANTRA Class">
-    <meta property="twitter:description" content="Website resmi LEVANTRA class">
+    <meta property="twitter:url" content="https://levantra.vercel.app/">
+    <meta property="twitter:title" content="Levantra Class">
+    <meta property="twitter:description" content="Website resmi Levantra Class">
     <meta property="twitter:image" content="img/LevantraLogo.jpg">
 
     <link rel="icon" type="image/jpeg" href="img/LevantraLogo.jpg">
     <link rel="apple-touch-icon" href="img/LevantraLogo.jpg">
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
+    <link rel="preconnect" href="https://www.gstatic.com/" crossorigin="">
 
     <link rel="preload" href="css/style.css" as="style">
     <link rel="preload" href="img/LevantraLogo.jpg" as="image">
+    <link rel="preload" href="img/moment1.avif" as="image">
+    <link rel="preload" href="img/moment2.avif" as="image">
+    <link rel="preload" href="img/moment3.avif" as="image">
 
     <title>Levantra Class</title>
 
@@ -38,6 +42,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div id="toastContainer" class="toast-container"></div>
     <div class="black-overlay" onclick="closeMenu()"></div>
     <nav>
         <div class="logo-container">
@@ -52,17 +57,17 @@
             <li><a href="#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
             <li><a href="#momen" onclick="closeMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
             <li class="account-menu-wrapper">
-                    <button class="account-menu-toggle" onclick="toggleMenu()">
-                        <i class="fa-regular fa-circle-user"></i>
+                    <button id="accountButton" class="account-menu-toggle" onclick="toggleMenu()">
+                        <i id="accountIcon" class="fa-regular fa-circle-user"></i>
                     </button>
                 <div id="accountMenu" class="account-menu">
-                    <a href="#"onclick="login(); closeMenu()">
+                    <a id="loginMenuItem" onclick="login(); closeMenu()">
                         <i class="fa-solid fa-right-to-bracket"></i>Masuk
                     </a>
                     <a href="settings.html">
                         <i class="fa-solid fa-gear"></i>Settings
                     </a>
-                    <a href="#" onclick="logout()">
+                    <a id="logoutMenuItem" onclick="logout(); closeMenu()" hidden>
                         <i class="fa-solid fa-right-from-bracket"></i>Keluar
                     </a>
                 </div>
