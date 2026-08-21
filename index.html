@@ -29,13 +29,30 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
     <link rel="preconnect" href="https://www.gstatic.com/" crossorigin="">
 
-    <link rel="preload" href="css/style.css" as="style">
-    <link rel="preload" href="img/LevantraLogo.jpg" as="image">
-    <link rel="preload" href="img/moment1.avif" as="image">
-    <link rel="preload" href="img/moment2.avif" as="image">
-    <link rel="preload" href="img/moment3.avif" as="image">
+    <link rel="preload" href="css/style.css" as="style" type="text/css">
+    <link rel="preload" href="img/LevantraLogo.jpg" as="image" type="image/jpeg">
+    <link rel="preload" href="img/moment1.avif" as="image" type="image/avif">
+    <link rel="preload" href="img/moment2.avif" as="image" type="image/avif">
+    <link rel="preload" href="img/moment3.avif" as="image" type="image/avif">
 
     <title>Levantra Class</title>
+
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                var isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var isDark = theme === 'dark' || (theme === 'system' && isSystemDark) || (!theme && isSystemDark);
+                
+                var resolvedTheme = isDark ? 'dark' : 'light';
+                document.documentElement.setAttribute('theme', resolvedTheme);
+                
+                if (isDark) {
+                    document.documentElement.classList.add('dark-mode');
+                }
+            } catch (e) {}
+        })();
+    </script>
 
     <link rel="stylesheet" href="css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
@@ -57,9 +74,9 @@
             <li><a href="#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
             <li><a href="#momen" onclick="closeMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
             <li class="account-menu-wrapper">
-                    <button id="accountButton" class="account-menu-toggle" onclick="toggleMenu()">
-                        <i id="accountIcon" class="fa-regular fa-circle-user"></i>
-                    </button>
+                <button id="accountButton" class="account-menu-toggle" onclick="toggleMenu()">
+                    <i id="accountIcon" class="fa-regular fa-circle-user"></i>
+                </button>
                 <div id="accountMenu" class="account-menu">
                     <a id="loginMenuItem" onclick="login(); closeMenu()">
                         <i class="fa-solid fa-right-to-bracket"></i>Masuk
@@ -95,11 +112,11 @@
     <section id="perangkat" class="section">
         <h2 class="section-title"><i class="fa-solid fa-sitemap"></i>Perangkat Kelas</h2>
 
-        <div class="leader-container">
+        <div class="hierarchy-container">
             <div class="main-leader-container">
                 <div class="p-card">
                     <div class="p-img leader">
-                        <img src="img/LevantraLogo.jpg" width="140" height="140">
+                        <img src="img/LevantraLogo.jpg" alt="Wali Kelas" width="140" height="140">
                     </div>
                     <h3>Wali Kelas</h3>
                     <p>Ni Putu Vivin Crisma Putri Cahyanti, S.Pd</p>
@@ -109,7 +126,7 @@
             <div class="main-leader-container">
                 <div class="p-card">
                     <div class="p-img leader">
-                        <img src="img/LevantraLogo.jpg" width="140" height="140">
+                        <img src="img/people/ray.avif" alt="Ketua Kelas" width="140" height="140">
                     </div>
                     <h3>Ketua Kelas</h3>
                     <p>Komang Ray Maha Pranatha Jaya</p>
@@ -119,7 +136,7 @@
             <div class="main-leader-container">
                 <div class="p-card">
                     <div class="p-img leader">
-                        <img src="img/LevantraLogo.jpg" width="140" height="140">
+                        <img src="img/people/prhyaterra.avif" alt="Wakil Kelas" width="140" height="140">
                     </div>
                     <h3>Wakil Kelas</h3>
                     <p>I Gede Prhyaterra Pratama Santana</p>
@@ -128,31 +145,31 @@
             <div class="staff-grid-container">
                 <div class="p-card staff">
                     <div class="p-img staff">
-                        <img src="img/LevantraLogo.jpg" width="100" height="100">
+                        <img src="img/people/almaira.avif" alt="Sekretaris 1" width="100" height="100">
                     </div>
                     <h3>Sekretaris 1</h3>
                     <p>Almaira Regina Anindinata</p>
                 </div>
                 <div class="p-card staff">
                     <div class="p-img staff">
-                        <img src="img/LevantraLogo.jpg" width="100" height="100">
+                        <img src="img/people/kirana_nariswari.avif" alt="Sekretaris 2" width="100" height="100">
                     </div>
                     <h3>Sekretaris 2</h3>
-                    <p>Entah</p>
+                    <p>Ni Wayan Kirana Nariswari</p>
                 </div>
                 <div class="p-card staff">
                     <div class="p-img staff">
-                        <img src="img/LevantraLogo.jpg" width="100" height="100">
+                        <img src="img/people/widya.avif" alt="Bendahara 1" width="100" height="100">
                     </div>
                     <h3>Bendahara 1</h3>
                     <p>Ni Nyoman Widya Cahyani</p>
                 </div>
                 <div class="p-card staff">
                     <div class="p-img staff">
-                        <img src="img/LevantraLogo.jpg" width="100" height="100">
+                        <img src="img/people/dinda_febriyanti.avif" alt="Bendahara 2" width="100" height="100">
                     </div>
                     <h3>Bendahara 2</h3>
-                    <p>Manu Mena</p>
+                    <p>Ni Komang Dinda Febriyanti</p>
                 </div>
             </div>
         </div>

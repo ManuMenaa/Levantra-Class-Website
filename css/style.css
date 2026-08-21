@@ -53,7 +53,13 @@
 }
 
 /* ===== DARK MODE VARIABLES ===== */
-body.dark-mode {
+html.dark-mode, 
+:root[theme="dark"] {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+html.dark-mode {
   /* Backgrounds */
   --bg-primary: #121212;
   --bg-white: #1e1e1e;
@@ -237,13 +243,9 @@ nav {
 }
 
 /* ===== ACCOUNT MENU ===== */
-.account-menu-wrapper {
-  position: relative;
-}
-
 .toast-container {
   position: fixed;
-  top: 20px;
+  top: 85px;
   right: 20px;
   z-index: 1200;
   display: flex;
@@ -287,6 +289,10 @@ nav {
   background: var(--primary-gold);
 }
 
+.account-menu-wrapper {
+  position: relative;
+}
+
 .account-menu-toggle {
   display: flex;
   align-items: center;
@@ -297,6 +303,7 @@ nav {
   font-size: 1.5rem;
   font-weight: 600;
   cursor: pointer;
+  height: 42.88px;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
   transition: var(--transition);
@@ -311,8 +318,8 @@ nav {
 }
 
 .account-avatar {
-  width: 36px;
-  height: 36px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--primary-gold);
@@ -638,7 +645,7 @@ select {
 }
 
 /* ===== LEADER SECTION ===== */
-.leader-container {
+.hierarchy-container {
   display: flex;
   flex-direction: column;
   align-items: center;
