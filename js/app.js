@@ -12,8 +12,7 @@
 // =============================================
 
 // Global state
-let indexSlide = 0;
-let slideInterval;
+let currentUser = null;
 let authListenerAttached = false;
 
 // =============================================
@@ -22,16 +21,30 @@ let authListenerAttached = false;
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('LEVANTRA App initializing...');
-    initApp();
-    initializeAuthUI();
-    window.setTimeout(initializeAuthUI, 200);
+
+    // Wait for Firebase to be ready
+    const checkFirebase = setInterval(() => {
+        if (window.firebaseAvailable) {
+            clearInterval(checkFirebase);
+            initApp();
+        }
+    }, 100);
+    
+    setTimeout(() => {
+        clearInterval(checkFirebase);
+    }, 5000);
 });
 
-document.addEventListener('firebaseReady', initializeAuthUI);
-
-function initApp () {
+function initApp() {
     console.log('LEVANTRA App initialized')
+
+    // Initialize authentication UI
+    window.auth.onAuthStateChanged(function(user) {
+        currentUser = user;
+        updateAuthMenu(user);
+    });
 }
+
 // =============================================
 // AUTHENTICATION
 // =============================================
@@ -61,7 +74,6 @@ function updateAuthMenu(user) {
     const loginItem = document.getElementById('loginMenuItem');
     const logoutItem = document.getElementById('logoutMenuItem');
     const accountButton = document.getElementById('accountButton');
-    const accountIcon = document.getElementById('accountIcon');
     const hasUser = Boolean(user);
 
     if (loginItem) {
@@ -76,17 +88,9 @@ function updateAuthMenu(user) {
 
     if (accountButton) {
         if (hasUser && user?.photoURL) {
-            accountButton.innerHTML = `<img src="${user.photoURL}" alt="Foto profil" class="account-avatar">`;
+            accountButton.innerHTML = `<img src="${user.photoURL}" alt="Profile Photo" class="account-avatar">`;
         } else {
             accountButton.innerHTML = '<i id="accountIcon" class="fa-regular fa-circle-user"></i>';
-        }
-
-        accountButton.querySelector('i')?.classList.remove('fa-regular', 'fa-circle-user');
-        if (!accountButton.querySelector('img')) {
-            const icon = accountButton.querySelector('i');
-            if (icon) {
-                icon.className = 'fa-regular fa-circle-user';
-            }
         }
     }
 }
@@ -104,6 +108,7 @@ function initializeAuthUI() {
 
     authListenerAttached = true;
     updateAuthMenu(window.auth.currentUser || null);
+
     window.auth.onAuthStateChanged((user) => {
         updateAuthMenu(user);
     });
@@ -112,7 +117,7 @@ function initializeAuthUI() {
 function login() {
     if (!window.auth) {
         console.error('Firebase auth is not ready.');
-        showToast('Login Google belum siap. Silakan refresh halaman dan coba lagi.', 'eror');
+        showToast('Login Google belum siap. Silakan refresh halaman dan coba lagi.', 'error');
         return;
     }
 
@@ -120,7 +125,6 @@ function login() {
     window.auth.signInWithPopup(provider)
         .then((result) => {
             console.log('Login successful:', result.user?.email);
-            updateAuthMenu(result.user || null);
             showToast('Login berhasil sebagai ' + (result.user?.email || 'pengguna'), 'success');
         })
         .catch((error) => {
@@ -135,15 +139,9 @@ function logout() {
         return;
     }
 
-    updateAuthMenu(null);
     window.auth.signOut()
         .then(() => {
             console.log('Logout successful');
-            updateAuthMenu(null);
-            const accountButton = document.getElementById('accountButton');
-            if (accountButton) {
-                accountButton.innerHTML = '<i id="accountIcon" class="fa-regular fa-circle-user"></i>';
-            }
             showToast('Logout berhasil', 'success');
         })
         .catch((error) => {
@@ -156,48 +154,96 @@ function logout() {
 // SLIDER IMPLEMENTATION
 // =============================================
 
-function updateSlider() {
-    const slides = document.querySelectorAll('.slide-item');
-    if (slides.length === 0) return;
-
-    slides.forEach((slide, i) => {
-        slide.className = 'slide-item';
-        if (i === indexSlide)
-            slide.classList.add('active');
-        else if (i === (indexSlide - 1 + slides.length) % slides.length)
-            slide.classList.add('prev');
-        else if (i === (indexSlide + 1) % slides.length)
-            slide.classList.add('next');
-    });
-}
-
-function nextSlide() {
-    const slides = document.querySelectorAll('.slide-item');
-    if (slides.length === 0) return;
-
-    indexSlide = (indexSlide + 1) % slides.length;
-    updateSlider();
-}
-
-function resetInterval() {
-    clearInterval(slideInterval);
-    slideInterval = setInterval(nextSlide, 5000);
-}
-
 (function initSlider() {
     const slides = document.querySelectorAll('.slide-item');
-    if (slides.length > 0) {
+    if (slides.length === 0) return;
+
+    let indexSlide = 0;
+    let slideInterval;
+    const timeInterval = 5000;
+    
+    function updateSlider() {
         slides.forEach((slide, i) => {
-            slide.addEventListener('click', () => {
-                indexSlide = i;
-                updateSlider();
-                resetInterval();
-            });
+            slide.classList.remove('active', 'prev', 'next');
+
+            if (i === indexSlide) {
+                slide.classList.add('active');
+            } else if (i === (indexSlide - 1 + slides.length) % slides.length) {
+                slide.classList.add('prev');
+            } else if (i === (indexSlide + 1) % slides.length) {
+                slide.classList.add('next');
+            }
         });
-        updateSlider();
-        resetInterval();
     }
+
+    function nextSlide() {
+        indexSlide = (indexSlide + 1) % slides.length;
+        updateSlider();
+    }
+
+    function resetInterval() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, timeInterval);
+    }
+
+    slides.forEach((slide, i) => {
+        slide.addEventListener('click', () => {
+            indexSlide = i;
+            updateSlider();
+            resetInterval();
+        });
+    });
+
+    updateSlider();
+    resetInterval();
 })();
+
+// =============================================
+// SETTINGS
+// =============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    const themeSelect = document.getElementById('themeSelect');
+    const langSelect = document.getElementById('langSelect');
+    const overlay = document.getElementById('loadingOverlay');
+
+    const applyTheme = (theme) => {
+        const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = theme === 'dark' || (theme === 'system' && isSystemDark);
+        const resolvedTheme = isDark ? 'dark' : 'light';
+
+        document.documentElement.setAttribute('theme', resolvedTheme);
+        document.documentElement.classList.toggle('dark-mode', isDark);
+    };
+
+    const currentTheme = localStorage.getItem('theme') || 'system';
+    
+    applyTheme(currentTheme);
+
+    if (themeSelect) {
+        themeSelect.value = currentTheme;
+        themeSelect.addEventListener('change', (e) => {
+            const selectedTheme = e.target.value;
+            localStorage.setItem('theme', selectedTheme);
+            applyTheme(selectedTheme);
+        });
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if ((localStorage.getItem('theme') || 'system') === 'system') {
+            applyTheme('system');
+        }
+    });
+
+    if (langSelect) {
+        langSelect.value = localStorage.getItem('lang') || 'id';
+        langSelect.addEventListener('change', (e) => {
+            localStorage.setItem('lang', e.target.value);
+            if (overlay) overlay.classList.add('show');
+            setTimeout(() => window.location.reload(), 600);
+        });
+    }
+});
 
 // =============================================
 // GLOBAL MENU
@@ -230,71 +276,6 @@ function closeMenu() {
     if (accountToggle) accountToggle.classList.remove('active');
     if (accountMenu) accountMenu.classList.remove('active');
 }
-
-// =============================================
-// SETTINGS
-// =============================================
-
-const themeSelect = document.getElementById('themeSelect');
-const langSelect = document.getElementById('langSelect');
-const overlay = document.getElementById('loadingOverlay');
-
-function applyTheme(theme) {
-    const resolvedTheme = theme === 'system'
-        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        : theme;
-
-    document.body.classList.toggle('dark-mode', resolvedTheme === 'dark');
-    document.body.setAttribute('data-theme', resolvedTheme);
-    document.documentElement.setAttribute('data-theme', resolvedTheme);
-}
-
-function initializeThemeControls() {
-    const savedTheme = localStorage.getItem('theme') || 'system';
-    applyTheme(savedTheme);
-
-    if (themeSelect) {
-        themeSelect.value = savedTheme;
-        themeSelect.addEventListener('change', (e) => {
-            const theme = e.target.value;
-            localStorage.setItem('theme', theme);
-            applyTheme(theme);
-        });
-    }
-
-    if (langSelect) {
-        const savedLang = localStorage.getItem('lang') || 'id';
-        langSelect.value = savedLang;
-        langSelect.addEventListener('change', (e) => {
-            localStorage.setItem('lang', e.target.value);
-            if (overlay) {
-                overlay.classList.add('show');
-            }
-            setTimeout(() => {
-                window.location.reload();
-            }, 600);
-        });
-    }
-}
-
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'system';
-    const resolvedTheme = savedTheme === 'system'
-        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        : savedTheme;
-
-    document.documentElement.setAttribute('data-theme', resolvedTheme);
-    if (document.body) {
-        document.body.classList.toggle('dark-mode', resolvedTheme === 'dark');
-    }
-}
-
-function setupSettings() {
-    initTheme();
-    initializeThemeControls();
-}
-
-document.addEventListener('DOMContentLoaded', setupSettings);
 
 // =============================================
 // EXPORT FUNCTIONS TO WINDOW
