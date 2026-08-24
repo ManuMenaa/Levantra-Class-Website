@@ -23,7 +23,7 @@ try {
     window.firebase = firebase;
     window.auth = firebase.auth();
     window.firebaseAvailable = true;
-    console.log("Firebase initialized successfully.");
+    console.log("Firebase initialized successfully");
 
     document.dispatchEvent(new Event('firebaseReady'));
 } catch (error) {

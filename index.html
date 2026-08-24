@@ -186,8 +186,35 @@
         </div>
     </section>
 
+    <section id="momen" class="section">
+        <h2 class="section-title"><i class="fa-solid fa-camera"></i>Momen Kelas</h2>
+    
+        <div class="moment-header">
+            <div class="search-container">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="searchMoment" placeholder="Cari momen...">
+            </div>
+            <button class="upload-btn" onclick="openUploadModal()">
+                <i class="fa-solid fa-plus"></i>
+                <span class="upload-text">Tambahkan</span>
+            </button>
+        </div>
+
+        <div id="uploadModal" class="black-overlay" onclick="closeModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h3>Upload Momen Baru</h3>
+                <input type="text" id="momentTitle" placeholder="Judul Momen">
+                <input type="file" id="momentImage" accept="image/*">
+                <button onclick="uploadMoment()">Upload</button>
+            </div>
+        </div>
+
+        <div id="momentGallery" class="moment-grid"></div>
+    </section>
+
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js" defer></script>
 
     <script src="js/firebase-config.js" defer></script>
     <script src="js/app.js" defer></script>

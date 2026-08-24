@@ -1,19 +1,22 @@
 /**
  * LEVANTRA - Unified App JS
  * Features:
- * - Firebase Authentication
- * - Slider Implementation
- * - Global Menu Handling
- * - Settings Management
+ * - Firebase Authentication & Database
+ * - CRUD Moments Gallery (Integrated with ImgBB & RTDB)
  */
 
 // =============================================
-// CONFIGURATION & GLOBAL STATE
+// CONFIGURATION & CONSTANTS
 // =============================================
 
 // Global state
 let currentUser = null;
-let authListenerAttached = false;
+
+// ImgBB API Key
+const IMGBB_API_KEY = 'a0553f2c3123cf33b9c0aa1f1684b5be';
+
+// Admin email
+const ADMIN_EMAILS = ['sudanamanumain1@gmail.com']; 
 
 // =============================================
 // INITIALIZATION
@@ -38,36 +41,55 @@ document.addEventListener('DOMContentLoaded', function() {
 function initApp() {
     console.log('LEVANTRA App initialized')
 
-    // Initialize authentication UI
+    // Authentication state listener
     window.auth.onAuthStateChanged(function(user) {
         currentUser = user;
         updateAuthMenu(user);
     });
+    // Load moments
+    if (window.loadMoments) {
+        window.loadMoments();
+    }
 }
 
 // =============================================
-// AUTHENTICATION
+// AUTHENTICATION HANDLING
 // =============================================
 
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    if (!container) return;
+function login() {
+    if (!window.auth) {
+        console.error('Firebase auth is not ready.');
+        showToast('Login Google belum siap. Silakan refresh halaman dan coba lagi.', 'error');
+        return;
+    }
 
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
+    const provider = new firebase.auth.GoogleAuthProvider();
+    window.auth.signInWithPopup(provider)
+        .then((result) => {
+            console.log('Login successful:', result.user?.email);
+            showToast('Login berhasil sebagai ' + result.user?.email, 'success');
+        })
+        .catch((error) => {
+            console.error('Login failed:', error);
+            showToast('Login gagal: ' + error.message, 'error');
+        });
+}
 
-    container.appendChild(toast);
+function logout() {
+    if (!window.auth) {
+        showToast('Logout belum siap. Silakan refresh halaman dan coba lagi.', 'error');
+        return;
+    }
 
-    requestAnimationFrame(() => {
-        toast.classList.add('show');
-    });
-
-    setTimeout(() => {
-        toast.classList.remove('show');
-        toast.classList.add('hide');
-        setTimeout(() => toast.remove(), 300);
-    }, 2500);
+    window.auth.signOut()
+        .then(() => {
+            console.log('Logout successful');
+            showToast('Logout berhasil', 'success');
+        })
+        .catch((error) => {
+            console.error('Logout failed:', error);
+            showToast('Logout gagal: ' + error.message, 'error');
+        });
 }
 
 function updateAuthMenu(user) {
@@ -95,59 +117,155 @@ function updateAuthMenu(user) {
     }
 }
 
-function initializeAuthUI() {
-    if (!window.auth) {
-        updateAuthMenu(null);
-        return;
-    }
+// =============================================
+// MOMENTS - CRUD Operations (RTDB + ImgBB)
+// =============================================
 
-    if (authListenerAttached) {
-        updateAuthMenu(window.auth.currentUser || null);
-        return;
-    }
+function loadMoments() {
+    const gallery = document.getElementById('momentGallery');
+    if (!gallery) return;
 
-    authListenerAttached = true;
-    updateAuthMenu(window.auth.currentUser || null);
+    firebase.database().ref('moments').orderByChild('timestamp').on('value', (snapshot) => {
+        gallery.innerHTML = '';
+        const momentsArray = [];
+        
+        snapshot.forEach((childSnapshot) => {
+            momentsArray.push({
+                id: childSnapshot.key,
+                ...childSnapshot.val()
+            });
+        });
 
-    window.auth.onAuthStateChanged((user) => {
-        updateAuthMenu(user);
+        momentsArray.reverse().forEach((moment) => {
+            renderMomentToGrid(moment.id, moment.title, moment.image);
+        });
     });
 }
 
-function login() {
-    if (!window.auth) {
-        console.error('Firebase auth is not ready.');
-        showToast('Login Google belum siap. Silakan refresh halaman dan coba lagi.', 'error');
+function renderMomentToGrid(id, title, imageUrl) {
+    const gallery = document.getElementById('momentGallery');
+    if (!gallery) {
+        console.error("Error: div id 'momentGallery' tidak ditemukan di HTML!");
         return;
     }
 
-    const provider = new firebase.auth.GoogleAuthProvider();
-    window.auth.signInWithPopup(provider)
-        .then((result) => {
-            console.log('Login successful:', result.user?.email);
-            showToast('Login berhasil sebagai ' + (result.user?.email || 'pengguna'), 'success');
-        })
-        .catch((error) => {
-            console.error('Login failed:', error);
-            showToast('Login gagal: ' + (error.message || error.code || 'Unknown error'), 'error');
-        });
+    const momentCard = document.createElement('div');
+    momentCard.className = 'momen-card';
+    momentCard.id = `moment-${id}`;
+    momentCard.innerHTML = `
+        <img src="${imageUrl}" alt="${title}" class="momen-img">
+        <div class="momen-info">
+            <h4>${title}</h4>
+        </div>
+    `;
+    gallery.appendChild(momentCard); 
 }
 
-function logout() {
-    if (!window.auth) {
-        showToast('Logout belum siap. Silakan refresh halaman dan coba lagi.', 'error');
+async function uploadMoment() {
+    if (!currentUser) {
+        showToast('Kamu harus login Google dulu!', 'error');
+        return;
+    }
+    
+    const titleInput = document.getElementById('momentTitle');
+    const fileInput = document.getElementById('momentImage');
+    const uploadBtn = document.querySelector('.modal-content button');
+    
+    const file = fileInput.files[0];
+    const title = titleInput.value;
+    
+    if (!file || !title) {
+        showToast('Judul dan gambar tidak boleh kosong!', 'error');
         return;
     }
 
-    window.auth.signOut()
-        .then(() => {
-            console.log('Logout successful');
-            showToast('Logout berhasil', 'success');
-        })
-        .catch((error) => {
-            console.error('Logout failed:', error);
-            showToast('Logout gagal: ' + (error.message || error.code || 'Unknown error'), 'error');
+    const originalBtnText = uploadBtn.innerHTML;
+    uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengupload...';
+    uploadBtn.disabled = true;
+
+    showToast('Mengupload gambar ke server...', 'info');
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: 'POST',
+            body: formData
         });
+        const data = await response.json();
+
+        if (data.success) {
+            const imageUrl = data.data.url; 
+            
+            const momentData = {
+                title: title,
+                image: imageUrl, 
+                authorEmail: currentUser.email,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            await firebase.database().ref('moments').push(momentData);
+            
+            fileInput.value = '';
+            titleInput.value = '';
+            closeModal();
+            showToast('Momen berhasil ditambahkan!', 'success');
+        }
+    } catch (error) {
+        showToast('Terjadi kesalahan: ' + error.message, 'error');
+    } finally {
+        uploadBtn.innerHTML = originalBtnText;
+        uploadBtn.disabled = false;
+    }
+}
+
+// =============================================
+// MOMENT GALLERY MODAL
+// =============================================
+
+function openUploadModal() {
+    if (!currentUser) {
+        showToast('Kamu harus login Google dulu untuk upload!', 'error');
+        return;
+    }
+    
+    const modal = document.getElementById('uploadModal');
+    if (modal) {
+        modal.classList.add('active');
+    }
+}
+
+function closeModal(event) {
+    const modal = document.getElementById('uploadModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+// =============================================
+// TOAST NOTIFICATION SYSTEM
+// =============================================
+
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 300);
+    }, 2500);
 }
 
 // =============================================
@@ -284,6 +402,12 @@ function closeMenu() {
 // Authentication functions
 window.login = login;
 window.logout = logout;
+
+// Moments functions
+window.loadMoments = loadMoments;
+window.uploadMoment = uploadMoment;
+window.openUploadModal = openUploadModal;
+window.closeModal = closeModal;
 
 // Global menu functions
 window.toggleMenu = toggleMenu;
