@@ -3,6 +3,7 @@
  * Features:
  * - Firebase Authentication & Database
  * - CRUD Moments Gallery (Integrated with ImgBB & RTDB)
+ * - Comments System (Using RTDB)
  */
 
 // =============================================
@@ -11,6 +12,8 @@
 
 // Global state
 let currentUser = null;
+let currentDetailImages = [];
+let currentDetailImageIndex = 0;
 
 // ImgBB API Key
 const IMGBB_API_KEY = 'a0553f2c3123cf33b9c0aa1f1684b5be';
@@ -19,7 +22,7 @@ const IMGBB_API_KEY = 'a0553f2c3123cf33b9c0aa1f1684b5be';
 const ADMIN_EMAILS = ['sudanamanumain1@gmail.com']; 
 
 // Current modal moment ID
-let currentDetailMomentId = null; // Menyimpan ID momen yang sedang dibuka
+let currentDetailMomentId = null;
 
 // =============================================
 // INITIALIZATION
@@ -56,7 +59,7 @@ function initApp() {
 }
 
 // =============================================
-// AUTHENTICATION HANDLING
+// AUTHENTICATION
 // =============================================
 
 function login() {
@@ -124,15 +127,14 @@ function updateAuthMenu(user) {
 // MOMENTS - CRUD Operations (RTDB + ImgBB)
 // =============================================
 
-function isAdmin() {
-    return currentUser && ADMIN_EMAILS.includes(currentUser.email);
-}
-
 function loadMoments() {
     const gallery = document.getElementById('momentGallery');
-    if (!gallery) return;
+    if (!gallery || !window.db) {
+        console.log('loadMoments: Gallery element not found or Firebase not available');
+        return;
+    }
 
-    firebase.database().ref('moments').orderByChild('timestamp').on('value', (snapshot) => {
+    window.db.ref('moments').orderByChild('timestamp').on('value', (snapshot) => {
         gallery.innerHTML = '';
         const momentsArray = [];
         
@@ -152,13 +154,19 @@ function loadMoments() {
 function renderMomentToGrid(moment) {
     const gallery = document.getElementById('momentGallery');
 
-    // Check if the user has permission to edit or delete (Admin or the uploader).
+    const isAdmin = currentUser && ADMIN_EMAILS.includes(currentUser.email);
     const isOwner = currentUser && currentUser.email === moment.authorEmail;
-    const canEditDelete = isOwner || isAdmin();
+    const canEditDelete = isOwner || isAdmin;
+
+    const imagesArray = moment.images || (moment.image ? [moment.image] : []);
+    const thumbUrl = imagesArray.length > 0 ? imagesArray[0] : '';
+
+    const multiIndicator = imagesArray.length > 1 ? 
+        `<div class="multi-image-indicator" title="Momen ini berisi banyak gambar"><i class="fa-solid fa-images"></i></div>` : '';
 
     const actionButtons = canEditDelete ? `
         <div class="moment-actions">
-            <button class="action-btn edit" onclick="event.stopPropagation(); openEditModal('${moment.id}', '${moment.title}', '${moment.description || ''}', '${moment.image}')" title="Edit">
+            <button class="action-btn edit" onclick="event.stopPropagation(); openEditModal('${moment.id}', '${moment.title.replace(/'/g, "\\'")}', '${(moment.description || '').replace(/'/g, "\\'")}')" title="Edit">
                 <i class="fa-solid fa-pen"></i>
             </button>
             <button class="action-btn delete" onclick="event.stopPropagation(); deleteMoment('${moment.id}')" title="Hapus">
@@ -170,15 +178,12 @@ function renderMomentToGrid(moment) {
     const momentCard = document.createElement('div');
     momentCard.className = 'moment-card';
     momentCard.id = `moment-${moment.id}`;
-
-    // The search feature reads the data-title.
     momentCard.setAttribute('data-title', moment.title.toLowerCase());
-
-    // Click the card to open the details modal
     momentCard.onclick = () => openDetailModal(moment);
 
     momentCard.innerHTML = `
-        <img src="${moment.image}" alt="${moment.title}" class="moment-img">
+        ${multiIndicator}
+        <img src="${thumbUrl}" alt="${moment.title}" class="moment-img">
         ${actionButtons}
         <div class="moment-info">
             <h4>${moment.title}</h4>
@@ -188,21 +193,18 @@ function renderMomentToGrid(moment) {
 }
 
 async function uploadMoment() {
-    if (!currentUser) {
-        showToast('Kamu harus login Google dulu!', 'error');
-        return;
-    }
+    if (!currentUser) return openLoginPromptModal();
     
     const titleInput = document.getElementById('momentTitle');
     const descInput = document.getElementById('momentDesc');
     const fileInput = document.getElementById('momentImage');
     const uploadBtn = document.querySelector('#uploadModal button');
     
-    const file = fileInput.files[0];
+    const files = fileInput.files;
     const title = titleInput.value;
     const desc = descInput.value;
     
-    if (!file || !title) {
+    if (files.length === 0 || !title) {
         showToast('Judul dan gambar tidak boleh kosong!', 'error');
         return;
     }
@@ -211,57 +213,42 @@ async function uploadMoment() {
     uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengupload...';
     uploadBtn.disabled = true;
 
-    showToast('Mengupload gambar ke server...', 'info');
-
-    const formData = new FormData();
-    formData.append('image', file);
+    showToast(`Mengupload ${files.length} gambar ke server...`, 'info');
 
     try {
-        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-            method: 'POST', body: formData
-        });
-        const data = await response.json();
-
-        if (data.success) {
-            const momentData = {
-                title: title,
-                description: desc,
-                image: data.data.url, 
-                authorEmail: currentUser.email,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
-
-            await firebase.database().ref('moments').push(momentData);
+        const uploadPromises = Array.from(files).map(async (file) => {
+            const formData = new FormData();
+            formData.append('image', file);
             
-            fileInput.value = ''; titleInput.value = ''; descInput.value = '';
-            closeModal('uploadModal');
-            showToast('Momen berhasil ditambahkan!', 'success');
-        }
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                method: 'POST', body: formData
+            });
+            const data = await response.json();
+            
+            if (data.success) return data.data.url;
+            throw new Error("Gagal mengupload salah satu gambar");
+        });
+
+        const imageUrls = await Promise.all(uploadPromises);
+
+        const momentData = {
+            title: title,
+            description: desc,
+            authorEmail: currentUser.email,
+            images: imageUrls, 
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        await window.db.ref('moments').push(momentData);
+            
+        fileInput.value = ''; titleInput.value = ''; descInput.value = '';
+        closeModal('uploadModal');
+        showToast('Momen berhasil ditambahkan!', 'success');
     } catch (error) {
         showToast('Gagal: ' + error.message, 'error');
     } finally {
         uploadBtn.innerHTML = originalBtnText; uploadBtn.disabled = false;
     }
-}
-
-async function deleteMoment(id) {
-    if (confirm("Yakin ingin menghapus momen ini?")) {
-        try {
-            await firebase.database().ref('moments/' + id).remove();
-            showToast('Momen berhasil dihapus!', 'success');
-        } catch (error) {
-            showToast('Gagal menghapus: ' + error.message, 'error');
-        }
-    }
-}
-
-function openEditModal(id, title, desc, imageUrl) {
-    document.getElementById('editMomentId').value = id;
-    document.getElementById('editMomentTitle').value = title;
-    document.getElementById('editMomentDesc').value = desc !== 'undefined' ? desc : '';
-    
-    const modal = document.getElementById('editModal');
-    modal.classList.add('active');
 }
 
 async function saveEditMoment() {
@@ -279,31 +266,43 @@ async function saveEditMoment() {
     try {
         let updateData = { title: title, description: desc };
 
-        // If the user selects a new image file
-        if (fileInput.files[0]) {
-            showToast('Mengupload gambar baru...', 'info');
-            const formData = new FormData();
-            formData.append('image', fileInput.files[0]);
+        if (fileInput.files.length > 0) {
+            showToast(`Mengupload ${fileInput.files.length} gambar baru...`, 'info');
             
-            const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
-            const data = await response.json();
-            
-            if (data.success) {
-                updateData.image = data.data.url;
-            } else {
+            const uploadPromises = Array.from(fileInput.files).map(async (file) => {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+                const data = await response.json();
+                
+                if (data.success) return data.data.url;
                 throw new Error("Gagal upload gambar ke ImgBB");
-            }
+            });
+
+            updateData.images = await Promise.all(uploadPromises);
+            updateData.image = null;
         }
 
-        await firebase.database().ref('moments/' + id).update(updateData);
+        await window.db.ref('moments/' + id).update(updateData);
         closeModal('editModal');
-        fileInput.value = ''; // Reset input file
+        fileInput.value = '';
         showToast('Momen berhasil diupdate!', 'success');
-
     } catch (error) {
         showToast('Gagal update: ' + error.message, 'error');
     } finally {
         saveBtn.innerHTML = 'Simpan Perubahan'; saveBtn.disabled = false;
+    }
+}
+
+async function deleteMoment(id) {
+    if (confirm("Yakin ingin menghapus momen ini?")) {
+        try {
+            await window.db.ref('moments/' + id).remove();
+            showToast('Momen berhasil dihapus!', 'success');
+        } catch (error) {
+            showToast('Gagal menghapus: ' + error.message, 'error');
+        }
     }
 }
 
@@ -322,24 +321,78 @@ function searchMoments() {
 }
 
 // =============================================
-// MODAL & COMMENT LOGIC
+// MODAL Functions
 // =============================================
 
+function openUploadModal() {
+    if (!currentUser) return openLoginPromptModal();
+    document.getElementById('uploadModal').classList.add('active');
+}
+
+function openLoginPromptModal() {
+    document.getElementById('loginPromptModal').classList.add('active');
+}
+
+function openEditModal(id, title, desc) {
+    document.getElementById('editMomentId').value = id;
+    document.getElementById('editMomentTitle').value = title;
+    document.getElementById('editMomentDesc').value = desc !== 'undefined' ? desc : '';
+    
+    const modal = document.getElementById('editModal');
+    modal.classList.add('active');
+}
+
 function openDetailModal(moment) {
-    document.getElementById('detailImage').src = moment.image;
+    currentDetailImages = moment.images || (moment.image ? [moment.image] : []);
+    currentDetailImageIndex = 0;
+    
     document.getElementById('detailTitle').textContent = moment.title;
     document.getElementById('detailDesc').textContent = moment.description || 'Tidak ada deskripsi.';
+    
+    updateDetailSlider();
     
     currentDetailMomentId = moment.id;
     document.getElementById('detailModal').classList.add('active');
 
-    // Load comments for this moment
     loadComments(moment.id);
 }
 
-function openUploadModal() {
-    if (!currentUser) return showToast('Kamu harus login Google dulu!', 'error');
-    document.getElementById('uploadModal').classList.add('active');
+function updateDetailSlider() {
+    const imgEl = document.getElementById('detailImage');
+    const prevBtn = document.querySelector('.slider-btn.prev');
+    const nextBtn = document.querySelector('.slider-btn.next');
+    const dotsContainer = document.getElementById('detailSliderDots');
+
+    if (currentDetailImages.length > 0) {
+        imgEl.src = currentDetailImages[currentDetailImageIndex];
+    }
+
+    const hasMultiple = currentDetailImages.length > 1;
+    prevBtn.style.display = hasMultiple ? 'flex' : 'none';
+    nextBtn.style.display = hasMultiple ? 'flex' : 'none';
+
+    dotsContainer.innerHTML = '';
+    if (hasMultiple) {
+        currentDetailImages.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.className = `slider-dot ${index === currentDetailImageIndex ? 'active' : ''}`;
+            dot.onclick = () => {
+                currentDetailImageIndex = index;
+                updateDetailSlider();
+            };
+            dotsContainer.appendChild(dot);
+        });
+    }
+}
+
+function changeDetailSlide(direction) {
+    currentDetailImageIndex += direction;
+    if (currentDetailImageIndex < 0) {
+        currentDetailImageIndex = currentDetailImages.length - 1;
+    } else if (currentDetailImageIndex >= currentDetailImages.length) {
+        currentDetailImageIndex = 0;
+    }
+    updateDetailSlider();
 }
 
 function closeModal(modalId, event) {
@@ -347,11 +400,14 @@ function closeModal(modalId, event) {
     if (modal) modal.classList.remove('active');
 }
 
+// =============================================
+// COMMENTS (RTDB)
+// =============================================
+
 function loadComments(momentId) {
     const commentsList = document.getElementById('commentsList');
     
-    // Listen for real-time changes to comment data.
-    firebase.database().ref(`moments/${momentId}/comments`).on('value', (snapshot) => {
+    window.db.ref(`moments/${momentId}/comments`).on('value', (snapshot) => {
         commentsList.innerHTML = '';
         
         if (!snapshot.exists()) {
@@ -361,7 +417,7 @@ function loadComments(momentId) {
 
         snapshot.forEach((child) => {
             const comment = child.val();
-            const photoUrl = comment.authorPhoto || 'img/LevantraLogo.jpg';
+            const photoUrl = comment.authorPhoto;
             
             commentsList.innerHTML += `
                 <div class="comment-item">
@@ -374,13 +430,12 @@ function loadComments(momentId) {
             `;
         });
         
-        // Auto-scroll down
         commentsList.scrollTop = commentsList.scrollHeight;
     });
 }
 
 async function postComment() {
-    if (!currentUser) return showToast('Login Google dulu untuk komentar!', 'error');
+    if (!currentUser) return openLoginPromptModal();
     if (!currentDetailMomentId) return;
 
     const input = document.getElementById('commentInput');
@@ -397,8 +452,8 @@ async function postComment() {
     };
 
     try {
-        await firebase.database().ref(`moments/${currentDetailMomentId}/comments`).push(commentData);
-        input.value = ''; // Clear input
+        await window.db.ref(`moments/${currentDetailMomentId}/comments`).push(commentData);
+        input.value = '';
     } catch (error) {
         showToast('Gagal mengirim komentar', 'error');
     }
@@ -567,16 +622,20 @@ window.logout = logout;
 // Moments functions
 window.loadMoments = loadMoments;
 window.uploadMoment = uploadMoment;
-window.deleteMoment = deleteMoment;
 window.saveEditMoment = saveEditMoment;
-window.searchMoments = searchMoments;
-window.postComment = postComment;
+window.deleteMoment = deleteMoment;
 
 // Modal functions
 window.openUploadModal = openUploadModal;
 window.openEditModal = openEditModal;
 window.openDetailModal = openDetailModal;
+window.changeDetailSlide = changeDetailSlide;
 window.closeModal = closeModal;
+
+// Comments functions
+window.loadComments = loadComments;
+window.searchMoments = searchMoments;
+window.postComment = postComment;
 
 // Global menu functions
 window.toggleMenu = toggleMenu;
