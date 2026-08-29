@@ -24,6 +24,8 @@ const ADMIN_EMAILS = ['sudanamanumain1@gmail.com'];
 // Current modal moment ID
 let currentDetailMomentId = null;
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // =============================================
 // INITIALIZATION
 // =============================================
@@ -213,23 +215,29 @@ async function uploadMoment() {
     uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengupload...';
     uploadBtn.disabled = true;
 
-    showToast(`Mengupload ${files.length} gambar ke server...`, 'info');
-
     try {
-        const uploadPromises = Array.from(files).map(async (file) => {
+        const imageUrls = [];
+        
+        for (let i = 0; i < files.length; i++) {
+            showToast(`Mengupload gambar ${i + 1} dari ${files.length}...`, 'info');
+            
+            const file = files[i];
+            
             const formData = new FormData();
             formData.append('image', file);
             
             const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-                method: 'POST', body: formData
+                method: 'POST', 
+                body: formData
             });
             const data = await response.json();
             
-            if (data.success) return data.data.url;
-            throw new Error("Gagal mengupload salah satu gambar");
-        });
-
-        const imageUrls = await Promise.all(uploadPromises);
+            if (data.success) {
+                imageUrls.push(data.data.url);
+            } else {
+                throw new Error("Gagal mengupload gambar ke-" + (i + 1));
+            }
+        }
 
         const momentData = {
             title: title,
@@ -241,13 +249,16 @@ async function uploadMoment() {
 
         await window.db.ref('moments').push(momentData);
             
-        fileInput.value = ''; titleInput.value = ''; descInput.value = '';
+        fileInput.value = ''; 
+        titleInput.value = ''; 
+        descInput.value = '';
         closeModal('uploadModal');
         showToast('Momen berhasil ditambahkan!', 'success');
     } catch (error) {
         showToast('Gagal: ' + error.message, 'error');
     } finally {
-        uploadBtn.innerHTML = originalBtnText; uploadBtn.disabled = false;
+        uploadBtn.innerHTML = originalBtnText; 
+        uploadBtn.disabled = false;
     }
 }
 
@@ -269,18 +280,28 @@ async function saveEditMoment() {
         if (fileInput.files.length > 0) {
             showToast(`Mengupload ${fileInput.files.length} gambar baru...`, 'info');
             
-            const uploadPromises = Array.from(fileInput.files).map(async (file) => {
+            const imageUrls = [];
+            
+            for (let i = 0; i < fileInput.files.length; i++) {
+                const file = fileInput.files[i];
+                
                 const formData = new FormData();
                 formData.append('image', file);
-                
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { 
+                    method: 'POST', 
+                    body: formData 
+                });
                 const data = await response.json();
                 
-                if (data.success) return data.data.url;
-                throw new Error("Gagal upload gambar ke ImgBB");
-            });
+                if (data.success) {
+                    imageUrls.push(data.data.url);
+                } else {
+                    throw new Error("Gagal upload gambar ke-" + (i + 1));
+                }
+            }
 
-            updateData.images = await Promise.all(uploadPromises);
+            updateData.images = imageUrls;
             updateData.image = null;
         }
 
@@ -291,7 +312,8 @@ async function saveEditMoment() {
     } catch (error) {
         showToast('Gagal update: ' + error.message, 'error');
     } finally {
-        saveBtn.innerHTML = 'Simpan Perubahan'; saveBtn.disabled = false;
+        saveBtn.innerHTML = 'Simpan Perubahan'; 
+        saveBtn.disabled = false;
     }
 }
 
@@ -343,12 +365,23 @@ function openEditModal(id, title, desc) {
 }
 
 function openDetailModal(moment) {
-    currentDetailImages = moment.images || (moment.image ? [moment.image] : []);
+    let imagesData = moment.images || (moment.image ? [moment.image] : []);
+    
+    currentDetailImages = Array.isArray(imagesData) ? imagesData : Object.values(imagesData);
+    currentDetailImages = currentDetailImages.filter(url => url);
+
     currentDetailImageIndex = 0;
     
     document.getElementById('detailTitle').textContent = moment.title;
     document.getElementById('detailDesc').textContent = moment.description || 'Tidak ada deskripsi.';
     
+    if (currentDetailImages.length > 1) {
+        currentDetailImages.forEach(url => {
+            const preloadImg = new Image();
+            preloadImg.src = url; 
+        });
+    }
+
     updateDetailSlider();
     
     currentDetailMomentId = moment.id;
@@ -364,6 +397,12 @@ function updateDetailSlider() {
     const dotsContainer = document.getElementById('detailSliderDots');
 
     if (currentDetailImages.length > 0) {
+        imgEl.style.opacity = '0.3'; 
+        
+        imgEl.onload = function() {
+            imgEl.style.opacity = '1';
+        };
+        
         imgEl.src = currentDetailImages[currentDetailImageIndex];
     }
 

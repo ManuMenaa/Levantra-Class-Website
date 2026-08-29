@@ -777,24 +777,59 @@ nav {
 }
 
 .modal-content input[type="text"],
-.modal-content input[type="file"] {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  background: var(--bg-primary);
-  color: var(--text-primary);
+.modal-content textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
 }
 
-.modal-content textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: inherit;
-  resize: vertical;
+.modal-content input[type="text"]:focus,
+.modal-content textarea:focus {
+    border-color: var(--primary-gold);
+    outline: none;
+    box-shadow: 0 0 8px rgba(238, 167, 15, 0.4); 
+}
+
+.modal-content input[type="file"] {
+    width: 100%;
+    padding: 20px;
+    border: 2px dashed var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.modal-content input[type="file"]:hover {
+    border-color: var(--primary-gold);
+    background: var(--bg-surface);
+}
+
+.modal-content button:not(.close-btn) {
+    background: var(--primary-gold);
+    color: var(--text-white);
+    border: none;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 10px;
+    width: 100%;
+}
+
+.modal-content button:not(.close-btn):hover {
+    background: var(--accent-warm);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 /* ===== MOMENT GALLERY CARD ===== */
@@ -917,6 +952,7 @@ nav {
   width: 100%;
   max-height: 80vh;
   object-fit: contain;
+  transition: opacity 0.3s ease;
 }
 
 .slider-btn {
