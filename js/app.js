@@ -146,6 +146,7 @@ function loadMoments() {
         });
     });
 }
+
 function renderMomentToGrid(moment) {
     const gallery = document.getElementById('momentGallery');
 
