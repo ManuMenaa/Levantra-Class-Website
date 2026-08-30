@@ -1200,7 +1200,7 @@ select {
     color: var(--text-white);
   }
 
-  .nav-links i {
+  .nav-icon {
     display: block;
   }
 
