@@ -191,7 +191,7 @@ nav {
 }
 
 .nav-icon {
-  display: none;
+  display: none !important;
 }
 
 /* ===== HAMBURGER ===== */
@@ -1201,7 +1201,7 @@ select {
   }
 
   .nav-icon {
-    display: block;
+    display: block !important;
   }
 
   /* Settings */
