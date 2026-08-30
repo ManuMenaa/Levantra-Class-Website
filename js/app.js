@@ -168,10 +168,10 @@ function renderMomentToGrid(moment) {
 
     const actionButtons = canEditDelete ? `
         <div class="moment-actions">
-            <button class="action-btn edit" onclick="event.stopPropagation(); openEditModal('${moment.id}', '${moment.title.replace(/'/g, "\\'")}', '${(moment.description || '').replace(/'/g, "\\'")}')" title="Edit">
+            <button class="moment-action-btn edit" onclick="event.stopPropagation(); openEditModal('${moment.id}', '${moment.title.replace(/'/g, "\\'")}', '${(moment.description || '').replace(/'/g, "\\'")}')" title="Edit">
                 <i class="fa-solid fa-pen"></i>
             </button>
-            <button class="action-btn delete" onclick="event.stopPropagation(); deleteMoment('${moment.id}')" title="Hapus">
+            <button class="moment-action-btn delete" onclick="event.stopPropagation(); deleteMoment('${moment.id}')" title="Hapus">
                 <i class="fa-solid fa-trash"></i>
             </button>
         </div>
@@ -217,7 +217,7 @@ async function uploadMoment() {
 
     try {
         const imageUrls = [];
-        
+
         for (let i = 0; i < files.length; i++) {
             showToast(`Mengupload gambar ${i + 1} dari ${files.length}...`, 'info');
             
@@ -365,62 +365,99 @@ function openEditModal(id, title, desc) {
 }
 
 function openDetailModal(moment) {
-    let imagesData = moment.images || (moment.image ? [moment.image] : []);
-    
-    currentDetailImages = Array.isArray(imagesData) ? imagesData : Object.values(imagesData);
-    currentDetailImages = currentDetailImages.filter(url => url);
+    try {
+        document.getElementById('detailModal').classList.add('active');
+        
+        document.getElementById('detailTitle').textContent = moment.title;
+        document.getElementById('detailDesc').textContent = moment.description;
+        
+        let imagesData = moment.images || (moment.image ? [moment.image] : []);
+        currentDetailImages = Array.isArray(imagesData) ? imagesData : Object.values(imagesData);
+        currentDetailImages = currentDetailImages.filter(url => url);
+        currentDetailImageIndex = 0;
+        
+        if (currentDetailImages.length > 1) {
+            currentDetailImages.forEach(url => {
+                const preloadImg = new Image();
+                preloadImg.src = url; 
+            });
+        }
 
-    currentDetailImageIndex = 0;
-    
-    document.getElementById('detailTitle').textContent = moment.title;
-    document.getElementById('detailDesc').textContent = moment.description || 'Tidak ada deskripsi.';
-    
-    if (currentDetailImages.length > 1) {
-        currentDetailImages.forEach(url => {
-            const preloadImg = new Image();
-            preloadImg.src = url; 
-        });
+        currentDetailMomentId = moment.id;
+        
+        updateDetailSlider();
+        loadComments(moment.id);
+    } catch (error) {
+        console.error("Error saat membuka modal detail:", error);
+        showToast("Terjadi kesalahan saat memuat momen ini.", "error");
     }
-
-    updateDetailSlider();
-    
-    currentDetailMomentId = moment.id;
-    document.getElementById('detailModal').classList.add('active');
-
-    loadComments(moment.id);
 }
 
 function updateDetailSlider() {
-    const imgEl = document.getElementById('detailImage');
-    const prevBtn = document.querySelector('.slider-btn.prev');
-    const nextBtn = document.querySelector('.slider-btn.next');
-    const dotsContainer = document.getElementById('detailSliderDots');
+    try {
+        const imgEl = document.getElementById('detailImage');
+        const prevBtn = document.querySelector('.slider-btn.prev');
+        const nextBtn = document.querySelector('.slider-btn.next');
+        const dotsContainer = document.getElementById('detailSliderDots');
+        const sliderContainer = document.querySelector('.detail-slider');
 
-    if (currentDetailImages.length > 0) {
-        imgEl.style.opacity = '0.3'; 
-        
-        imgEl.onload = function() {
-            imgEl.style.opacity = '1';
-        };
-        
-        imgEl.src = currentDetailImages[currentDetailImageIndex];
-    }
+        if (!imgEl || !sliderContainer) return; 
 
-    const hasMultiple = currentDetailImages.length > 1;
-    prevBtn.style.display = hasMultiple ? 'flex' : 'none';
-    nextBtn.style.display = hasMultiple ? 'flex' : 'none';
-
-    dotsContainer.innerHTML = '';
-    if (hasMultiple) {
-        currentDetailImages.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.className = `slider-dot ${index === currentDetailImageIndex ? 'active' : ''}`;
-            dot.onclick = () => {
-                currentDetailImageIndex = index;
-                updateDetailSlider();
+        if (currentDetailImages.length > 0) {
+            let spinner = document.getElementById('imageLoader');
+            if (!spinner) {
+                spinner = document.createElement('div');
+                spinner.id = 'imageLoader';
+                spinner.innerHTML = '<i class="fa-solid fa-spinner fa-spin fa-2x" style="color: var(--primary-gold);"></i>';
+                spinner.style.position = 'absolute';
+                spinner.style.top = '50%';
+                spinner.style.left = '50%';
+                spinner.style.transform = 'translate(-50%, -50%)';
+                spinner.style.zIndex = '20';
+                sliderContainer.appendChild(spinner);
+            }
+            
+            spinner.style.display = 'block';
+            imgEl.style.opacity = '0.3'; 
+            
+            const tempImg = new Image();
+            
+            tempImg.onload = function() {
+                imgEl.src = tempImg.src;
+                imgEl.style.opacity = '1';       
+                spinner.style.display = 'none';  
             };
-            dotsContainer.appendChild(dot);
-        });
+
+            tempImg.onerror = function() {
+                console.warn("Gagal meload gambar dari server");
+                imgEl.src = currentDetailImages[currentDetailImageIndex]; 
+                imgEl.style.opacity = '1';
+                spinner.style.display = 'none';
+            };
+            
+            tempImg.src = currentDetailImages[currentDetailImageIndex];
+        }
+
+        const hasMultiple = currentDetailImages.length > 1;
+        if (prevBtn) prevBtn.style.display = hasMultiple ? 'flex' : 'none';
+        if (nextBtn) nextBtn.style.display = hasMultiple ? 'flex' : 'none';
+
+        if (dotsContainer) {
+            dotsContainer.innerHTML = '';
+            if (hasMultiple) {
+                currentDetailImages.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.className = `slider-dot ${index === currentDetailImageIndex ? 'active' : ''}`;
+                    dot.onclick = () => {
+                        currentDetailImageIndex = index;
+                        updateDetailSlider();
+                    };
+                    dotsContainer.appendChild(dot);
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Error pada proses slider:", err);
     }
 }
 
