@@ -24,7 +24,8 @@ const ADMIN_EMAILS = ['sudanamanumain1@gmail.com'];
 // Current modal moment ID
 let currentDetailMomentId = null;
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// Import Firebase
+import { app, db, auth } from './firebase-config.js';
 
 // =============================================
 // INITIALIZATION
