@@ -9,14 +9,6 @@
       "destination": "/settings.html"
     },
     {
-      "source": "/siswa",
-      "destination": "/siswa.html"
-    },
-    {
-      "source": "/siswa.html",
-      "destination": "/siswa.html"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
