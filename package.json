@@ -1,0 +1,28 @@
+{
+  "name": "levantra-website",
+  "version": "1.0.0",
+  "description": "This is the main source code of levantra class website, include html, css and javascript. Created by [@inimanumenaa](https://www.instagram.com/inimanumenaa/)",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ManuMenaa/Levantra-Website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ManuMenaa/Levantra-Website/issues"
+  },
+  "homepage": "https://github.com/ManuMenaa/Levantra-Website#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "firebase": "^12.18.0"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
+  }
+}

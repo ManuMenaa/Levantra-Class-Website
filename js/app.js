@@ -16,7 +16,7 @@ let currentDetailImages = [];
 let currentDetailImageIndex = 0;
 
 // ImgBB API Key
-const IMGBB_API_KEY = 'a0553f2c3123cf33b9c0aa1f1684b5be';
+const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
 
 // Admin email
 const ADMIN_EMAILS = ['sudanamanumain1@gmail.com']; 
@@ -24,7 +24,10 @@ const ADMIN_EMAILS = ['sudanamanumain1@gmail.com'];
 // Current modal moment ID
 let currentDetailMomentId = null;
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// Import Firebase & Firebase SDK
+import { app, db, auth } from './firebase-config.js';
+import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
+import { ref, push, update, remove, onValue, serverTimestamp } from 'firebase/database';
 
 // =============================================
 // INITIALIZATION
@@ -32,25 +35,14 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('LEVANTRA App initializing...');
-
-    // Wait for Firebase to be ready
-    const checkFirebase = setInterval(() => {
-        if (window.firebaseAvailable) {
-            clearInterval(checkFirebase);
-            initApp();
-        }
-    }, 100);
-    
-    setTimeout(() => {
-        clearInterval(checkFirebase);
-    }, 5000);
+    initApp();
 });
 
 function initApp() {
     console.log('LEVANTRA App initialized')
 
     // Authentication state listener
-    window.auth.onAuthStateChanged(function(user) {
+    onAuthStateChanged(auth, function(user) {
         currentUser = user;
         updateAuthMenu(user);
     });
@@ -65,14 +57,14 @@ function initApp() {
 // =============================================
 
 function login() {
-    if (!window.auth) {
+    if (!auth) {
         console.error('Firebase auth is not ready.');
         showToast('Login Google belum siap. Silakan refresh halaman dan coba lagi.', 'error');
         return;
     }
 
-    const provider = new firebase.auth.GoogleAuthProvider();
-    window.auth.signInWithPopup(provider)
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
         .then((result) => {
             console.log('Login successful:', result.user?.email);
             showToast('Login berhasil sebagai ' + result.user?.email, 'success');
@@ -84,12 +76,12 @@ function login() {
 }
 
 function logout() {
-    if (!window.auth) {
+    if (!auth) {
         showToast('Logout belum siap. Silakan refresh halaman dan coba lagi.', 'error');
         return;
     }
 
-    window.auth.signOut()
+    signOut(auth)
         .then(() => {
             console.log('Logout successful');
             showToast('Logout berhasil', 'success');
@@ -131,12 +123,14 @@ function updateAuthMenu(user) {
 
 function loadMoments() {
     const gallery = document.getElementById('momentGallery');
-    if (!gallery || !window.db) {
+    if (!gallery || !db) {
         console.log('loadMoments: Gallery element not found or Firebase not available');
         return;
     }
 
-    window.db.ref('moments').orderByChild('timestamp').on('value', (snapshot) => {
+    const momentsRef = ref(db, 'moments');
+    
+    onValue(momentsRef, (snapshot) => {
         gallery.innerHTML = '';
         const momentsArray = [];
         
@@ -152,7 +146,6 @@ function loadMoments() {
         });
     });
 }
-
 function renderMomentToGrid(moment) {
     const gallery = document.getElementById('momentGallery');
 
@@ -244,10 +237,11 @@ async function uploadMoment() {
             description: desc,
             authorEmail: currentUser.email,
             images: imageUrls, 
-            timestamp: firebase.database.ServerValue.TIMESTAMP
+            timestamp: serverTimestamp() 
         };
 
-        await window.db.ref('moments').push(momentData);
+        const momentsRef = ref(db, 'moments');
+        await push(momentsRef, momentData);
             
         fileInput.value = ''; 
         titleInput.value = ''; 
@@ -304,8 +298,9 @@ async function saveEditMoment() {
             updateData.images = imageUrls;
             updateData.image = null;
         }
-
-        await window.db.ref('moments/' + id).update(updateData);
+        
+        const momentRef = ref(db, 'moments/' + id);
+        await update(momentRef, updateData);
         closeModal('editModal');
         fileInput.value = '';
         showToast('Momen berhasil diupdate!', 'success');
@@ -320,7 +315,8 @@ async function saveEditMoment() {
 async function deleteMoment(id) {
     if (confirm("Yakin ingin menghapus momen ini?")) {
         try {
-            await window.db.ref('moments/' + id).remove();
+            const momentRef = ref(db, 'moments/' + id);
+            await remove(momentRef);
             showToast('Momen berhasil dihapus!', 'success');
         } catch (error) {
             showToast('Gagal menghapus: ' + error.message, 'error');
@@ -482,9 +478,10 @@ function closeModal(modalId, event) {
 
 function loadComments(momentId) {
     const commentsList = document.getElementById('commentsList');
+
+    const commentsRef = ref(db, `moments/${momentId}/comments`);
     
-    window.db.ref(`moments/${momentId}/comments`).on('value', (snapshot) => {
-        commentsList.innerHTML = '';
+    onValue(commentsRef, (snapshot) => {
         
         if (!snapshot.exists()) {
             commentsList.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.9rem;">Belum ada komentar. Jadilah yang pertama!</p>';
@@ -524,11 +521,12 @@ async function postComment() {
         authorEmail: currentUser.email,
         authorName: currentUser.displayName || currentUser.email.split('@')[0],
         authorPhoto: currentUser.photoURL,
-        timestamp: firebase.database.ServerValue.TIMESTAMP
+        timestamp: serverTimestamp()
     };
 
     try {
-        await window.db.ref(`moments/${currentDetailMomentId}/comments`).push(commentData);
+        const commentsRef = ref(db, `moments/${currentDetailMomentId}/comments`);
+        await push(commentsRef, commentData);
         input.value = '';
     } catch (error) {
         showToast('Gagal mengirim komentar', 'error');
