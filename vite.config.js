@@ -6,7 +6,6 @@ export default defineConfig({
       input: {
         main: 'index.html',
         settings: 'settings.html',
-        siswa: 'siswa.html'
       }
     }
   }

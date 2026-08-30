@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/settings",
+      "destination": "/settings.html"
+    },
+    {
+      "source": "/settings.html",
+      "destination": "/settings.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
