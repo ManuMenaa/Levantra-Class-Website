@@ -29,11 +29,11 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
     <link rel="preconnect" href="https://www.gstatic.com/" crossorigin="">
 
-    <link rel="preload" href="css/style.css" as="style" type="text/css">
-    <link rel="preload" href="img/LevantraLogo.jpg" as="image" type="image/jpeg">
-    <link rel="preload" href="img/moment1.avif" as="image" type="image/avif">
-    <link rel="preload" href="img/moment2.avif" as="image" type="image/avif">
-    <link rel="preload" href="img/moment3.avif" as="image" type="image/avif">
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="preload" href="img/LevantraLogo.jpg" as="image">
+    <link rel="preload" href="img/moment1.avif" as="image">
+    <link rel="preload" href="img/moment2.avif" as="image">
+    <link rel="preload" href="img/moment3.avif" as="image">
 
     <title>Levantra Class</title>
 
@@ -63,7 +63,7 @@
     <div class="black-overlay" onclick="closeMenu()"></div>
     <nav>
         <div class="logo-container">
-            <img src="img/LevantraLogo.jpg" alt="Levantra Logo" class="logo-img" width="50" height="50">
+            <img src="img/LevantraLogo.jpg" alt="Logo Levantra" class="logo-img" width="50" height="50">
             <span class="logo-text">LEVANTRA</span>
         </div>
         <ul class="nav-links">
@@ -145,31 +145,31 @@
             <div class="staff-grid-container">
                 <div class="p-card staff">
                     <div class="p-img staff">
-                        <img src="img/people/almaira.avif" alt="Sekretaris 1" width="100" height="100">
+                        <img src="img/people/kirana_nariswari.avif" alt="Sekretaris 1" width="100" height="100">
                     </div>
                     <h3>Sekretaris 1</h3>
-                    <p>Almaira Regina Anindinata</p>
-                </div>
-                <div class="p-card staff">
-                    <div class="p-img staff">
-                        <img src="img/people/kirana_nariswari.avif" alt="Sekretaris 2" width="100" height="100">
-                    </div>
-                    <h3>Sekretaris 2</h3>
                     <p>Ni Wayan Kirana Nariswari</p>
                 </div>
                 <div class="p-card staff">
                     <div class="p-img staff">
-                        <img src="img/people/widya.avif" alt="Bendahara 1" width="100" height="100">
+                        <img src="img/people/almaira.avif" alt="Sekretaris 2" width="100" height="100">
                     </div>
-                    <h3>Bendahara 1</h3>
-                    <p>Ni Nyoman Widya Cahyani</p>
+                    <h3>Sekretaris 2</h3>
+                    <p>Almaira Regina Anindinata</p>
                 </div>
                 <div class="p-card staff">
                     <div class="p-img staff">
-                        <img src="img/people/dinda_febriyanti.avif" alt="Bendahara 2" width="100" height="100">
+                        <img src="img/people/dinda_febriyanti.avif" alt="Bendahara 1" width="100" height="100">
+                    </div>
+                    <h3>Bendahara 1</h3>
+                    <p>Ni Komang Dinda Febriyanti</p>
+                </div>
+                <div class="p-card staff">
+                    <div class="p-img staff">
+                        <img src="img/people/widya.avif" alt="Bendahara 2" width="100" height="100">
                     </div>
                     <h3>Bendahara 2</h3>
-                    <p>Ni Komang Dinda Febriyanti</p>
+                    <p>Ni Nyoman Widya Cahyani</p>
                 </div>
             </div>
         </div>
@@ -186,8 +186,102 @@
         </div>
     </section>
 
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+    <section id="momen" class="section">
+        <h2 class="section-title"><i class="fa-solid fa-camera"></i>Momen Kelas</h2>
+    
+        <div class="moment-header">
+            <div class="search-container">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="searchMoment" placeholder="Cari momen..." onkeyup="searchMoments()">
+            </div>
+            <button class="upload-btn" onclick="openUploadModal()">
+                <i class="fa-solid fa-plus"></i>
+                <span class="upload-text">Tambahkan</span>
+            </button>
+        </div>
+
+        <div id="uploadModal" class="black-overlay" onclick="closeModal('uploadModal', event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3>Upload Momen Baru</h3>
+                    <button class="close-btn" onclick="closeModal('uploadModal')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <input type="text" id="momentTitle" placeholder="Judul Momen">
+                <textarea id="momentDesc" placeholder="Ceritakan momen ini..." rows="3"></textarea>
+                <input type="file" id="momentImage" accept="image/*" multiple>
+                <small style="color:var(--text-muted);">*Anda bisa memilih lebih dari satu gambar sekaligus</small>
+                <button onclick="uploadMoment()">Upload</button>
+            </div>
+        </div>
+
+        <div id="editModal" class="black-overlay" onclick="closeModal('editModal', event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3>Edit Momen</h3>
+                    <button class="close-btn" onclick="closeModal('editModal')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <input type="hidden" id="editMomentId">
+                <input type="text" id="editMomentTitle" placeholder="Judul Momen">
+                <textarea id="editMomentDesc" placeholder="Ceritakan momen ini..." rows="3"></textarea>
+                <small style="color:var(--text-muted);">*Biarkan file kosong jika tidak ingin mengganti gambar. Jika Anda memilih gambar baru, gambar lama akan tertimpa.</small>
+                <input type="file" id="editMomentImage" accept="image/*" multiple>
+                <button onclick="saveEditMoment()" id="saveEditBtn">Simpan Perubahan</button>
+            </div>
+        </div>
+
+        <div id="detailModal" class="black-overlay" onclick="closeModal('detailModal', event)">
+            <div class="modal-content detail-content" onclick="event.stopPropagation()">
+                <button class="close-btn detail-close" onclick="closeModal('detailModal')"><i class="fa-solid fa-xmark"></i></button>
+                
+                <div class="detail-left">
+                    <div class="detail-slider">
+                        <button class="slider-btn prev" onclick="changeDetailSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                        <img id="detailImage" src="" alt="Detail Momen">
+                        <button class="slider-btn next" onclick="changeDetailSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                        <div class="slider-dots" id="detailSliderDots"></div>
+                    </div>
+                </div>
+
+                <div class="detail-right">
+                    <div class="detail-info">
+                        <h3 id="detailTitle"></h3>
+                        <p id="detailDesc"></p>
+                    </div>
+                    
+                    <div class="comments-section">
+                        <h4>Komentar</h4>
+                        <div id="commentsList" class="comments-list"></div>
+                        <div class="comment-input-area">
+                            <input type="text" id="commentInput" placeholder="Tulis komentar...">
+                            <button onclick="postComment()"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loginPromptModal" class="black-overlay" onclick="closeModal('loginPromptModal', event)">
+            <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center; max-width: 350px;">
+                <div class="modal-header">
+                    <h3 style="margin: 0 auto; color: var(--primary-gold);">Login Diperlukan</h3>
+                    <button class="close-btn" onclick="closeModal('loginPromptModal')" style="position: absolute; right: 15px;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div style="margin: 15px 0;">
+                    <i class="fa-brands fa-google" style="font-size: 3rem; color: var(--primary-gold); margin-bottom: 15px;"></i>
+                    <p style="color: var(--text-primary);">Anda perlu login Google untuk menambahkan post atau memberikan komentar.</p>
+                </div>
+                <button onclick="login(); closeModal('loginPromptModal')" style="background: var(--primary-gold); color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-size: 1rem; width: 100%; font-weight: bold;">
+                    Login dengan Google
+                </button>
+            </div>
+        </div>
+
+        <div id="momentGallery" class="moment-grid"></div>
+    </section>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js" defer></script>
 
     <script src="js/firebase-config.js" defer></script>
     <script src="js/app.js" defer></script>

@@ -1,19 +1,30 @@
 /**
  * LEVANTRA - Unified App JS
  * Features:
- * - Firebase Authentication
- * - Slider Implementation
- * - Global Menu Handling
- * - Settings Management
+ * - Firebase Authentication & Database
+ * - CRUD Moments Gallery (Integrated with ImgBB & RTDB)
+ * - Comments System (Using RTDB)
  */
 
 // =============================================
-// CONFIGURATION & GLOBAL STATE
+// CONFIGURATION & CONSTANTS
 // =============================================
 
 // Global state
 let currentUser = null;
-let authListenerAttached = false;
+let currentDetailImages = [];
+let currentDetailImageIndex = 0;
+
+// ImgBB API Key
+const IMGBB_API_KEY = 'a0553f2c3123cf33b9c0aa1f1684b5be';
+
+// Admin email
+const ADMIN_EMAILS = ['sudanamanumain1@gmail.com']; 
+
+// Current modal moment ID
+let currentDetailMomentId = null;
+
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // =============================================
 // INITIALIZATION
@@ -38,36 +49,55 @@ document.addEventListener('DOMContentLoaded', function() {
 function initApp() {
     console.log('LEVANTRA App initialized')
 
-    // Initialize authentication UI
+    // Authentication state listener
     window.auth.onAuthStateChanged(function(user) {
         currentUser = user;
         updateAuthMenu(user);
     });
+    // Load moments
+    if (window.loadMoments) {
+        window.loadMoments();
+    }
 }
 
 // =============================================
 // AUTHENTICATION
 // =============================================
 
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    if (!container) return;
+function login() {
+    if (!window.auth) {
+        console.error('Firebase auth is not ready.');
+        showToast('Login Google belum siap. Silakan refresh halaman dan coba lagi.', 'error');
+        return;
+    }
 
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
+    const provider = new firebase.auth.GoogleAuthProvider();
+    window.auth.signInWithPopup(provider)
+        .then((result) => {
+            console.log('Login successful:', result.user?.email);
+            showToast('Login berhasil sebagai ' + result.user?.email, 'success');
+        })
+        .catch((error) => {
+            console.error('Login failed:', error);
+            showToast('Login gagal: ' + error.message, 'error');
+        });
+}
 
-    container.appendChild(toast);
+function logout() {
+    if (!window.auth) {
+        showToast('Logout belum siap. Silakan refresh halaman dan coba lagi.', 'error');
+        return;
+    }
 
-    requestAnimationFrame(() => {
-        toast.classList.add('show');
-    });
-
-    setTimeout(() => {
-        toast.classList.remove('show');
-        toast.classList.add('hide');
-        setTimeout(() => toast.remove(), 300);
-    }, 2500);
+    window.auth.signOut()
+        .then(() => {
+            console.log('Logout successful');
+            showToast('Logout berhasil', 'success');
+        })
+        .catch((error) => {
+            console.error('Logout failed:', error);
+            showToast('Logout gagal: ' + error.message, 'error');
+        });
 }
 
 function updateAuthMenu(user) {
@@ -95,59 +125,402 @@ function updateAuthMenu(user) {
     }
 }
 
-function initializeAuthUI() {
-    if (!window.auth) {
-        updateAuthMenu(null);
+// =============================================
+// MOMENTS - CRUD Operations (RTDB + ImgBB)
+// =============================================
+
+function loadMoments() {
+    const gallery = document.getElementById('momentGallery');
+    if (!gallery || !window.db) {
+        console.log('loadMoments: Gallery element not found or Firebase not available');
         return;
     }
 
-    if (authListenerAttached) {
-        updateAuthMenu(window.auth.currentUser || null);
-        return;
-    }
+    window.db.ref('moments').orderByChild('timestamp').on('value', (snapshot) => {
+        gallery.innerHTML = '';
+        const momentsArray = [];
+        
+        snapshot.forEach((childSnapshot) => {
+            momentsArray.push({
+                id: childSnapshot.key,
+                ...childSnapshot.val()
+            });
+        });
 
-    authListenerAttached = true;
-    updateAuthMenu(window.auth.currentUser || null);
-
-    window.auth.onAuthStateChanged((user) => {
-        updateAuthMenu(user);
+        momentsArray.reverse().forEach((moment) => {
+            renderMomentToGrid(moment);
+        });
     });
 }
 
-function login() {
-    if (!window.auth) {
-        console.error('Firebase auth is not ready.');
-        showToast('Login Google belum siap. Silakan refresh halaman dan coba lagi.', 'error');
-        return;
-    }
+function renderMomentToGrid(moment) {
+    const gallery = document.getElementById('momentGallery');
 
-    const provider = new firebase.auth.GoogleAuthProvider();
-    window.auth.signInWithPopup(provider)
-        .then((result) => {
-            console.log('Login successful:', result.user?.email);
-            showToast('Login berhasil sebagai ' + (result.user?.email || 'pengguna'), 'success');
-        })
-        .catch((error) => {
-            console.error('Login failed:', error);
-            showToast('Login gagal: ' + (error.message || error.code || 'Unknown error'), 'error');
-        });
+    const isAdmin = currentUser && ADMIN_EMAILS.includes(currentUser.email);
+    const isOwner = currentUser && currentUser.email === moment.authorEmail;
+    const canEditDelete = isOwner || isAdmin;
+
+    const imagesArray = moment.images || (moment.image ? [moment.image] : []);
+    const thumbUrl = imagesArray.length > 0 ? imagesArray[0] : '';
+
+    const multiIndicator = imagesArray.length > 1 ? 
+        `<div class="multi-image-indicator" title="Momen ini berisi banyak gambar"><i class="fa-solid fa-images"></i></div>` : '';
+
+    const actionButtons = canEditDelete ? `
+        <div class="moment-actions">
+            <button class="action-btn edit" onclick="event.stopPropagation(); openEditModal('${moment.id}', '${moment.title.replace(/'/g, "\\'")}', '${(moment.description || '').replace(/'/g, "\\'")}')" title="Edit">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="action-btn delete" onclick="event.stopPropagation(); deleteMoment('${moment.id}')" title="Hapus">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    ` : '';
+
+    const momentCard = document.createElement('div');
+    momentCard.className = 'moment-card';
+    momentCard.id = `moment-${moment.id}`;
+    momentCard.setAttribute('data-title', moment.title.toLowerCase());
+    momentCard.onclick = () => openDetailModal(moment);
+
+    momentCard.innerHTML = `
+        ${multiIndicator}
+        <img src="${thumbUrl}" alt="${moment.title}" class="moment-img">
+        ${actionButtons}
+        <div class="moment-info">
+            <h4>${moment.title}</h4>
+        </div>
+    `;
+    gallery.appendChild(momentCard); 
 }
 
-function logout() {
-    if (!window.auth) {
-        showToast('Logout belum siap. Silakan refresh halaman dan coba lagi.', 'error');
+async function uploadMoment() {
+    if (!currentUser) return openLoginPromptModal();
+    
+    const titleInput = document.getElementById('momentTitle');
+    const descInput = document.getElementById('momentDesc');
+    const fileInput = document.getElementById('momentImage');
+    const uploadBtn = document.querySelector('#uploadModal button');
+    
+    const files = fileInput.files;
+    const title = titleInput.value;
+    const desc = descInput.value;
+    
+    if (files.length === 0 || !title) {
+        showToast('Judul dan gambar tidak boleh kosong!', 'error');
         return;
     }
 
-    window.auth.signOut()
-        .then(() => {
-            console.log('Logout successful');
-            showToast('Logout berhasil', 'success');
-        })
-        .catch((error) => {
-            console.error('Logout failed:', error);
-            showToast('Logout gagal: ' + (error.message || error.code || 'Unknown error'), 'error');
+    const originalBtnText = uploadBtn.innerHTML;
+    uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengupload...';
+    uploadBtn.disabled = true;
+
+    try {
+        const imageUrls = [];
+        
+        for (let i = 0; i < files.length; i++) {
+            showToast(`Mengupload gambar ${i + 1} dari ${files.length}...`, 'info');
+            
+            const file = files[i];
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                method: 'POST', 
+                body: formData
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                imageUrls.push(data.data.url);
+            } else {
+                throw new Error("Gagal mengupload gambar ke-" + (i + 1));
+            }
+        }
+
+        const momentData = {
+            title: title,
+            description: desc,
+            authorEmail: currentUser.email,
+            images: imageUrls, 
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        await window.db.ref('moments').push(momentData);
+            
+        fileInput.value = ''; 
+        titleInput.value = ''; 
+        descInput.value = '';
+        closeModal('uploadModal');
+        showToast('Momen berhasil ditambahkan!', 'success');
+    } catch (error) {
+        showToast('Gagal: ' + error.message, 'error');
+    } finally {
+        uploadBtn.innerHTML = originalBtnText; 
+        uploadBtn.disabled = false;
+    }
+}
+
+async function saveEditMoment() {
+    const id = document.getElementById('editMomentId').value;
+    const title = document.getElementById('editMomentTitle').value;
+    const desc = document.getElementById('editMomentDesc').value;
+    const fileInput = document.getElementById('editMomentImage');
+    const saveBtn = document.getElementById('saveEditBtn');
+    
+    if (!title) return showToast('Judul tidak boleh kosong!', 'error');
+
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+    saveBtn.disabled = true;
+
+    try {
+        let updateData = { title: title, description: desc };
+
+        if (fileInput.files.length > 0) {
+            showToast(`Mengupload ${fileInput.files.length} gambar baru...`, 'info');
+            
+            const imageUrls = [];
+            
+            for (let i = 0; i < fileInput.files.length; i++) {
+                const file = fileInput.files[i];
+                
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { 
+                    method: 'POST', 
+                    body: formData 
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    imageUrls.push(data.data.url);
+                } else {
+                    throw new Error("Gagal upload gambar ke-" + (i + 1));
+                }
+            }
+
+            updateData.images = imageUrls;
+            updateData.image = null;
+        }
+
+        await window.db.ref('moments/' + id).update(updateData);
+        closeModal('editModal');
+        fileInput.value = '';
+        showToast('Momen berhasil diupdate!', 'success');
+    } catch (error) {
+        showToast('Gagal update: ' + error.message, 'error');
+    } finally {
+        saveBtn.innerHTML = 'Simpan Perubahan'; 
+        saveBtn.disabled = false;
+    }
+}
+
+async function deleteMoment(id) {
+    if (confirm("Yakin ingin menghapus momen ini?")) {
+        try {
+            await window.db.ref('moments/' + id).remove();
+            showToast('Momen berhasil dihapus!', 'success');
+        } catch (error) {
+            showToast('Gagal menghapus: ' + error.message, 'error');
+        }
+    }
+}
+
+function searchMoments() {
+    const input = document.getElementById('searchMoment').value.toLowerCase();
+    const cards = document.getElementsByClassName('moment-card');
+
+    for (let i = 0; i < cards.length; i++) {
+        const title = cards[i].getAttribute('data-title');
+        if (title.includes(input)) {
+            cards[i].style.display = "";
+        } else {
+            cards[i].style.display = "none";
+        }
+    }
+}
+
+// =============================================
+// MODAL Functions
+// =============================================
+
+function openUploadModal() {
+    if (!currentUser) return openLoginPromptModal();
+    document.getElementById('uploadModal').classList.add('active');
+}
+
+function openLoginPromptModal() {
+    document.getElementById('loginPromptModal').classList.add('active');
+}
+
+function openEditModal(id, title, desc) {
+    document.getElementById('editMomentId').value = id;
+    document.getElementById('editMomentTitle').value = title;
+    document.getElementById('editMomentDesc').value = desc !== 'undefined' ? desc : '';
+    
+    const modal = document.getElementById('editModal');
+    modal.classList.add('active');
+}
+
+function openDetailModal(moment) {
+    let imagesData = moment.images || (moment.image ? [moment.image] : []);
+    
+    currentDetailImages = Array.isArray(imagesData) ? imagesData : Object.values(imagesData);
+    currentDetailImages = currentDetailImages.filter(url => url);
+
+    currentDetailImageIndex = 0;
+    
+    document.getElementById('detailTitle').textContent = moment.title;
+    document.getElementById('detailDesc').textContent = moment.description || 'Tidak ada deskripsi.';
+    
+    if (currentDetailImages.length > 1) {
+        currentDetailImages.forEach(url => {
+            const preloadImg = new Image();
+            preloadImg.src = url; 
         });
+    }
+
+    updateDetailSlider();
+    
+    currentDetailMomentId = moment.id;
+    document.getElementById('detailModal').classList.add('active');
+
+    loadComments(moment.id);
+}
+
+function updateDetailSlider() {
+    const imgEl = document.getElementById('detailImage');
+    const prevBtn = document.querySelector('.slider-btn.prev');
+    const nextBtn = document.querySelector('.slider-btn.next');
+    const dotsContainer = document.getElementById('detailSliderDots');
+
+    if (currentDetailImages.length > 0) {
+        imgEl.style.opacity = '0.3'; 
+        
+        imgEl.onload = function() {
+            imgEl.style.opacity = '1';
+        };
+        
+        imgEl.src = currentDetailImages[currentDetailImageIndex];
+    }
+
+    const hasMultiple = currentDetailImages.length > 1;
+    prevBtn.style.display = hasMultiple ? 'flex' : 'none';
+    nextBtn.style.display = hasMultiple ? 'flex' : 'none';
+
+    dotsContainer.innerHTML = '';
+    if (hasMultiple) {
+        currentDetailImages.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.className = `slider-dot ${index === currentDetailImageIndex ? 'active' : ''}`;
+            dot.onclick = () => {
+                currentDetailImageIndex = index;
+                updateDetailSlider();
+            };
+            dotsContainer.appendChild(dot);
+        });
+    }
+}
+
+function changeDetailSlide(direction) {
+    currentDetailImageIndex += direction;
+    if (currentDetailImageIndex < 0) {
+        currentDetailImageIndex = currentDetailImages.length - 1;
+    } else if (currentDetailImageIndex >= currentDetailImages.length) {
+        currentDetailImageIndex = 0;
+    }
+    updateDetailSlider();
+}
+
+function closeModal(modalId, event) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('active');
+}
+
+// =============================================
+// COMMENTS (RTDB)
+// =============================================
+
+function loadComments(momentId) {
+    const commentsList = document.getElementById('commentsList');
+    
+    window.db.ref(`moments/${momentId}/comments`).on('value', (snapshot) => {
+        commentsList.innerHTML = '';
+        
+        if (!snapshot.exists()) {
+            commentsList.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.9rem;">Belum ada komentar. Jadilah yang pertama!</p>';
+            return;
+        }
+
+        snapshot.forEach((child) => {
+            const comment = child.val();
+            const photoUrl = comment.authorPhoto;
+            
+            commentsList.innerHTML += `
+                <div class="comment-item">
+                    <img src="${photoUrl}" class="comment-avatar">
+                    <div class="comment-text">
+                        <strong>${comment.authorName}</strong>
+                        ${comment.text}
+                    </div>
+                </div>
+            `;
+        });
+        
+        commentsList.scrollTop = commentsList.scrollHeight;
+    });
+}
+
+async function postComment() {
+    if (!currentUser) return openLoginPromptModal();
+    if (!currentDetailMomentId) return;
+
+    const input = document.getElementById('commentInput');
+    const text = input.value.trim();
+    
+    if (!text) return;
+
+    const commentData = {
+        text: text,
+        authorEmail: currentUser.email,
+        authorName: currentUser.displayName || currentUser.email.split('@')[0],
+        authorPhoto: currentUser.photoURL,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    try {
+        await window.db.ref(`moments/${currentDetailMomentId}/comments`).push(commentData);
+        input.value = '';
+    } catch (error) {
+        showToast('Gagal mengirim komentar', 'error');
+    }
+}
+
+// =============================================
+// TOAST NOTIFICATION SYSTEM
+// =============================================
+
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 300);
+    }, 2500);
 }
 
 // =============================================
@@ -284,6 +657,24 @@ function closeMenu() {
 // Authentication functions
 window.login = login;
 window.logout = logout;
+
+// Moments functions
+window.loadMoments = loadMoments;
+window.uploadMoment = uploadMoment;
+window.saveEditMoment = saveEditMoment;
+window.deleteMoment = deleteMoment;
+
+// Modal functions
+window.openUploadModal = openUploadModal;
+window.openEditModal = openEditModal;
+window.openDetailModal = openDetailModal;
+window.changeDetailSlide = changeDetailSlide;
+window.closeModal = closeModal;
+
+// Comments functions
+window.loadComments = loadComments;
+window.searchMoments = searchMoments;
+window.postComment = postComment;
 
 // Global menu functions
 window.toggleMenu = toggleMenu;

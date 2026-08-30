@@ -9,24 +9,21 @@ const firebaseConfig = {
     measurementId: "G-BZZQRLXJMH"
 };
 
-// Check if Firebase SDK is loaded
-if (typeof firebase === 'undefined') {
-     console.error("Firebase SDK is not loaded.");
-    window.firebaseAvailable = false;
-}
+// Check if Firebase is available
+if (typeof firebase !== 'undefined') {
+    try {
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
 
-try {
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+        // Initialize services
+        window.db = firebase.database();
+        window.auth = firebase.auth();
+        window.firebaseAvailable = true;
+        console.log("Firebase initialized successfully");
 
-    // Initialize services
-    window.firebase = firebase;
-    window.auth = firebase.auth();
-    window.firebaseAvailable = true;
-    console.log("Firebase initialized successfully.");
-
-    document.dispatchEvent(new Event('firebaseReady'));
-} catch (error) {
-    console.error("Firebase initialization failed:", error);
-    window.firebaseAvailable = false;
+        document.dispatchEvent(new Event('firebaseReady'));
+    } catch (error) {
+        console.error("Firebase initialization failed:", error);
+        window.firebaseAvailable = false;
+    }
 }
