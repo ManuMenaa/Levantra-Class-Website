@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+    <meta http-equiv="Content-Type" charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -19,7 +19,7 @@
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://levantra.vercel.app/settings.html">
-    <meta property="twitter:title" content="Levantra Settins">
+    <meta property="twitter:title" content="Levantra Settings">
     <meta property="twitter:description" content="Levantra website settings">
     <meta property="twitter:image" content="img/LevantraLogo.jpg">
 
@@ -50,8 +50,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
+    <link rel="stylesheet" href="css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -96,33 +96,60 @@
     <section id="settings" class="section">
         <h2 class="section-title"><i class="fa-solid fa-gear"></i>Pengaturan</h2>
 
-        <a href="index.html">
-            <span class="settings-back-btn"><i class="fa-solid fa-angle-left"></i>Kembali</span>
-        </a>
-        <div class="settings-container">
-            <div class="setting-item">
-                <label for="themeSelect">Tema</label>
-                <select id="themeSelect">
-                    <option value="system">Sistem Default</option>
-                    <option value="light">Terang</option>
-                    <option value="dark">Gelap</option>
-                </select>
+        <div class="settings-card">
+            <div class="settings-header">
+                <div class="settings-header-title">
+                    <h3>Preferensi</h3>
+                    <span>Sesuaikan tampilan & bahasa</span>
+                </div>
+                <a href="index.html" class="settings-back-btn">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                </a>
             </div>
+            
+            <div class="settings-container">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <div class="setting-icon"><i class="fa-solid fa-palette"></i></div>
+                        <div class="setting-text">
+                            <label for="themeSelect">Tema Tampilan</label>
+                            <span>Pilih mode terang atau gelap</span>
+                        </div>
+                    </div>
+                    <div class="setting-control">
+                        <select id="themeSelect" class="styled-select">
+                            <option value="system">Sistem Default</option>
+                            <option value="light">Terang</option>
+                            <option value="dark">Gelap</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
+                </div>
 
-            <div class="setting-item">
-                <label for="langSelect">Bahasa</label>
-                <select id="langSelect">
-                    <option value="id">Indonesia</option>
-                    <option value="en">English</option>
-                </select>
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <div class="setting-icon"><i class="fa-solid fa-language"></i></div>
+                        <div class="setting-text">
+                            <label for="langSelect">Bahasa</label>
+                            <span>Pilih bahasa antarmuka web</span>
+                        </div>
+                    </div>
+                    <div class="setting-control">
+                        <select id="langSelect" class="styled-select">
+                            <option value="id">Indonesia</option>
+                            <option value="en">English</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
+                </div>
             </div>
         </div>
+
         <div id="loadingOverlay">
             <span>Menerapkan perubahan...</span>
         </div>
     </section>
 
-    <script src="js/firebase-config.js" defer></script>
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/app.js" defer></script>
 </body>
 </html>
