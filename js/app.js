@@ -468,6 +468,31 @@ function changeDetailSlide(direction) {
     updateDetailSlider();
 }
 
+function openStructureModal(name, position, absent, imgUrl, informationLink) {
+    const modal = document.getElementById('structureModal');
+    if (!modal) return;
+
+    document.getElementById('modalStructureName').textContent = name;
+    document.getElementById('modalStructurePosition').textContent = position;
+    document.getElementById('modalStructureAbsent').textContent = absent;
+
+    const imgEl = document.getElementById('modalStructureImg');
+    if (imgEl) {
+        let resolvedImgUrl = imgUrl;
+        if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('/')) {
+            resolvedImgUrl = '/' + imgUrl;
+        }
+        imgEl.src = resolvedImgUrl || '/img/LevantraLogo.jpg';
+    }
+
+    const linkBtn = document.getElementById('modalStructureLink');
+    if (linkBtn) {
+        linkBtn.href = informationLink || 'siswa.html';
+    }
+
+    modal.classList.add('active');
+}
+
 function closeModal(modalId, event) {
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.remove('active');
@@ -706,6 +731,7 @@ window.openEditModal = openEditModal;
 window.openDetailModal = openDetailModal;
 window.changeDetailSlide = changeDetailSlide;
 window.closeModal = closeModal;
+window.openStructureModal = openStructureModal;
 
 // Comments functions
 window.loadComments = loadComments;
