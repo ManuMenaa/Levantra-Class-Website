@@ -475,15 +475,7 @@ function openStructureModal(name, position, absent, imgUrl, informationLink) {
     document.getElementById('modalStructureName').textContent = name;
     document.getElementById('modalStructurePosition').textContent = position;
     document.getElementById('modalStructureAbsent').textContent = absent;
-
-    const imgEl = document.getElementById('modalStructureImg');
-    if (imgEl) {
-        let resolvedImgUrl = imgUrl;
-        if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('/')) {
-            resolvedImgUrl = '/' + imgUrl;
-        }
-        imgEl.src = resolvedImgUrl || '/img/LevantraLogo.jpg';
-    }
+    document.getElementById('modalStructureImg').src = imgUrl;
 
     const linkBtn = document.getElementById('modalStructureLink');
     if (linkBtn) {
