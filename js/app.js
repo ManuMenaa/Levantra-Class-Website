@@ -679,26 +679,43 @@ function toggleMenu() {
     const navLinks = document.querySelector('.nav-links');
     const hamburger = document.querySelector('.hamburger');
     const blackOverlay = document.querySelector('.black-overlay');
-    const accountToggle = document.querySelector('.account-menu-toggle');
-    const accountMenu = document.querySelector('.account-menu');
 
     if (navLinks) navLinks.classList.toggle('active');
     if (hamburger) hamburger.classList.toggle('active');
     if (blackOverlay) blackOverlay.classList.toggle('active');
+    
+    closeAccountMenu();
+}
+
+function toggleAccountMenu() {
+    const accountToggle = document.querySelector('.account-menu-toggle');
+    const accountMenu = document.querySelector('.account-menu');
+
     if (accountToggle) accountToggle.classList.toggle('active');
     if (accountMenu) accountMenu.classList.toggle('active');
+
+    const navLinks = document.querySelector('.nav-links');
+    const hamburger = document.querySelector('.hamburger');
+    const blackOverlay = document.querySelector('.black-overlay');
+    if (navLinks) navLinks.classList.remove('active');
+    if (hamburger) hamburger.classList.remove('active');
+    if (blackOverlay) blackOverlay.classList.remove('active');
 }
 
 function closeMenu() {
     const navLinks = document.querySelector('.nav-links');
     const hamburger = document.querySelector('.hamburger');
     const blackOverlay = document.querySelector('.black-overlay');
-    const accountToggle = document.querySelector('.account-menu-toggle');
-    const accountMenu = document.querySelector('.account-menu');
 
     if (navLinks) navLinks.classList.remove('active');
     if (hamburger) hamburger.classList.remove('active');
     if (blackOverlay) blackOverlay.classList.remove('active');
+}
+
+function closeAccountMenu() {
+    const accountToggle = document.querySelector('.account-menu-toggle');
+    const accountMenu = document.querySelector('.account-menu');
+
     if (accountToggle) accountToggle.classList.remove('active');
     if (accountMenu) accountMenu.classList.remove('active');
 }
@@ -733,3 +750,5 @@ window.postComment = postComment;
 // Global menu functions
 window.toggleMenu = toggleMenu;
 window.closeMenu = closeMenu;
+window.toggleAccountMenu = toggleAccountMenu;
+window.closeAccountMenu = closeAccountMenu;

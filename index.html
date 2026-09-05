@@ -73,34 +73,36 @@
             <li><a href="#jadwal" onclick="closeMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
             <li><a href="#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
             <li><a href="#momen" onclick="closeMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
-            <li class="account-menu-wrapper">
-                <button id="accountButton" class="account-menu-toggle" onclick="toggleMenu()">
+        </ul>
+        <div class="nav-actions">
+            <div class="account-menu-wrapper">
+                <button id="accountButton" class="account-menu-toggle" onclick="toggleAccountMenu()">
                     <i id="accountIcon" class="fa-regular fa-circle-user"></i>
                 </button>
                 <div id="accountMenu" class="account-menu">
-                    <a id="loginMenuItem" onclick="login(); closeMenu()">
+                    <a id="loginMenuItem" onclick="login(); closeAccountMenu()">
                         <i class="fa-solid fa-right-to-bracket"></i>Masuk
                     </a>
                     <a href="settings.html">
                         <i class="fa-solid fa-gear"></i>Settings
                     </a>
-                    <a id="logoutMenuItem" onclick="logout(); closeMenu()" hidden>
+                    <a id="logoutMenuItem" onclick="logout(); closeAccountMenu()" hidden>
                         <i class="fa-solid fa-right-from-bracket"></i>Keluar
                     </a>
                 </div>
-            </li>
-        </ul>
-        <div class="hamburger" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
+            </div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </nav>
 
     <section id="beranda" class="hero">
         <div class="hero-content">
             <h1>LEARN, VISION, TRIUMPH</h1>
-            <p>Generasi Hebat Menuju Indonesia Emas 2045</p>
+            <p>Membangun Generasi Tangguh untuk Masa Depan Gemilang</p>
             <div class="slider-container">
                 <img src="img/moment1.avif" alt="Slide 1" class="slide-item">
                 <img src="img/moment2.avif" alt="Slide 2" class="slide-item">
@@ -127,7 +129,7 @@
                     <div class="org-line-vertical"></div>
                 </div>
                 <div class="org-branch">
-                    <div class="org-line-horizontal main-split"">
+                    <div class="org-line-horizontal main-split">
                         <div class="org-line-left"></div>
                         <div class="org-line-right"></div>
                     </div>
@@ -218,6 +220,7 @@
                 </div>
             </div>
         </div>
+        
         <div id="structureModal" class="black-overlay" onclick="closeModal('structureModal', event)">
             <div class="modal-content structure-modal-card" onclick="event.stopPropagation()">
                 <div class="modal-header">
