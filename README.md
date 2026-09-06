@@ -1,6 +1,6 @@
 # Levantra Class Website
 
-The website url: levantraclass.web.app
+The website url: [Levantra Website](https://levantraclass.web.app/)
 
 This is the main source code of levantra class website. Created by [@inimanumenaa](https://www.instagram.com/inimanumenaa/)
 
