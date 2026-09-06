@@ -1,27 +1,13 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: 'index.html',
-        settings: 'settings.html',
+        main: resolve(import.meta.dirname, 'index.html'),
+        settings: resolve(import.meta.dirname, 'settings.html')
       },
-      output: {
-        entryFileNames: 'js/[name].js',
-        chunkFileNames: 'js/[name]-[hash].js',
-        assetFileNames: (assetInfo) => {
-          if (/\.(png|jpe?g|gif|svg|webp|avif)$/i.test(assetInfo.name)) {
-            return 'img/[name][extname]';
-          }
-
-          if (/\.css$/i.test(assetInfo.name)) {
-            return 'css/[name][extname]';
-          }
-
-          return 'assets/[name]-[hash][extname]';
-        }
-      }
-    }
-  }
+    },
+  },
 });

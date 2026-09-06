@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Web resmi LEVANTRA class yang digunakan untuk informasi perangkat, siswa, jadwal, kas dan juga momen selama di LEVANTRA">
+    <meta name="description" content="LEVANTRA Website Settings">
     <meta name="keyword" content="LEVANTRA, kelas XI.7, web kelas, siswa, toska, sma negeri 2 kuta selatan, perangkat kelas, kelas XII.7">
     <meta name="author" content="LEVANTRA Class, inimanumenaa">
     <meta name="robots" content="index, follow">
@@ -15,21 +15,21 @@
     <meta property="og:url" content="https://levantraclass.web.app/settings">
     <meta property="og:title" content="Levantra Settings">
     <meta property="og:description" content="Levantra website settings">
-    <meta property="og:image" content="img/LevantraLogo.jpg">
+    <meta property="og:image" content="/img/LevantraLogo.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://levantraclass.web.app/settings">
     <meta property="twitter:title" content="Levantra Settings">
     <meta property="twitter:description" content="Levantra website settings">
-    <meta property="twitter:image" content="img/LevantraLogo.jpg">
+    <meta property="twitter:image" content="/img/LevantraLogo.jpg">
 
-    <link rel="icon" type="image/jpeg" href="img/LevantraLogo.jpg">
-    <link rel="apple-touch-icon" href="img/LevantraLogo.jpg">
+    <link rel="icon" type="image/jpeg" href="/img/LevantraLogo.jpg">
+    <link rel="apple-touch-icon" href="/img/LevantraLogo.jpg">
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
 
-    <link rel="preload" href="css/style.css" as="style">
-    <link rel="preload" href="img/LevantraLogo.jpg" as="image">
+    <link rel="preload" href="/src/css/app.css" as="style">
+    <link rel="preload" href="/img/LevantraLogo.jpg" as="image">
 
     <title>Levantra Settings</title>
 
@@ -51,20 +51,20 @@
     </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
-    <link rel="stylesheet" href="css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/src/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/app.css">
 </head>
 <body>
     <div id="toastContainer" class="toast-container"></div>
     <div class="black-overlay" onclick="closeMenu()"></div>
     <nav>
         <div class="logo-container">
-            <img src="img/LevantraLogo.jpg" alt="Levantra Logo" class="logo-img" width="50" height="50">
+            <img src="/img/LevantraLogo.jpg" alt="Logo Levantra" class="logo-img" width="50" height="50">
             <span class="logo-text">LEVANTRA</span>
         </div>
         <ul class="nav-links">
             <li><a href="index.html#beranda" onclick="closeMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
-            <li><a href="index.html#struktur" onclick="closeMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Perangkat</a></li>
+            <li><a href="index.html#pengurus" onclick="closeMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
             <li><a href="index.html#siswa" onclick="closeMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
             <li><a href="index.html#jadwal" onclick="closeMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
             <li><a href="index.html#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
@@ -108,7 +108,6 @@
                     <i class="fa-solid fa-arrow-left"></i> Kembali
                 </a>
             </div>
-            
             <div class="settings-container">
                 <div class="setting-item">
                     <div class="setting-label">
@@ -127,7 +126,6 @@
                         <i class="fa-solid fa-chevron-down select-icon"></i>
                     </div>
                 </div>
-
                 <div class="setting-item">
                     <div class="setting-label">
                         <div class="setting-icon"><i class="fa-solid fa-language"></i></div>
@@ -152,6 +150,6 @@
         </div>
     </section>
 
-    <script type="module" src="js/app.js" defer></script>
+    <script type="module" src="/src/js/app.js" defer></script>
 </body>
 </html>

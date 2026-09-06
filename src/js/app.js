@@ -14,15 +14,13 @@
 let currentUser = null;
 let currentDetailImages = [];
 let currentDetailImageIndex = 0;
+let currentDetailMomentId = null;
+
+// Admin email
+const ADMIN_EMAILS = ['sudanamanumain1@gmail.com'];
 
 // ImgBB API Key
 const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
-
-// Admin email
-const ADMIN_EMAILS = ['sudanamanumain1@gmail.com']; 
-
-// Current modal moment ID
-let currentDetailMomentId = null;
 
 // Import Firebase & Firebase SDK
 import { app, db, auth } from './firebase-config.js';

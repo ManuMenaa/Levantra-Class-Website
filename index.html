@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Web resmi LEVANTRA class yang digunakan untuk informasi perangkat, siswa, jadwal, kas dan juga momen selama di LEVANTRA">
+    <meta name="description" content="Website resmi LEVANTRA class yang digunakan untuk mendapatkan informasi tentang pengurus, siswa, jadwal, kas dan juga momen selama di LEVANTRA">
     <meta name="keyword" content="LEVANTRA, kelas XI.7, web kelas, siswa, toska, sma negeri 2 kuta selatan, perangkat kelas, kelas XII.7">
     <meta name="author" content="LEVANTRA Class, inimanumenaa">
     <meta name="robots" content="index, follow">
@@ -14,26 +14,26 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://levantraclass.web.app/">
     <meta property="og:title" content="Levantra Class">
-    <meta property="og:description" content="Website resmi Levantra Class">
+    <meta property="og:description" content="Website resmi LEVANTRA Class. Digunakan untuk informasi tentang pengurus, siswa, jadwal, kas dan juga momen selama di LEVANTRA">
     <meta property="og:image" content="/img/LevantraLogo.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://levantraclass.web.app/">
     <meta property="twitter:title" content="Levantra Class">
-    <meta property="twitter:description" content="Website resmi Levantra Class">
-    <meta property="twitter:image" content="img/LevantraLogo.jpg">
+    <meta property="twitter:description" content="Website resmi LEVANTRA Class. Digunakan untuk informasi tentang pengurus, siswa, jadwal, kas dan juga momen selama di LEVANTRA">
+    <meta property="twitter:image" content="/img/LevantraLogo.jpg">
 
-    <link rel="icon" type="image/jpeg" href="img/LevantraLogo.jpg">
-    <link rel="apple-touch-icon" href="img/LevantraLogo.jpg">
+    <link rel="icon" type="image/jpeg" href="/img/LevantraLogo.jpg">
+    <link rel="apple-touch-icon" href="/img/LevantraLogo.jpg">
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
     <link rel="preconnect" href="https://i.ibb.co/" crossorigin="">
 
-    <link rel="preload" href="css/style.css" as="style">
-    <link rel="preload" href="img/LevantraLogo.jpg" as="image">
-    <link rel="preload" href="img/moment1.avif" as="image">
-    <link rel="preload" href="img/moment2.avif" as="image">
-    <link rel="preload" href="img/moment3.avif" as="image">
+    <link rel="preload" href="/src/css/app.css" as="style">
+    <link rel="preload" href="/img/LevantraLogo.jpg" as="image">
+    <link rel="preload" href="/img/moment1.avif" as="image">
+    <link rel="preload" href="/img/moment2.avif" as="image">
+    <link rel="preload" href="/img/moment3.avif" as="image">
 
     <title>Levantra Class</title>
 
@@ -55,8 +55,8 @@
     </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
-    <link rel="stylesheet" href="css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/src/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/app.css">
 </head>
 <body>
     <div id="toastContainer" class="toast-container"></div>
@@ -68,7 +68,7 @@
         </div>
         <ul class="nav-links">
             <li><a href="#beranda" onclick="closeMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
-            <li><a href="#struktur" onclick="closeMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Struktur</a></li>
+            <li><a href="#pengurus" onclick="closeMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
             <li><a href="#siswa" onclick="closeMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
             <li><a href="#jadwal" onclick="closeMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
             <li><a href="#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
@@ -104,15 +104,15 @@
             <h1>LEARN, VISION, TRIUMPH</h1>
             <p>Membangun Generasi Tangguh untuk Masa Depan Gemilang</p>
             <div class="slider-container">
-                <img src="img/moment1.avif" alt="Slide 1" class="slide-item">
-                <img src="img/moment2.avif" alt="Slide 2" class="slide-item">
-                <img src="img/moment3.avif" alt="Slide 3" class="slide-item">
+                <img src="/img/moment1.avif" alt="Slide 1" class="slide-item">
+                <img src="/img/moment2.avif" alt="Slide 2" class="slide-item">
+                <img src="/img/moment3.avif" alt="Slide 3" class="slide-item">
             </div>
         </div>
     </section>
 
-    <section id="struktur" class="section">
-        <h2 class="section-title"><i class="fa-solid fa-sitemap"></i>Struktur Kelas</h2>
+    <section id="pengurus" class="section">
+        <h2 class="section-title"><i class="fa-solid fa-sitemap"></i>Pengurus Kelas</h2>
 
         <div class="org-chart-wrapper">
             <div class="org-tree">
@@ -135,9 +135,9 @@
                     </div>
                     <div class="org-nodes-group">
                         <div class="org-branch">
-                            <div class="structure-card" onclick="openStructureModal('Komang Ray Maha Pranatha Jaya', 'Ketua Kelas', '24', 'img/people/ray.avif', 'siswa.html?absen=24')">
+                            <div class="structure-card" onclick="openStructureModal('Komang Ray Maha Pranatha Jaya', 'Ketua Kelas', '24', '/img/people/ray.avif', 'siswa.html?absen=24')">
                                 <div class="card-avatar">
-                                    <img src="img/people/ray.avif" alt="Ketua Kelas" width="140" height="140">
+                                    <img src="/img/people/ray.avif" alt="Ketua Kelas" width="140" height="140">
                                 </div>
                                 <div class="card-badge">Ketua Kelas</div>
                                 <div class="card-info">
@@ -151,9 +151,9 @@
                             </div>
                             <div class="org-nodes-row">
                                 <div class="org-branch">
-                                    <div class="structure-card" onclick="openStructureModal('Ni Wayan Kirana Nariswari', 'Sekretaris 1', '37', 'img/people/kirana_nariswari.avif', 'siswa.html?absen=37')">
+                                    <div class="structure-card" onclick="openStructureModal('Ni Wayan Kirana Nariswari', 'Sekretaris 1', '37', '/img/people/kirana_nariswari.avif', 'siswa.html?absen=37')">
                                         <div class="card-avatar">
-                                            <img src="img/people/kirana_nariswari.avif" alt="Sekretaris 1" width="140" height="140">
+                                            <img src="/img/people/kirana_nariswari.avif" alt="Sekretaris 1" width="140" height="140">
                                         </div>
                                         <div class="card-badge">Sekretaris 1</div>
                                         <div class="card-info">
@@ -163,9 +163,9 @@
                                     <div class="org-line-vertical mobile-only"></div>
                                 </div>
                                 <div class="org-branch">
-                                    <div class="structure-card" onclick="openStructureModal('Ni Komang Dinda Febriyanti', 'Bendahara 1', '29', 'img/people/dinda_febriyanti.avif', 'siswa.html?absen=29')">
+                                    <div class="structure-card" onclick="openStructureModal('Ni Komang Dinda Febriyanti', 'Bendahara 1', '29', '/img/people/dinda_febriyanti.avif', 'siswa.html?absen=29')">
                                         <div class="card-avatar">
-                                            <img src="img/people/dinda_febriyanti.avif" alt="Bendahara 1" width="140" height="140">
+                                            <img src="/img/people/dinda_febriyanti.avif" alt="Bendahara 1" width="140" height="140">
                                         </div>
                                         <div class="card-badge">Bendahara 1</div>
                                         <div class="card-info">
@@ -176,9 +176,9 @@
                             </div>
                         </div>
                         <div class="org-branch">
-                            <div class="structure-card" onclick="openStructureModal('I Gede Prhyaterra Pratama Santana', 'Wakil Kelas', '16', 'img/people/prhyaterra.avif', 'siswa.html?absen=16')">
+                            <div class="structure-card" onclick="openStructureModal('I Gede Prhyaterra Pratama Santana', 'Wakil Kelas', '16', '/img/people/prhyaterra.avif', 'siswa.html?absen=16')">
                                 <div class="card-avatar">
-                                    <img src="img/people/prhyaterra.avif" alt="Wakil Kelas" width="140" height="140">
+                                    <img src="/img/people/prhyaterra.avif" alt="Wakil Kelas" width="140" height="140">
                                 </div>
                                 <div class="card-badge">Wakil Kelas</div>
                                 <div class="card-info">
@@ -192,9 +192,9 @@
                             </div>
                             <div class="org-nodes-row">
                                 <div class="org-branch">
-                                    <div class="structure-card" onclick="openStructureModal('Almaira Regina Anindinata', 'Sekretaris 2', '4', 'img/people/almaira.avif', 'siswa.html?absen=4')">
+                                    <div class="structure-card" onclick="openStructureModal('Almaira Regina Anindinata', 'Sekretaris 2', '4', '/img/people/almaira.avif', 'siswa.html?absen=4')">
                                         <div class="card-avatar">
-                                            <img src="img/people/almaira.avif" alt="Sekretaris 2" width="140" height="140">
+                                            <img src="/img/people/almaira.avif" alt="Sekretaris 2" width="140" height="140">
                                         </div>
                                         <div class="card-badge">Sekretaris 2</div>
                                         <div class="card-info">
@@ -204,9 +204,9 @@
                                     <div class="org-line-vertical mobile-only"></div>
                                 </div>
                                 <div class="org-branch">
-                                    <div class="structure-card" onclick="openStructureModal('Ni Nyoman Widya Cahyani', 'Bendahara 2', '33', 'img/people/widya.avif', 'siswa.html?absen=33')">
+                                    <div class="structure-card" onclick="openStructureModal('Ni Nyoman Widya Cahyani', 'Bendahara 2', '33', '/img/people/widya.avif', 'siswa.html?absen=33')">
                                         <div class="card-avatar">
-                                            <img src="img/people/widya.avif" alt="Bendahara 2" width="140" height="140">
+                                            <img src="/img/people/widya.avif" alt="Bendahara 2" width="140" height="140">
                                         </div>
                                         <div class="card-badge">Bendahara 2</div>
                                         <div class="card-info">
@@ -224,19 +224,18 @@
         <div id="structureModal" class="black-overlay" onclick="closeModal('structureModal', event)">
             <div class="modal-content structure-modal-card" onclick="event.stopPropagation()">
                 <div class="modal-header">
-                    <h3 style="text-align: center; margin: 0 auto; color: var(--primary-gold);">Detail Struktur Kelas</h3>
+                    <h3 style="margin: 0 auto;">Detail Pengurus Kelas</h3>
                     <button class="close-btn" onclick="closeModal('structureModal')" style="position: absolute; right: 15px;">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
                 <div class="structure-modal-body">
                     <div class="modal-avatar-wrapper">
-                        <img id="modalStructureImg" src="" alt="Foto Struktur" class="modal-avatar">
+                        <img id="modalStructureImg" src="" alt="Foto Pengurus" class="modal-avatar">
                     </div>
                     <span id="modalStructurePosition" class="modal-badge">Jabatan</span>
-                    <h2 id="modalStructureName" class="modal-name">Nama Struktur</h2>
+                    <h2 id="modalStructureName" class="modal-name">Nama Pengurus</h2>
                     <p class="modal-absent">No. Absen: <strong id="modalStructureAbsent">-</strong></p>
-                
                     <a id="modalStructureLink" href="siswa.html" class="btn-information">
                         <span>Informasi Lengkap</span>
                         <i class="fa-solid fa-arrow-right"></i>
@@ -303,7 +302,6 @@
         <div id="detailModal" class="black-overlay" onclick="closeModal('detailModal', event)">
             <div class="modal-content detail-content" onclick="event.stopPropagation()">
                 <button class="close-btn detail-close" onclick="closeModal('detailModal')"><i class="fa-solid fa-xmark"></i></button>
-                
                 <div class="detail-left">
                     <div class="detail-slider">
                         <button class="slider-btn prev" onclick="changeDetailSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
@@ -312,13 +310,11 @@
                         <div class="slider-dots" id="detailSliderDots"></div>
                     </div>
                 </div>
-
                 <div class="detail-right">
                     <div class="detail-info">
                         <h3 id="detailTitle"></h3>
                         <p id="detailDesc"></p>
                     </div>
-                    
                     <div class="comments-section">
                         <h4>Komentar</h4>
                         <div id="commentsList" class="comments-list"></div>
@@ -334,7 +330,7 @@
         <div id="loginPromptModal" class="black-overlay" onclick="closeModal('loginPromptModal', event)">
             <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center; max-width: 350px;">
                 <div class="modal-header">
-                    <h3 style="margin: 0 auto; color: var(--primary-gold);">Login Diperlukan</h3>
+                    <h3 style="margin: 0 auto;">Login Diperlukan</h3>
                     <button class="close-btn" onclick="closeModal('loginPromptModal')" style="position: absolute; right: 15px;"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div style="margin: 15px 0;">
@@ -350,6 +346,6 @@
         <div id="momentGallery" class="moment-grid"></div>
     </section>
 
-    <script type="module" src="js/app.js" defer></script>
+    <script type="module" src="/src/js/app.js"></script>
 </body>
 </html>
