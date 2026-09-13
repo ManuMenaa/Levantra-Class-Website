@@ -22,6 +22,9 @@ const ADMIN_EMAILS = ['sudanamanumain1@gmail.com'];
 // ImgBB API Key
 const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
 
+// Import student data
+import { renderStudents } from './studentData.js';
+
 // Import Firebase & Firebase SDK
 import { app, db, auth } from './firebase-config.js';
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
@@ -44,6 +47,9 @@ function initApp() {
         currentUser = user;
         updateAuthMenu(user);
     });
+    // Render student data
+    renderStudents();
+
     // Load moments
     if (window.loadMoments) {
         window.loadMoments();
@@ -483,6 +489,26 @@ function openStructureModal(name, position, absent, imgUrl, informationLink) {
     modal.classList.add('active');
 }
 
+function openStudentModal(studentOrName, absent) {
+    const modal = document.getElementById('studentModal');
+    if (!modal) return;
+
+    if (typeof studentOrName === 'object' && studentOrName !== null) {
+        const student = studentOrName;
+        document.getElementById('modalStudentAvatar').src = student.avatar || '/img/LevantraLogo.jpg';
+        document.getElementById('modalStudentName').textContent = student.name;
+        document.getElementById('modalStudentNickname').textContent = 'Nama Panggilan: ' + (student.nickname || student.name.split(' ')[0]);
+        document.getElementById('modalStudentAbsentStrong').textContent = student.absent;
+    } else {
+        document.getElementById('modalStudentAvatar').src = '/img/LevantraLogo.jpg';
+        document.getElementById('modalStudentName').textContent = studentOrName;
+        document.getElementById('modalStudentNickname').textContent = 'Nama Panggilan: -';
+        document.getElementById('modalStudentAbsentStrong').textContent = absent || '-';
+    }
+
+    modal.classList.add('active');
+}
+
 function closeModal(modalId, event) {
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.remove('active');
@@ -739,6 +765,7 @@ window.openDetailModal = openDetailModal;
 window.changeDetailSlide = changeDetailSlide;
 window.closeModal = closeModal;
 window.openStructureModal = openStructureModal;
+window.openStudentModal = openStudentModal;
 
 // Comments functions
 window.loadComments = loadComments;

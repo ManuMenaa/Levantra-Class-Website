@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="LEVANTRA Website Settings">
+    <meta name="description" content="LEVANTRA Website Settings digunakan untuk setting website">
     <meta name="keyword" content="LEVANTRA, kelas XI.7, web kelas, siswa, toska, sma negeri 2 kuta selatan, perangkat kelas, kelas XII.7">
     <meta name="author" content="LEVANTRA Class, inimanumenaa">
     <meta name="robots" content="index, follow">
@@ -14,13 +14,13 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://levantraclass.web.app/settings">
     <meta property="og:title" content="Levantra Settings">
-    <meta property="og:description" content="Levantra website settings">
+    <meta property="og:description" content="LEVANTRA Website Settings digunakan untuk setting website">
     <meta property="og:image" content="/img/LevantraLogo.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://levantraclass.web.app/settings">
     <meta property="twitter:title" content="Levantra Settings">
-    <meta property="twitter:description" content="Levantra website settings">
+    <meta property="twitter:description" content="Levantra website settingsLEVANTRA Website Settings digunakan untuk setting website">
     <meta property="twitter:image" content="/img/LevantraLogo.jpg">
 
     <link rel="icon" type="image/jpeg" href="/img/LevantraLogo.jpg">
@@ -28,7 +28,7 @@
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
 
-    <link rel="preload" href="/src/css/app.css" as="style">
+    <link rel="preload" href="/src/css/style.css" as="style">
     <link rel="preload" href="/img/LevantraLogo.jpg" as="image">
 
     <title>Levantra Settings</title>
@@ -49,10 +49,11 @@
             } catch (e) {}
         })();
     </script>
+    <script type="module" src="/src/js/app.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
     <link rel="stylesheet" href="/src/css/all.min.css">
-    <link rel="stylesheet" href="/src/css/app.css">
+    <link rel="stylesheet" href="/src/css/style.css">
 </head>
 <body>
     <div id="toastContainer" class="toast-container"></div>
@@ -65,7 +66,7 @@
         <ul class="nav-links">
             <li><a href="index.html#beranda" onclick="closeMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
             <li><a href="index.html#pengurus" onclick="closeMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
-            <li><a href="index.html#siswa" onclick="closeMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
+            <li><a href="siswa.html" onclick="closeMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
             <li><a href="index.html#jadwal" onclick="closeMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
             <li><a href="index.html#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
             <li><a href="index.html#momen" onclick="closeMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
@@ -95,7 +96,7 @@
         </div>
     </nav>
 
-    <section id="settings" class="section">
+    <section class="section">
         <h2 class="section-title"><i class="fa-solid fa-gear"></i>Pengaturan</h2>
 
         <div class="settings-card">
@@ -149,7 +150,5 @@
             <span>Menerapkan perubahan...</span>
         </div>
     </section>
-
-    <script type="module" src="/src/js/app.js" defer></script>
 </body>
 </html>

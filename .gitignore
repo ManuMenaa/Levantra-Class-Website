@@ -171,4 +171,8 @@ dist
 .history
 .ionide
 
+### Node Windows 7 Fix ###
+node.cmd
+node.txt
+
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,firebase,dotenv,node

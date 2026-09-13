@@ -29,7 +29,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
     <link rel="preconnect" href="https://i.ibb.co/" crossorigin="">
 
-    <link rel="preload" href="/src/css/app.css" as="style">
+    <link rel="preload" href="/src/css/style.css" as="style">
     <link rel="preload" href="/img/LevantraLogo.jpg" as="image">
     <link rel="preload" href="/img/moment1.avif" as="image">
     <link rel="preload" href="/img/moment2.avif" as="image">
@@ -53,10 +53,11 @@
             } catch (e) {}
         })();
     </script>
+    <script type="module" src="/src/js/app.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
     <link rel="stylesheet" href="/src/css/all.min.css">
-    <link rel="stylesheet" href="/src/css/app.css">
+    <link rel="stylesheet" href="/src/css/style.css">
 </head>
 <body>
     <div id="toastContainer" class="toast-container"></div>
@@ -69,7 +70,7 @@
         <ul class="nav-links">
             <li><a href="#beranda" onclick="closeMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
             <li><a href="#pengurus" onclick="closeMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
-            <li><a href="#siswa" onclick="closeMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
+            <li><a href="siswa.html" onclick="closeMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
             <li><a href="#jadwal" onclick="closeMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
             <li><a href="#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
             <li><a href="#momen" onclick="closeMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
@@ -135,9 +136,9 @@
                     </div>
                     <div class="org-nodes-group">
                         <div class="org-branch">
-                            <div class="structure-card" onclick="openStructureModal('Komang Ray Maha Pranatha Jaya', 'Ketua Kelas', '24', '/img/people/ray.avif', 'siswa.html?absen=24')">
+                            <div class="structure-card" onclick="openStructureModal('Komang Ray Maha Pranatha Jaya', 'Ketua Kelas', '24', '/img/people/24. Ray.avif', 'siswa.html')">
                                 <div class="card-avatar">
-                                    <img src="/img/people/ray.avif" alt="Ketua Kelas" width="140" height="140">
+                                    <img src="/img/people/24. Ray.avif" alt="Ketua Kelas" width="140" height="140">
                                 </div>
                                 <div class="card-badge">Ketua Kelas</div>
                                 <div class="card-info">
@@ -151,9 +152,9 @@
                             </div>
                             <div class="org-nodes-row">
                                 <div class="org-branch">
-                                    <div class="structure-card" onclick="openStructureModal('Ni Wayan Kirana Nariswari', 'Sekretaris 1', '37', '/img/people/kirana_nariswari.avif', 'siswa.html?absen=37')">
+                                    <div class="structure-card" onclick="openStructureModal('Ni Wayan Kirana Nariswari', 'Sekretaris 1', '37', '/img/people/37. KiranaNariswari.avif', 'siswa.html')">
                                         <div class="card-avatar">
-                                            <img src="/img/people/kirana_nariswari.avif" alt="Sekretaris 1" width="140" height="140">
+                                            <img src="/img/people/37. KiranaNariswari.avif" alt="Sekretaris 1" width="140" height="140">
                                         </div>
                                         <div class="card-badge">Sekretaris 1</div>
                                         <div class="card-info">
@@ -163,9 +164,9 @@
                                     <div class="org-line-vertical mobile-only"></div>
                                 </div>
                                 <div class="org-branch">
-                                    <div class="structure-card" onclick="openStructureModal('Ni Komang Dinda Febriyanti', 'Bendahara 1', '29', '/img/people/dinda_febriyanti.avif', 'siswa.html?absen=29')">
+                                    <div class="structure-card" onclick="openStructureModal('Ni Komang Dinda Febriyanti', 'Bendahara 1', '29', '/img/people/29. DindaFebriyanti.avif', 'siswa.html')">
                                         <div class="card-avatar">
-                                            <img src="/img/people/dinda_febriyanti.avif" alt="Bendahara 1" width="140" height="140">
+                                            <img src="/img/people/29. DindaFebriyanti.avif" alt="Bendahara 1" width="140" height="140">
                                         </div>
                                         <div class="card-badge">Bendahara 1</div>
                                         <div class="card-info">
@@ -176,9 +177,9 @@
                             </div>
                         </div>
                         <div class="org-branch">
-                            <div class="structure-card" onclick="openStructureModal('I Gede Prhyaterra Pratama Santana', 'Wakil Kelas', '16', '/img/people/prhyaterra.avif', 'siswa.html?absen=16')">
+                            <div class="structure-card" onclick="openStructureModal('I Gede Prhyaterra Pratama Santana', 'Wakil Kelas', '16', '/img/people/16. Terra.avif', 'siswa.html')">
                                 <div class="card-avatar">
-                                    <img src="/img/people/prhyaterra.avif" alt="Wakil Kelas" width="140" height="140">
+                                    <img src="/img/people/16. Terra.avif" alt="Wakil Kelas" width="140" height="140">
                                 </div>
                                 <div class="card-badge">Wakil Kelas</div>
                                 <div class="card-info">
@@ -192,9 +193,9 @@
                             </div>
                             <div class="org-nodes-row">
                                 <div class="org-branch">
-                                    <div class="structure-card" onclick="openStructureModal('Almaira Regina Anindinata', 'Sekretaris 2', '4', '/img/people/almaira.avif', 'siswa.html?absen=4')">
+                                    <div class="structure-card" onclick="openStructureModal('Almaira Regina Anindinata', 'Sekretaris 2', '4', '/img/people/4. Almaira.avif', 'siswa.html')">
                                         <div class="card-avatar">
-                                            <img src="/img/people/almaira.avif" alt="Sekretaris 2" width="140" height="140">
+                                            <img src="/img/people/4. Almaira.avif" alt="Sekretaris 2" width="140" height="140">
                                         </div>
                                         <div class="card-badge">Sekretaris 2</div>
                                         <div class="card-info">
@@ -204,9 +205,9 @@
                                     <div class="org-line-vertical mobile-only"></div>
                                 </div>
                                 <div class="org-branch">
-                                    <div class="structure-card" onclick="openStructureModal('Ni Nyoman Widya Cahyani', 'Bendahara 2', '33', '/img/people/widya.avif', 'siswa.html?absen=33')">
+                                    <div class="structure-card" onclick="openStructureModal('Ni Nyoman Widya Cahyani', 'Bendahara 2', '33', '/img/people/33. Widya.avif', 'siswa.html')">
                                         <div class="card-avatar">
-                                            <img src="/img/people/widya.avif" alt="Bendahara 2" width="140" height="140">
+                                            <img src="/img/people/33. Widya.avif" alt="Bendahara 2" width="140" height="140">
                                         </div>
                                         <div class="card-badge">Bendahara 2</div>
                                         <div class="card-info">
@@ -345,7 +346,5 @@
 
         <div id="momentGallery" class="moment-grid"></div>
     </section>
-
-    <script type="module" src="/src/js/app.js"></script>
 </body>
 </html>
