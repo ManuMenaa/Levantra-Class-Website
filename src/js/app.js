@@ -133,7 +133,7 @@ function loadMoments() {
     }
 
     const momentsRef = ref(db, 'moments');
-    
+
     onValue(momentsRef, (snapshot) => {
         gallery.innerHTML = '';
         const momentsArray = [];
@@ -145,9 +145,24 @@ function loadMoments() {
             });
         });
 
-        momentsArray.reverse().forEach((moment) => {
-            renderMomentToGrid(moment);
-        });
+        if (momentsArray.length === 0) {
+            gallery.innerHTML = `
+                <div class="empty-moment-state">
+                    <div class="empty-icon">
+                        <i class="fa-solid fa-camera-retro"></i>
+                    </div>
+                    <h3>Belum Ada Momen</h3>
+                    <p>Galeri kelas masih kosong. Yuk, jadilah yang pertama membagikan keseruan kelas kita!</p>
+                    <button class="btn-empty-upload" onclick="openUploadModal()">
+                        <i class="fa-solid fa-plus"></i> Tambahkan Momen
+                    </button>
+                </div>
+            `;
+        } else {
+            momentsArray.reverse().forEach((moment) => {
+                renderMomentToGrid(moment);
+            });
+        }
     });
 }
 
@@ -332,14 +347,35 @@ async function deleteMoment(id) {
 function searchMoments() {
     const input = document.getElementById('searchMoment').value.toLowerCase();
     const cards = document.getElementsByClassName('moment-card');
+    let visibleCount = 0;
 
     for (let i = 0; i < cards.length; i++) {
         const title = cards[i].getAttribute('data-title');
         if (title.includes(input)) {
             cards[i].style.display = "";
+            visibleCount++;
         } else {
             cards[i].style.display = "none";
         }
+    }
+
+    let searchEmpty = document.getElementById('searchEmptyState');
+    
+    if (visibleCount === 0 && cards.length > 0) {
+        if (!searchEmpty) {
+            searchEmpty = document.createElement('div');
+            searchEmpty.id = 'searchEmptyState';
+            searchEmpty.className = 'empty-moment-state';
+            searchEmpty.innerHTML = `
+                <div class="empty-icon"><i class="fa-solid fa-magnifying-glass-minus"></i></div>
+                <h3>Tidak Ditemukan</h3>
+                <p>Momen yang Anda cari tidak ada atau belum diunggah.</p>
+            `;
+            document.getElementById('momentGallery').appendChild(searchEmpty);
+        }
+        searchEmpty.style.display = "flex";
+    } else if (searchEmpty) {
+        searchEmpty.style.display = "none";
     }
 }
 

@@ -40,7 +40,10 @@ const STUDENT_DATA = [
 
 export function renderStudents() {
     const grid = document.getElementById('studentGrid');
-    if (!grid) return;
+    if (!grid) {
+        console.log('renderStudents: Students grid element not found');
+        return;
+    }
 
     grid.innerHTML = STUDENT_DATA.map(student => `
         <article class="student-card" tabindex="0" data-student='${JSON.stringify(student)}'>
