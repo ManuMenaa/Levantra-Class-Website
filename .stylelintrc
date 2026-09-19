@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-rational-order"
+  ],
+  "rules": {
+    "order/properties-order": [],
+    "plugin/rational-order": [true, {
+      "border-in-box-model": false,
+      "empty-line-between-groups": false
+    }],
+    "no-descending-specificity": null,
+    "selector-id-pattern": null,
+    "keyframes-name-pattern": null,
+    "selector-class-pattern": null
+  }
+}
