@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta http-equiv="Content-Type" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Halaman pengaturan Levantra Class website yang digunakan untuk merubah tema dan bahasa">
+    <meta name="keyword" content="Levantra, pengurus kelas, siswa, jadwal, kas, momen, kelas XI.7, kelas XII.7, website kelas, toska, sma negeri 2 kuta selatan">
+    <meta name="author" content="Levantra Class, inimanumenaa">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Indonesian, English">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://levantraclass.web.app/pengaturan">
+    <meta property="og:title" content="Pengaturan Levantra">
+    <meta property="og:description" content="Halaman pengaturan Levantra Class website yang digunakan untuk merubah tema dan bahasa">
+    <meta property="og:image" content="/img/LevantraLogo.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://levantraclass.web.app/pengaturan">
+    <meta property="twitter:title" content="Pengaturan Levantra">
+    <meta property="twitter:description" content="Halaman pengaturan Levantra Class website yang digunakan untuk merubah tema dan bahasa">
+    <meta property="twitter:image" content="/img/LevantraLogo.jpg">
+
+    <link rel="icon" type="image/jpeg" href="/img/LevantraLogo.jpg">
+    <link rel="apple-touch-icon" href="/img/LevantraLogo.jpg">
+
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
+
+    <link rel="preload" href="/css/style.css" as="style">
+    <link rel="preload" href="/img/LevantraLogo.jpg" as="image">
+
+    <title>Pengaturan</title>
+
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                var isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var isDark = theme === 'dark' || (theme === 'system' && isSystemDark) || (!theme && isSystemDark);
+                
+                var resolvedTheme = isDark ? 'dark' : 'light';
+                document.documentElement.setAttribute('theme', resolvedTheme);
+                
+                if (isDark) {
+                    document.documentElement.classList.add('dark-mode');
+                }Pen
+            } catch (e) {}
+        })();
+    </script>
+    <script type="module" src="/js/app.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="toastContainer" class="toast-container"></div>
+    <div class="black-overlay" onclick="closeMenu()"></div>
+    <nav>
+        <div class="logo-container">
+            <img src="/img/LevantraLogo.jpg" alt="Logo Levantra" class="logo-img" width="50" height="50">
+            <span class="logo-text">LEVANTRA</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html#beranda" onclick="closeMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
+            <li><a href="index.html#pengurus" onclick="closeMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
+            <li><a href="siswa.html" onclick="closeMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
+            <li><a href="index.html#jadwal" onclick="closeMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
+            <li><a href="index.html#kas" onclick="closeMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
+            <li><a href="index.html#momen" onclick="closeMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div class="account-menu-wrapper">
+                <button id="accountButton" class="account-menu-toggle" onclick="toggleAccountMenu()">
+                    <i id="accountIcon" class="fa-regular fa-circle-user"></i>
+                </button>
+                <div id="accountMenu" class="account-menu">
+                    <a id="loginMenuItem" onclick="login(); closeAccountMenu()">
+                        <i class="fa-solid fa-right-to-bracket"></i>Masuk
+                    </a>
+                    <a href="pengaturan.html">
+                        <i class="fa-solid fa-gear"></i>Pengaturan
+                    </a>
+                    <a id="logoutMenuItem" onclick="logout(); closeAccountMenu()" hidden>
+                        <i class="fa-solid fa-right-from-bracket"></i>Keluar
+                    </a>
+                </div>
+            </div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <h2 class="section-title"><i class="fa-solid fa-gear"></i>Pengaturan</h2>
+
+        <div class="settings-card">
+            <div class="settings-header">
+                <div class="settings-header-title">
+                    <h3>Preferensi</h3>
+                    <span>Sesuaikan tampilan & bahasa</span>
+                </div>
+                <a href="index.html" class="settings-back-btn">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                </a>
+            </div>
+            <div class="settings-container">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <div class="setting-icon"><i class="fa-solid fa-palette"></i></div>
+                        <div class="setting-text">
+                            <label for="themeSelect">Tema Tampilan</label>
+                            <span>Pilih mode terang atau gelap</span>
+                        </div>
+                    </div>
+                    <div class="setting-control">
+                        <select id="themeSelect" class="styled-select">
+                            <option value="system">Sistem Default</option>
+                            <option value="light">Terang</option>
+                            <option value="dark">Gelap</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <div class="setting-icon"><i class="fa-solid fa-language"></i></div>
+                        <div class="setting-text">
+                            <label for="langSelect">Bahasa</label>
+                            <span>Pilih bahasa antarmuka web</span>
+                        </div>
+                    </div>
+                    <div class="setting-control">
+                        <select id="langSelect" class="styled-select">
+                            <option value="id">Indonesia</option>
+                            <option value="en">English</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingOverlay">
+            <span>Menerapkan perubahan...</span>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="/img/LevantraLogo.jpg" alt="Logo Levantra" width="45" height="45">
+                    <span>LEVANTRA</span>
+                </div>
+                <p>Website resmi kelas yang digunakan untuk mendapatkan informasi tentang pengurus, siswa, jadwal, kas, dan momen tak terlupakan.</p>
+                <div class="footer-socials">
+                    <a href="https://www.instagram.com/levantra.tsk/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@levantra.tsk/" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://www.youtube.com/@tsk.levantra" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Tautan Cepat</h3>
+                <ul>
+                    <li><a href="index.html#beranda">Beranda</a></li>
+                    <li><a href="index.html#pengurus">Pengurus Kelas</a></li>
+                    <li><a href="siswa.html">Direktori Siswa</a></li>
+                    <li><a href="index.html#jadwal">Jadwal Pelajaran</a></li>
+                    <li><a href="index.html#momen">Galeri Momen</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Hubungi Kami</h3>
+                <ul class="footer-contact">
+                    <li>
+                        <i class="fa-solid fa-location-dot"></i>
+                        <a href="https://maps.google.com/?q=SMA+Negeri+2+Kuta+Selatan,+Bali" target="_blank" rel="noopener noreferrer">SMA Negeri 2 Kuta Selatan, Bali</a>
+                    <li>
+                        <i class="fa-solid fa-envelope"></i>
+                        <a href="mailto:levantra.tsk@gmail.com">levantra.tsk@gmail.com</a>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Senin - Jumat: 07.30 - 16.00 WITA</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 LEVANTRA Class. All rights reserved. | <a href="kebijakan-privasi.html">Kebijakan Privasi</a></p>
+            <p style="margin-top: 8px;">Dibuat oleh <a href="https://instagram.com/inimanumenaa" target="_blank" style="color: var(--primary-gold); font-weight: 600;">@inimanumenaa</a></p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -23,7 +23,7 @@ const ADMIN_EMAILS = ['sudanamanumain1@gmail.com'];
 const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
 
 // Import student data
-import { renderStudents } from './studentData.js';
+import { renderStudents } from './student-data.js';
 
 // Import Firebase & Firebase SDK
 import { app, db, auth } from './firebase-config.js';
@@ -35,20 +35,23 @@ import { ref, push, update, remove, onValue, serverTimestamp } from 'firebase/da
 // =============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('LEVANTRA App initializing...');
+    console.log('Levantra App initializing...');
     initApp();
 });
 
 function initApp() {
-    console.log('LEVANTRA App initialized')
+    console.log('Levantra App initialized')
 
     // Authentication state listener
     onAuthStateChanged(auth, function(user) {
         currentUser = user;
         updateAuthMenu(user);
     });
+
     // Render student data
-    renderStudents();
+    if (renderStudents) {
+        renderStudents();
+    }
 
     // Load moments
     if (window.loadMoments) {
@@ -128,8 +131,9 @@ function updateAuthMenu(user) {
 function loadMoments() {
     const gallery = document.getElementById('momentGallery');
     if (!gallery || !db) {
-        console.log('loadMoments: Gallery element not found or Firebase not available');
-        return;
+        console.log('loadMoments: Gallery element not found or db not available');
+    } else {
+        console.log('loadMoments: Gallery loaded successful');
     }
 
     const momentsRef = ref(db, 'moments');
@@ -283,7 +287,10 @@ async function saveEditMoment() {
     const fileInput = document.getElementById('editMomentImage');
     const saveBtn = document.getElementById('saveEditBtn');
     
-    if (!title) return showToast('Judul tidak boleh kosong!', 'error');
+    if (!title) {
+        showToast('Judul tidak boleh kosong!', 'error');
+        return;
+    }
 
     saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
     saveBtn.disabled = true;
@@ -383,13 +390,13 @@ function searchMoments() {
 // MODAL Functions
 // =============================================
 
+function openLoginPromptModal() {
+    document.getElementById('loginPromptModal').classList.add('active');
+}
+
 function openUploadModal() {
     if (!currentUser) return openLoginPromptModal();
     document.getElementById('uploadModal').classList.add('active');
-}
-
-function openLoginPromptModal() {
-    document.getElementById('loginPromptModal').classList.add('active');
 }
 
 function openEditModal(id, title, desc) {
@@ -510,7 +517,10 @@ function changeDetailSlide(direction) {
 
 function openStructureModal(name, position, absent, imgUrl, informationLink) {
     const modal = document.getElementById('structureModal');
-    if (!modal) return;
+    if (!modal) {
+        console.log('openStructureModal: Modal element not found');
+        return;
+    }
 
     document.getElementById('modalStructureName').textContent = name;
     document.getElementById('modalStructurePosition').textContent = position;
@@ -527,7 +537,10 @@ function openStructureModal(name, position, absent, imgUrl, informationLink) {
 
 function openStudentModal(studentOrName, absent) {
     const modal = document.getElementById('studentModal');
-    if (!modal) return;
+    if (!modal) {
+        console.log('openStudentModal: Modal element not found');
+        return;
+    }
 
     if (typeof studentOrName === 'object' && studentOrName !== null) {
         const student = studentOrName;
@@ -565,7 +578,7 @@ function loadComments(momentId) {
             commentsList.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.9rem;">Belum ada komentar. Jadilah yang pertama!</p>';
             return;
         }
-
+        
         snapshot.forEach((child) => {
             const comment = child.val();
             const photoUrl = comment.authorPhoto;
@@ -617,7 +630,10 @@ async function postComment() {
 
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
-    if (!container) return;
+    if (!container) {
+        console.log('showToast: Toast container not found');
+        return;
+    }
 
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -637,7 +653,7 @@ function showToast(message, type = 'info') {
 }
 
 // =============================================
-// SLIDER IMPLEMENTATION
+// HERO SLIDER IMPLEMENTATION
 // =============================================
 
 (function initSlider() {
@@ -685,7 +701,7 @@ function showToast(message, type = 'info') {
 })();
 
 // =============================================
-// SETTINGS
+// SETTINGS SYSTEM
 // =============================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -743,23 +759,6 @@ function toggleMenu() {
     if (navLinks) navLinks.classList.toggle('active');
     if (hamburger) hamburger.classList.toggle('active');
     if (blackOverlay) blackOverlay.classList.toggle('active');
-    
-    closeAccountMenu();
-}
-
-function toggleAccountMenu() {
-    const accountToggle = document.querySelector('.account-menu-toggle');
-    const accountMenu = document.querySelector('.account-menu');
-
-    if (accountToggle) accountToggle.classList.toggle('active');
-    if (accountMenu) accountMenu.classList.toggle('active');
-
-    const navLinks = document.querySelector('.nav-links');
-    const hamburger = document.querySelector('.hamburger');
-    const blackOverlay = document.querySelector('.black-overlay');
-    if (navLinks) navLinks.classList.remove('active');
-    if (hamburger) hamburger.classList.remove('active');
-    if (blackOverlay) blackOverlay.classList.remove('active');
 }
 
 function closeMenu() {
@@ -770,18 +769,30 @@ function closeMenu() {
     if (navLinks) navLinks.classList.remove('active');
     if (hamburger) hamburger.classList.remove('active');
     if (blackOverlay) blackOverlay.classList.remove('active');
+
+    closeAccountMenu();
+}
+
+function toggleAccountMenu() {
+    const accountToggle = document.querySelector('.account-menu-toggle');
+    const accountMenu = document.querySelector('.account-menu');
+    const blackOverlay = document.querySelector('.black-overlay');
+    
+    if (accountToggle) accountToggle.classList.toggle('active');
+    if (accountMenu) accountMenu.classList.toggle('active');
+    if (blackOverlay) blackOverlay.classList.toggle('active');
 }
 
 function closeAccountMenu() {
     const accountToggle = document.querySelector('.account-menu-toggle');
     const accountMenu = document.querySelector('.account-menu');
-
+    
     if (accountToggle) accountToggle.classList.remove('active');
     if (accountMenu) accountMenu.classList.remove('active');
 }
 
 // =============================================
-// EXPORT FUNCTIONS TO WINDOW
+// EXPORT FUNCTIONS
 // =============================================
 
 // Authentication functions
