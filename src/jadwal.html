@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta http-equiv="Content-Type" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Halaman jadwal Levantra Class Website yang digunakan untuk mendapatkan informasi jadwal Levantra">
+    <meta name="keyword" content="Levantra, pengurus kelas, siswa, jadwal, kas, momen, kelas XI.7, kelas XII.7, website kelas, toska, sma negeri 2 kuta selatan">
+    <meta name="author" content="Levantra Class, inimanumenaa">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Indonesian, English">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://levantraclass.web.app/jadwal">
+    <meta property="og:title" content="Jadwal">
+    <meta property="og:description" content="Halaman jadwal Levantra Class Website yang digunakan untuk mendapatkan informasi jadwal Levantra">
+    <meta property="og:image" content="/img/LevantraLogo.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://levantraclass.web.app/jadwal">
+    <meta property="twitter:title" content="Jadwal">
+    <meta property="twitter:description" content="Halaman jadwal Levantra Class Website yang digunakan untuk mendapatkan informasi jadwal Levantra">
+    <meta property="twitter:image" content="/img/LevantraLogo.jpg">
+
+    <link rel="icon" type="image/jpeg" href="/img/LevantraLogo.jpg">
+    <link rel="apple-touch-icon" href="/img/LevantraLogo.jpg">
+
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin="">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link rel="preconnect" href="https://www.gstatic.com/" crossorigin="">
+
+    <link rel="preload" href="/css/style.css" as="style">
+    <link rel="preload" href="/img/LevantraLogo.jpg" as="image">
+
+    <title>Jadwal</title>
+
+    <script src="/theme-init.js"></script>
+    <script type="module" src="/js/app.js"></script>
+
+    <link rel="stylesheet" href="/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="toastContainer" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="black-overlay" onclick="closeBlackOverlay()"></div>
+    <nav>
+        <button class="hamburger" type="button" aria-label="Buka menu" aria-controls="site-navigation" aria-expanded="false" onclick="toggleHamburgerMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="logo-container">
+            <img src="/img/LevantraLogo.jpg" alt="Logo Levantra" class="logo-img" width="50" height="50">
+            <span class="logo-text">LEVANTRA</span>
+        </div>
+        <ul class="nav-links" id="site-navigation">
+            <li><a href="index.html#beranda" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-home nav-icon"></i>Beranda</a></li>
+            <li><a href="index.html#pengurus" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
+            <li><a href="siswa.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
+            <li><a href="#jadwal" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
+            <li><a href="kas.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
+            <li><a href="index.html#momen" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
+        </ul>
+        <div class="account-menu-wrapper">
+            <button id="accountButton" class="account-menu-toggle" onclick="toggleAccountMenu()">
+                <i id="accountIcon" class="fa-regular fa-circle-user"></i>
+            </button>
+            <div id="accountMenu" class="account-menu">
+                <a id="loginMenuItem" onclick="login(); toggleAccountMenu()">
+                    <i class="fa-solid fa-right-to-bracket"></i>Masuk
+                </a>
+                <a href="pengaturan.html" onclick="toggleAccountMenu()">
+                    <i class="fa-solid fa-gear"></i>Pengaturan
+                </a>
+                <a id="logoutMenuItem" onclick="logout(); toggleAccountMenu()" hidden>
+                    <i class="fa-solid fa-right-from-bracket"></i>Keluar
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="jadwal" class="section">
+        <h1 class="section-title"><i class="fa-solid fa-calendar-alt"></i>Jadwal Kelas</h1>
+        <div class="page-empty-state" role="status">
+            <h3>Jadwal belum tersedia</h3>
+            <p>Informasi jadwal kelas akan ditampilkan di halaman ini setelah diperbarui.</p>
+        </div>
+        
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="/img/LevantraLogo.jpg" alt="Logo Levantra" width="45" height="45">
+                    <span>LEVANTRA</span>
+                </div>
+                <p>Website resmi kelas yang digunakan untuk mendapatkan informasi tentang pengurus, siswa, jadwal, kas, dan momen tak terlupakan.</p>
+                <div class="footer-socials">
+                    <a href="https://www.instagram.com/levantra.tsk/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@levantra.tsk/" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://www.youtube.com/@tsk.levantra" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Tautan Cepat</h3>
+                <ul>
+                    <li><a href="index.html#beranda">Beranda</a></li>
+                    <li><a href="index.html#pengurus">Pengurus Kelas</a></li>
+                    <li><a href="siswa.html">Direktori Siswa</a></li>
+                    <li><a href="#jadwal">Jadwal Kelas</a></li>
+                    <li><a href="kas.html">Kas Kelas</a></li>
+                    <li><a href="index.html#momen">Galeri Momen</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Hubungi Kami</h3>
+                <ul class="footer-contact">
+                    <li>
+                        <i class="fa-solid fa-location-dot"></i>
+                        <a href="https://maps.google.com/?q=SMA+Negeri+2+Kuta+Selatan,+Bali" target="_blank" rel="noopener noreferrer">SMA Negeri 2 Kuta Selatan, Bali</a>
+                    <li>
+                        <i class="fa-solid fa-envelope"></i>
+                        <a href="mailto:levantra.tsk@gmail.com">levantra.tsk@gmail.com</a>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Senin - Jumat: 07.30 - 16.00 WITA</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 LEVANTRA Class. All rights reserved. | <a href="kebijakan-privasi.html">Kebijakan Privasi</a></p>
+            <p style="margin-top: 8px;">Dibuat oleh <a href="https://instagram.com/inimanumenaa" target="_blank" style="color: var(--primary-gold); font-weight: 600;">@inimanumenaa</a></p>
+        </div>
+    </footer>
+</body>
+</html>

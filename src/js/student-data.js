@@ -1,4 +1,4 @@
-const STUDENT_DATA = [
+export const STUDENT_DATA = [
     { absent: 1, name: 'Alexander Orvin Nathaniel', nickname: 'Orvin', avatar: '/img/people/1. Orvin.avif' },
     { absent: 2, name: 'Alfin Yusuf', nickname: 'Alfin', avatar: '/img/people/2. Alfin.avif' },
     { absent: 3, name: 'Alicia Rhensiana Kusuma', nickname: 'Ecy', avatar: '/img/people/3. Ecy.avif' },
@@ -48,21 +48,15 @@ export function renderStudents() {
     }
 
     grid.innerHTML = STUDENT_DATA.map(student => `
-        <article class="student-card" tabindex="0" data-student='${JSON.stringify(student)}'>
+        <button class="student-card" type="button" data-student='${JSON.stringify(student)}'>
             <img class="student-avatar" src="${student.avatar || '/img/LevantraLogo.jpg'}" alt="${student.name}" />
             <h3>${student.name}</h3>
             <span class="absent-tag">No. ${String(student.absent).padStart(2, '0')}</span>
-        </article>
+        </button>
     `).join('');
 
     grid.querySelectorAll('.student-card').forEach((card) => {
         const student = JSON.parse(card.dataset.student);
         card.addEventListener('click', () => openStudentModal(student));
-        card.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                openStudentModal(student);
-            }
-        });
     });
 }

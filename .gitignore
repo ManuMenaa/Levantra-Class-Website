@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,firebase,dotenv,node
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,firebase,dotenv,node
+# Created by https://www.toptal.com/developers/gitignore/api/firebase,node,dotenv,linux,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=firebase,node,dotenv,linux,visualstudiocode
 
 ### dotenv ###
 .env
@@ -8,10 +8,26 @@
 .idea
 **/node_modules/*
 **/.firebaserc
+**/database.rules.json
 
 ### Firebase Patch ###
 .runtimeconfig.json
 .firebase/
+
+### Linux ###
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
 
 ### Node ###
 # Logs
@@ -171,8 +187,4 @@ dist
 .history
 .ionide
 
-### Node Windows 7 Fix ###
-node.cmd
-node.txt
-
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,firebase,dotenv,node
+# End of https://www.toptal.com/developers/gitignore/api/firebase,node,dotenv,linux,visualstudiocode

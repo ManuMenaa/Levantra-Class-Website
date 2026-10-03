@@ -4,6 +4,7 @@
  * - Firebase Authentication & Database
  * - CRUD Moments Gallery (Integrated with ImgBB & RTDB)
  * - Comments System (Using RTDB)
+ * - Class Cash System (Integrated with Google Sheets)
  */
 
 // =============================================
@@ -15,9 +16,11 @@ let currentUser = null;
 let currentDetailImages = [];
 let currentDetailImageIndex = 0;
 let currentDetailMomentId = null;
+let activeModal = null;
+let modalTrigger = null;
 
 // Admin email
-const ADMIN_EMAILS = ['sudanamanumain1@gmail.com'];
+const ADMIN_EMAILS = ['sudanamanumain1@gmail.com', 'levantra.tsk@gmail.com'];
 
 // ImgBB API Key
 const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
@@ -387,16 +390,16 @@ function searchMoments() {
 }
 
 // =============================================
-// MODAL Functions
+// MODAL SYSTEM Functions
 // =============================================
-
-function openLoginPromptModal() {
-    document.getElementById('loginPromptModal').classList.add('active');
-}
 
 function openUploadModal() {
     if (!currentUser) return openLoginPromptModal();
-    document.getElementById('uploadModal').classList.add('active');
+    openModal(document.getElementById('uploadModal'));
+}
+
+function openLoginPromptModal() {
+    openModal(document.getElementById('loginPromptModal'));
 }
 
 function openEditModal(id, title, desc) {
@@ -404,13 +407,12 @@ function openEditModal(id, title, desc) {
     document.getElementById('editMomentTitle').value = title;
     document.getElementById('editMomentDesc').value = desc !== 'undefined' ? desc : '';
     
-    const modal = document.getElementById('editModal');
-    modal.classList.add('active');
+    openModal(document.getElementById('editModal'));
 }
 
 function openDetailModal(moment) {
     try {
-        document.getElementById('detailModal').classList.add('active');
+        openModal(document.getElementById('detailModal'));
         
         document.getElementById('detailTitle').textContent = moment.title;
         document.getElementById('detailDesc').textContent = moment.description;
@@ -532,7 +534,7 @@ function openStructureModal(name, position, absent, imgUrl, informationLink) {
         linkBtn.href = informationLink || 'siswa.html';
     }
 
-    modal.classList.add('active');
+    openModal(modal);
 }
 
 function openStudentModal(studentOrName, absent) {
@@ -555,13 +557,60 @@ function openStudentModal(studentOrName, absent) {
         document.getElementById('modalStudentAbsentStrong').textContent = absent || '-';
     }
 
+    openModal(modal);
+}
+
+function openModal(modal) {
+    if (!modal) return;
+    activeModal = modal;
+    modalTrigger = document.activeElement;
     modal.classList.add('active');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-hidden', 'false');
+    const focusTarget = [...modal.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])')]
+        .find((element) => element.getClientRects().length > 0) || modal;
+    focusTarget.focus();
 }
 
 function closeModal(modalId, event) {
     const modal = document.getElementById(modalId);
-    if (modal) modal.classList.remove('active');
+    if (!modal || (event && event.target !== modal)) return;
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    if (activeModal === modal) {
+        activeModal = null;
+        if (modalTrigger instanceof HTMLElement) modalTrigger.focus();
+        modalTrigger = null;
+    }
 }
+
+document.addEventListener('keydown', (event) => {
+    if (!activeModal) return;
+    if (event.key === 'Escape') {
+        closeModal(activeModal.id);
+        return;
+    }
+    if (event.key !== 'Tab') return;
+
+    const focusable = [...activeModal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+        .filter((element) => element.getClientRects().length > 0);
+    if (focusable.length === 0) {
+        event.preventDefault();
+        activeModal.focus();
+        return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+    }
+});
 
 // =============================================
 // COMMENTS (RTDB)
@@ -649,7 +698,7 @@ function showToast(message, type = 'info') {
         toast.classList.remove('show');
         toast.classList.add('hide');
         setTimeout(() => toast.remove(), 300);
-    }, 2500);
+    }, 5000);
 }
 
 // =============================================
@@ -697,8 +746,16 @@ function showToast(message, type = 'info') {
     });
 
     updateSlider();
-    resetInterval();
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) resetInterval();
 })();
+
+document.addEventListener('keydown', (event) => {
+    const card = event.target.closest('.structure-card[role="button"]');
+    if (card && (event.key === 'Enter' || event.key === ' ')) {
+        event.preventDefault();
+        card.click();
+    }
+});
 
 // =============================================
 // SETTINGS SYSTEM
@@ -706,8 +763,6 @@ function showToast(message, type = 'info') {
 
 document.addEventListener('DOMContentLoaded', () => {
     const themeSelect = document.getElementById('themeSelect');
-    const langSelect = document.getElementById('langSelect');
-    const overlay = document.getElementById('loadingOverlay');
 
     const applyTheme = (theme) => {
         const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -737,59 +792,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    if (langSelect) {
-        langSelect.value = localStorage.getItem('lang') || 'id';
-        langSelect.addEventListener('change', (e) => {
-            localStorage.setItem('lang', e.target.value);
-            if (overlay) overlay.classList.add('show');
-            setTimeout(() => window.location.reload(), 600);
-        });
-    }
 });
 
 // =============================================
 // GLOBAL MENU
 // =============================================
 
-function toggleMenu() {
-    const navLinks = document.querySelector('.nav-links');
-    const hamburger = document.querySelector('.hamburger');
-    const blackOverlay = document.querySelector('.black-overlay');
+function toggleHamburgerMenu() {
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
 
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (hamburger) {
+        const isOpen = hamburger.classList.toggle('active');
+        hamburger.setAttribute('aria-expanded', String(isOpen));
+        hamburger.setAttribute('aria-label', isOpen ? 'Tutup menu' : 'Buka menu');
+    }
     if (navLinks) navLinks.classList.toggle('active');
-    if (hamburger) hamburger.classList.toggle('active');
-    if (blackOverlay) blackOverlay.classList.toggle('active');
+
+    toggleBlackOverlay();
 }
 
-function closeMenu() {
-    const navLinks = document.querySelector('.nav-links');
+function closeHamburgerMenu() {
     const hamburger = document.querySelector('.hamburger');
-    const blackOverlay = document.querySelector('.black-overlay');
+    const navLinks = document.querySelector('.nav-links');
 
+    if (hamburger) {
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Buka menu');
+    }
     if (navLinks) navLinks.classList.remove('active');
-    if (hamburger) hamburger.classList.remove('active');
-    if (blackOverlay) blackOverlay.classList.remove('active');
-
-    closeAccountMenu();
 }
 
 function toggleAccountMenu() {
-    const accountToggle = document.querySelector('.account-menu-toggle');
     const accountMenu = document.querySelector('.account-menu');
-    const blackOverlay = document.querySelector('.black-overlay');
-    
-    if (accountToggle) accountToggle.classList.toggle('active');
+
     if (accountMenu) accountMenu.classList.toggle('active');
-    if (blackOverlay) blackOverlay.classList.toggle('active');
+
+    toggleBlackOverlay();
 }
 
 function closeAccountMenu() {
-    const accountToggle = document.querySelector('.account-menu-toggle');
     const accountMenu = document.querySelector('.account-menu');
-    
-    if (accountToggle) accountToggle.classList.remove('active');
+
     if (accountMenu) accountMenu.classList.remove('active');
 }
+
+function toggleBlackOverlay() {
+    const blackOverlay = document.querySelector('.black-overlay');
+
+    if (blackOverlay) blackOverlay.classList.toggle('active');
+}
+
+function closeBlackOverlay() {
+    const blackOverlay = document.querySelector('.black-overlay');
+
+    if (blackOverlay) blackOverlay.classList.remove('active');
+
+    closeHamburgerMenu();
+    closeAccountMenu();
+    if (activeModal) closeModal(activeModal.id);
+}
+
 
 // =============================================
 // EXPORT FUNCTIONS
@@ -805,6 +871,11 @@ window.uploadMoment = uploadMoment;
 window.saveEditMoment = saveEditMoment;
 window.deleteMoment = deleteMoment;
 
+// Comments functions
+window.loadComments = loadComments;
+window.searchMoments = searchMoments;
+window.postComment = postComment;
+
 // Modal functions
 window.openUploadModal = openUploadModal;
 window.openEditModal = openEditModal;
@@ -814,13 +885,10 @@ window.closeModal = closeModal;
 window.openStructureModal = openStructureModal;
 window.openStudentModal = openStudentModal;
 
-// Comments functions
-window.loadComments = loadComments;
-window.searchMoments = searchMoments;
-window.postComment = postComment;
-
 // Global menu functions
-window.toggleMenu = toggleMenu;
-window.closeMenu = closeMenu;
+window.toggleHamburgerMenu = toggleHamburgerMenu;
+window.closeHamburgerMenu = closeHamburgerMenu;
 window.toggleAccountMenu = toggleAccountMenu;
 window.closeAccountMenu = closeAccountMenu;
+window.toggleBlackOverlay = toggleBlackOverlay;
+window.closeBlackOverlay = closeBlackOverlay;
