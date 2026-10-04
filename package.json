@@ -1,23 +1,38 @@
 {
   "name": "levantra-class-website",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Levantra Class Website Package Module",
+  "keyword": [
+    "classroom",
+    "structure",
+    "student",
+    "schedule",
+    "cash",
+    "moment",
+    "privacy",
+    "settings"
+  ],
+  "homepage": "https://levantraclass.web.app",
+  "repository": "https://github.com/ManuMenaa/Levanta-Class-Website",
+  "license": "MIT",
+  "author": "ManuMenaa",
   "type": "module",
   "scripts": {
-    "dev": "node --max-old-space-size=200 ./node_modules/vite/bin/vite.js",
+    "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview"
-  },
-  "devDependencies": {
-    "stylelint": "^15.11.0",
-    "stylelint-config-rational-order": "^0.1.2",
-    "stylelint-config-standard": "^29.0.0",
-    "stylelint-order": "^6.0.4",
-    "vite": "^8.3.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.3.1",
     "firebase": "^12.19.0"
+  },
+  "devDependencies": {
+    "stylelint": "^17.16.0",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-config-recommended": "^18.0.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-order": "^8.1.1",
+    "vite": "^8.3.2"
   },
   "allowScripts": {
     "@firebase/util@1.15.3": true,

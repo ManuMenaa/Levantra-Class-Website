@@ -8,7 +8,6 @@
 .idea
 **/node_modules/*
 **/.firebaserc
-**/database.rules.json
 
 ### Firebase Patch ###
 .runtimeconfig.json
