@@ -107,7 +107,76 @@
                 <tfoot id="cashTableFoot"></tfoot>
             </table>
         </div>
+
+        <div class="expense-section" id="expenseSection">
+            <div class="expense-header">
+                <h2 class="section-title"><i class="fa-solid fa-file-invoice-dollar"></i>Pengeluaran Kas</h2>
+                <button id="addExpenseBtn" class="btn-add-expense" type="button" hidden>
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Tambah Pengeluaran</span>
+                </button>
+            </div>
+
+            <div class="cash-summary-cards">
+                <div class="summary-card">
+                    <h3>Total Pemasukan</h3>
+                    <p id="summaryIncome">Rp 0</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Pengeluaran</h3>
+                    <p id="summarySpending" class="text-danger">Rp 0</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Sisa Kas Saat Ini</h3>
+                    <p id="summaryCashBalance">Rp 0</p>
+                </div>
+            </div>
+
+            <div class="cash-table-scroll" tabindex="0" aria-label="Tabel pengeluaran kas">
+                <table class="cash-table expense-table">
+                    <thead>
+                        <tr>
+                            <th style="min-width: 120px;">Tanggal</th>
+                            <th style="text-align: left; width: 100%;">Nama Pengeluaran</th>
+                            <th style="min-width: 150px;">Jumlah (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenseTableBody">
+                        <tr><td colspan="3" style="text-align: center;">Memuat data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </section>
+
+    <div id="expenseModal" class="black-overlay" aria-hidden="true" tabindex="-1" onclick="closeModal('expenseModal', event)">
+        <div class="modal-content expense-modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-file-invoice-dollar modal-header-icon"></i>Tambah Pengeluaran</h3>
+                <button type="button" class="close-btn" onclick="closeModal('expenseModal')" aria-label="Tutup modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="expenseForm" class="expense-form">
+                <div class="form-group">
+                    <label for="expenseDate">Tanggal</label>
+                    <input type="date" id="expenseDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseDesc">Nama Pengeluaran</label>
+                    <input type="text" id="expenseDesc" required placeholder="Contoh: Beli spidol kelas" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="expenseAmount">Jumlah Uang (Rp)</label>
+                    <input type="number" id="expenseAmount" required min="100" step="100" placeholder="Contoh: 15000">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="closeExpenseModal" class="btn-cancel" onclick="closeModal('expenseModal')">Batal</button>
+                    <button type="submit" class="modal-action-btn" id="saveExpenseBtn">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="footer-container">

@@ -26,6 +26,16 @@ const monthSelect = document.getElementById('cashMonth');
 const status = document.getElementById('cashStatus');
 const access = document.getElementById('cashAccess');
 const tokenButton = document.getElementById('cashGoogleConnect');
+const addExpenseBtn = document.getElementById('addExpenseBtn');
+const expenseModal = document.getElementById('expenseModal');
+const closeExpenseModal = document.getElementById('closeExpenseModal');
+const expenseForm = document.getElementById('expenseForm');
+const expenseTableBody = document.getElementById('expenseTableBody');
+const summaryIncome = document.getElementById('summaryIncome');
+const summarySpending = document.getElementById('summarySpending');
+const summaryCashBalance = document.getElementById('summaryCashBalance');
+let expenses = [];
+let totalExpense = 0;
 let allPeriods = [];
 let selectedMonth;
 let records = new Map();
@@ -89,6 +99,27 @@ function render() {
     access.textContent = canEdit ? `Admin: ${auth.currentUser.email}` : 'Hanya lihat';
     access.dataset.editable = String(canEdit);
     tokenButton.hidden = !canEdit;
+    if (addExpenseBtn) addExpenseBtn.hidden = !canEdit;
+
+    // Update Summaries
+    if (summaryIncome) summaryIncome.textContent = totalLabel;
+    if (summarySpending) summarySpending.textContent = formatRupiah(totalExpense);
+    if (summaryCashBalance) summaryCashBalance.textContent = allTimeTotal === null ? 'Memuat...' : formatRupiah(allTimeTotal - totalExpense);
+
+    // Render Expenses
+    if (expenseTableBody) {
+        if (expenses.length === 0) {
+            expenseTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Belum ada pengeluaran</td></tr>';
+        } else {
+            expenseTableBody.innerHTML = expenses.map(exp => 
+                `<tr>
+                    <td>${exp.date}</td>
+                    <td style="text-align: left;">${exp.desc}</td>
+                    <td>${formatRupiah(exp.amount)}</td>
+                </tr>`
+            ).join('');
+        }
+    }
 }
 
 function fetchPublicSheet(monthPeriods, month) {
@@ -147,6 +178,14 @@ async function loadSheet(showLoading = true) {
         allTimeTotal = calculatePaidTotal(monthRows, periodsByMonth, STUDENT_DATA.map(student => student.absent), FEE);
         missingMonths = missing;
         records = nextRecords;
+        
+        try {
+            expenses = await fetchExpenses();
+            totalExpense = expenses.reduce((sum, item) => sum + item.amount, 0);
+        } catch (e) {
+            console.error("Gagal memuat pengeluaran:", e);
+        }
+
         render();
         setStatus(missing.length
             ? `Data tersinkron sebagian; tab belum tersedia: ${missing.map(monthSheetName).join(', ')}`
@@ -160,6 +199,152 @@ async function loadSheet(showLoading = true) {
             loadSheet(false);
         }
     }
+}
+
+
+// =============================================
+// EXPENSE SYSTEM
+// =============================================
+
+async function fetchExpenses() {
+    if (!SHEET_ID) return [];
+    const sheetName = 'Pengeluaran';
+    return new Promise((resolve, reject) => {
+        const callback = `expenseSheet_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const script = document.createElement('script');
+        const timeout = setTimeout(() => finish(new Error('Waktu membaca Pengeluaran habis.')), 15000);
+        function finish(error, data) {
+            clearTimeout(timeout);
+            delete window[callback];
+            script.remove();
+            error ? reject(error) : resolve(data);
+        }
+        window[callback] = response => {
+            if (!response.table) {
+                // If sheet doesn't exist, just resolve with empty
+                return finish(null, []);
+            }
+            const data = response.table.rows.map(row => {
+                const c = row.c || [];
+                return {
+                    date: c[0]?.f || c[0]?.v || '',
+                    desc: c[1]?.v || '',
+                    amount: Number(c[2]?.v) || 0
+                };
+            });
+            finish(null, data);
+        };
+        script.onerror = () => finish(null, []); // Silent fail if doesn't exist yet
+        script.src = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&range=A2:C&headers=0&tqx=${encodeURIComponent(`out:json;responseHandler:${callback}`)}&cache=${Date.now()}`;
+        document.head.append(script);
+    });
+}
+
+async function ensureExpenseSheet() {
+    const spreadsheetUrl = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(SHEET_ID)}`;
+    const metadataResponse = await fetch(`${spreadsheetUrl}?fields=sheets.properties(sheetId,title)`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    if (!metadataResponse.ok) throw new Error('Gagal memeriksa Google Sheet.');
+    const spreadsheet = await metadataResponse.json();
+    let sheet = spreadsheet.sheets?.find(item => item.properties.title === 'Pengeluaran');
+    
+    if (!sheet) {
+        const createResponse = await fetch(`${spreadsheetUrl}:batchUpdate`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ requests: [{ addSheet: { properties: { title: 'Pengeluaran', gridProperties: { columnCount: 3 } } } }] })
+        });
+        if (!createResponse.ok) throw new Error('Gagal membuat tab Pengeluaran.');
+        
+        const values = [['Tanggal', 'Keterangan', 'Jumlah']];
+        const initRange = encodeURIComponent("'Pengeluaran'!A1:C1");
+        const initResponse = await fetch(`${spreadsheetUrl}/values/${initRange}?valueInputOption=RAW`, {
+            method: 'PUT',
+            headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ values })
+        });
+        if (!initResponse.ok) throw new Error('Gagal menginisialisasi tab Pengeluaran.');
+    }
+}
+
+async function writeExpense(date, desc, amount) {
+    if (!accessToken) await connectGoogleSheets();
+    await ensureExpenseSheet();
+    
+    const range = encodeURIComponent("'Pengeluaran'!A:C");
+    const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(SHEET_ID)}/values/${range}:append?valueInputOption=USER_ENTERED`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [[date, desc, amount]] })
+    });
+    
+    if (response.status === 401) accessToken = '';
+    if (!response.ok) throw new Error('Gagal menyimpan pengeluaran ke Google Sheets.');
+    
+    expenses.push({ date, desc, amount });
+    totalExpense += amount;
+    render();
+    setStatus('Pengeluaran berhasil ditambahkan.', 'success');
+}
+
+// Modal Listeners
+function showExpenseModal() {
+    if (expenseForm) expenseForm.reset();
+    const dateInput = document.getElementById('expenseDate');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+    }
+    if (typeof window.openModal === 'function') {
+        window.openModal(expenseModal);
+    } else {
+        expenseModal?.classList.add('active');
+        expenseModal?.setAttribute('aria-hidden', 'false');
+    }
+}
+
+function hideExpenseModal() {
+    if (typeof window.closeModal === 'function') {
+        window.closeModal('expenseModal');
+    } else {
+        expenseModal?.classList.remove('active');
+        expenseModal?.setAttribute('aria-hidden', 'true');
+    }
+}
+
+if (addExpenseBtn) {
+    addExpenseBtn.addEventListener('click', showExpenseModal);
+}
+if (closeExpenseModal) {
+    closeExpenseModal.addEventListener('click', hideExpenseModal);
+}
+if (expenseForm) {
+    expenseForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const date = document.getElementById('expenseDate').value;
+        const desc = document.getElementById('expenseDesc').value;
+        const amount = Number(document.getElementById('expenseAmount').value);
+        
+        const submitBtn = document.getElementById('saveExpenseBtn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Menyimpan...';
+        }
+        
+        try {
+            await writeExpense(date, desc, amount);
+            hideExpenseModal();
+        } catch (error) {
+            setStatus(`Gagal: ${error.message}`, 'error');
+            alert(error.message);
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Simpan';
+            }
+        }
+    });
 }
 
 function setStatus(message, state) {

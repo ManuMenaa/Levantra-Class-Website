@@ -877,6 +877,7 @@ window.searchMoments = searchMoments;
 window.postComment = postComment;
 
 // Modal functions
+window.openModal = openModal;
 window.openUploadModal = openUploadModal;
 window.openEditModal = openEditModal;
 window.openDetailModal = openDetailModal;
