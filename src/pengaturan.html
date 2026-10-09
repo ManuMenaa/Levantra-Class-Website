@@ -44,7 +44,7 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div id="toastContainer" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="toast-container" id="toastContainer" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="black-overlay" onclick="closeBlackOverlay()"></div>
     <nav>
         <button class="hamburger" type="button" aria-label="Buka menu" aria-controls="site-navigation" aria-expanded="false" onclick="toggleHamburgerMenu()">
@@ -53,7 +53,7 @@
             <span></span>
         </button>
         <div class="logo-container">
-            <img src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" class="logo-img" width="50" height="50">
+            <img class="logo-img" src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" width="50" height="50">
             <span class="logo-text">LEVANTRA</span>
         </div>
         <ul class="nav-links" id="site-navigation">
@@ -61,14 +61,22 @@
             <li><a href="index.html#pengurus" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
             <li><a href="siswa.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
             <li><a href="jadwal.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
-            <li><a href="kas.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
+            <li class="cash-nav-dropdown">
+                <button class="cash-nav-toggle" type="button" aria-controls="cash-nav-menu" aria-expanded="false" onclick="toggleCashMenu()">
+                    <i class="fa-solid fa-money-check-alt nav-icon"></i>Kas<i class="fa-solid fa-chevron-down cash-nav-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="cash-nav-menu" id="cash-nav-menu">
+                    <a href="kas.html#pemasukan" onclick="closeCashMenu(); toggleHamburgerMenu()">Pemasukan</a>
+                    <a href="kas.html#pengeluaran" onclick="closeCashMenu(); toggleHamburgerMenu()">Pengeluaran</a>
+                </div>
+            </li>
             <li><a href="index.html#momen" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
         </ul>
         <div class="account-menu-wrapper">
-            <button id="accountButton" class="account-menu-toggle" onclick="toggleAccountMenu()">
-                <i id="accountIcon" class="fa-regular fa-circle-user"></i>
+            <button class="account-menu-toggle" id="accountButton" onclick="toggleAccountMenu()">
+                <i class="fa-regular fa-circle-user" id="accountIcon"></i>
             </button>
-            <div id="accountMenu" class="account-menu">
+            <div class="account-menu" id="accountMenu">
                 <a id="loginMenuItem" onclick="login(); toggleAccountMenu()">
                     <i class="fa-solid fa-right-to-bracket"></i>Masuk
                 </a>
@@ -82,7 +90,7 @@
         </div>
     </nav>
 
-    <section id="pengaturan" class="section">
+    <section class="section" id="pengaturan">
         <h1 class="section-title"><i class="fa-solid fa-gear"></i>Pengaturan</h1>
 
         <div class="settings-card">
@@ -105,7 +113,7 @@
                         </div>
                     </div>
                     <div class="setting-control">
-                        <select id="themeSelect" class="styled-select">
+                        <select class="styled-select" id="themeSelect">
                             <option value="system">Sistem Default</option>
                             <option value="light">Terang</option>
                             <option value="dark">Gelap</option>

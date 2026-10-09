@@ -5,22 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Halaman error 404 Levantra Class website">
-    <meta name="keyword" content="Levantra, pengurus kelas, siswa, jadwal, kas, momen, kelas XI.7, kelas XII.7, website kelas, toska, sma negeri 2 kuta selatan">
+    <meta name="description" content="Error 404 - Halaman tidak ditemukan">
     <meta name="author" content="Levantra Class, inimanumenaa">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="noindex, follow">
     <meta name="language" content="Indonesian, English">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://levantraclass.web.app/404">
     <meta property="og:title" content="404">
-    <meta property="og:description" content="Halaman error 404 Levantra Class website">
+    <meta property="og:description" content="Error 404 - Halaman tidak ditemukan">
     <meta property="og:image" content="/img/misc/LevantraLogo.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://levantraclass.web.app/404">
     <meta property="twitter:title" content="404">
-    <meta property="twitter:description" content="Halaman error 404 Levantra Class website">
+    <meta property="twitter:description" content="Error 404 - Halaman tidak ditemukan">
     <meta property="twitter:image" content="/img/misc/LevantraLogo.jpg">
 
     <link rel="icon" type="image/jpeg" href="/img/misc/LevantraLogo.jpg">
@@ -44,7 +43,7 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div id="toastContainer" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="toast-container" id="toastContainer" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="black-overlay" onclick="closeBlackOverlay()"></div>
     <nav>
         <button class="hamburger" type="button" aria-label="Buka menu" aria-controls="site-navigation" aria-expanded="false" onclick="toggleHamburgerMenu()">
@@ -53,7 +52,7 @@
             <span></span>
         </button>
         <div class="logo-container">
-            <img src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" class="logo-img" width="50" height="50">
+            <img class="logo-img" src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" width="50" height="50">
             <span class="logo-text">LEVANTRA</span>
         </div>
         <ul class="nav-links" id="site-navigation">
@@ -61,14 +60,22 @@
             <li><a href="index.html#pengurus" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
             <li><a href="siswa.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
             <li><a href="jadwal.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
-            <li><a href="kas.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
+            <li class="cash-nav-dropdown">
+                <button class="cash-nav-toggle" type="button" aria-controls="cash-nav-menu" aria-expanded="false" onclick="toggleCashMenu()">
+                    <i class="fa-solid fa-money-check-alt nav-icon"></i>Kas<i class="fa-solid fa-chevron-down cash-nav-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="cash-nav-menu" id="cash-nav-menu">
+                    <a href="kas.html#pemasukan" onclick="closeCashMenu(); toggleHamburgerMenu()">Pemasukan</a>
+                    <a href="kas.html#pengeluaran" onclick="closeCashMenu(); toggleHamburgerMenu()">Pengeluaran</a>
+                </div>
+            </li>
             <li><a href="index.html#momen" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
         </ul>
         <div class="account-menu-wrapper">
-            <button id="accountButton" class="account-menu-toggle" onclick="toggleAccountMenu();">
-                <i id="accountIcon" class="fa-regular fa-circle-user"></i>
+            <button class="account-menu-toggle" id="accountButton" onclick="toggleAccountMenu();">
+                <i class="fa-regular fa-circle-user" id="accountIcon"></i>
             </button>
-            <div id="accountMenu" class="account-menu">
+            <div class="account-menu" id="accountMenu">
                 <a id="loginMenuItem" onclick="login(); toggleAccountMenu()">
                     <i class="fa-solid fa-right-to-bracket"></i>Masuk
                 </a>
@@ -82,14 +89,14 @@
         </div>
     </nav>
 
-    <section id="404" class="section">
+    <section class="section" id="404">
         <div class="error-container">
             <h1 class="error-code">404</h1>
             <h2 class="error-title">Oops! Halaman Tidak Ditemukan</h2>
             <p class="error-desc">Maaf, halaman yang kamu cari mungkin telah dihapus, namanya diubah, atau memang tidak pernah ada. Mari kembali ke halaman utama.</p>
           
             <a href="index.html" class="btn-student-modern">
-                <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+                <i class="fa-solid fa-arrow-left"></i>Kembali ke Beranda
             </a>
         </div>
     </section>

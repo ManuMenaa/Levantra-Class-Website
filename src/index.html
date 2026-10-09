@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="description" content="Website resmi Levantra Class yang digunakan untuk mendapatkan informasi tentang pengurus, siswa, jadwal, kas dan juga momen selama di Levantra">
-    <meta name="keyword" content="Levantra, pengurus kelas, siswa, jadwal, kas, momen, kelas XI.7, kelas XII.7, website kelas, toska, sma negeri 2 kuta selatan">
+    <meta name="keyword" content="Levantra, pengurus, siswa, jadwal, kas, momen, kelas XI.7, kelas XII.7, website kelas, toska, sma negeri 2 kuta selatan">
     <meta name="author" content="Levantra Class, inimanumenaa">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian, English">
@@ -30,7 +30,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
     <link rel="preconnect" href="https://www.gstatic.com/" crossorigin="">
-    <link rel="preconnect" href="https://i.ibb.co/" crossorigin="">
+    <link rel="preconnect" href="https://i.ibb.co.com/" crossorigin="">
 
     <link rel="preload" href="/css/style.css" as="style">
     <link rel="preload" href="/img/misc/LevantraLogo.jpg" as="image">
@@ -48,7 +48,7 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div id="toastContainer" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="toast-container" id="toastContainer" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="black-overlay" onclick="closeBlackOverlay()"></div>
     <nav>
         <button class="hamburger" type="button" aria-label="Buka menu" aria-controls="site-navigation" aria-expanded="false" onclick="toggleHamburgerMenu()">
@@ -57,7 +57,7 @@
             <span></span>
         </button>
         <div class="logo-container">
-            <img src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" class="logo-img" width="50" height="50">
+            <img class="logo-img" src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" width="50" height="50">
             <span class="logo-text">LEVANTRA</span>
         </div>
         <ul class="nav-links" id="site-navigation">
@@ -65,14 +65,22 @@
             <li><a href="#pengurus" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
             <li><a href="siswa.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
             <li><a href="jadwal.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
-            <li><a href="kas.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
+            <li class="cash-nav-dropdown">
+                <button class="cash-nav-toggle" type="button" aria-controls="cash-nav-menu" aria-expanded="false" onclick="toggleCashMenu()">
+                    <i class="fa-solid fa-money-check-alt nav-icon"></i>Kas<i class="fa-solid fa-chevron-down cash-nav-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="cash-nav-menu" id="cash-nav-menu">
+                    <a href="kas.html#pemasukan" onclick="closeCashMenu(); toggleHamburgerMenu()">Pemasukan</a>
+                    <a href="kas.html#pengeluaran" onclick="closeCashMenu(); toggleHamburgerMenu()">Pengeluaran</a>
+                </div>
+            </li>
             <li><a href="#momen" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
         </ul>
         <div class="account-menu-wrapper">
-            <button id="accountButton" class="account-menu-toggle" onclick="toggleAccountMenu();">
-                <i id="accountIcon" class="fa-regular fa-circle-user"></i>
+            <button class="account-menu-toggle" id="accountButton" onclick="toggleAccountMenu();">
+                <i class="fa-regular fa-circle-user" id="accountIcon"></i>
             </button>
-            <div id="accountMenu" class="account-menu">
+            <div class="account-menu" id="accountMenu">
                 <a id="loginMenuItem" onclick="login(); toggleAccountMenu()">
                     <i class="fa-solid fa-right-to-bracket"></i>Masuk
                 </a>
@@ -86,7 +94,7 @@
         </div>
     </nav>
 
-    <section id="beranda" class="hero">
+    <section class="hero" id="beranda">
         <div class="hero-content">
             <h1>LEARN VISION TRIUMPH</h1>
             <p>Membangun Generasi Tangguh untuk Masa Depan Gemilang</p>
@@ -98,7 +106,7 @@
         </div>
     </section>
 
-    <section id="pengurus" class="section">
+    <section class="section" id="pengurus">
         <h2 class="section-title"><i class="fa-solid fa-sitemap"></i>Pengurus Kelas</h2>
 
         <div class="org-chart-wrapper">
@@ -208,7 +216,7 @@
             </div>
         </div>
         
-        <div id="structureModal" class="black-overlay" aria-hidden="true" tabindex="-1" onclick="closeModal('structureModal', event)">
+        <div class="black-overlay" id="structureModal" aria-hidden="true" tabindex="-1" onclick="closeModal('structureModal', event)">
             <div class="modal-content structure-modal-card" onclick="event.stopPropagation()">
                 <div class="modal-header">
                     <h3 style="margin: 0 auto;">Detail Pengurus Kelas</h3>
@@ -218,12 +226,12 @@
                 </div>
                 <div class="structure-modal-body">
                     <div class="modal-avatar-wrapper">
-                        <img id="modalStructureImg" src="" alt="Foto Pengurus" class="modal-avatar">
+                        <img class="modal-avatar" id="modalStructureImg" src="" alt="Foto Pengurus">
                     </div>
-                    <span id="modalStructurePosition" class="modal-badge">Jabatan</span>
-                    <h2 id="modalStructureName" class="modal-name">Nama Pengurus</h2>
+                    <span class="modal-badge" id="modalStructurePosition">Jabatan</span>
+                    <h2 class="modal-name" id="modalStructureName">Nama Pengurus</h2>
                     <p class="modal-absent">No. Absen: <strong id="modalStructureAbsent">-</strong></p>
-                    <a id="modalStructureLink" href="siswa.html" class="btn-information">
+                    <a class="btn-information" id="modalStructureLink" href="siswa.html">
                         <span>Informasi Lengkap</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
@@ -232,7 +240,7 @@
         </div>
     </section>
 
-    <section id="siswa" class="section">
+    <section class="section" id="siswa">
         <h2 class="section-title"><i class="fa-solid fa-user-group"></i>Direktori Siswa</h2>
 
         <div class="student-overview-container">
@@ -242,7 +250,7 @@
                 </div>
                 <h3>Kenali Keluarga LEVANTRA</h3>
                 <p>Jelajahi profil lengkap, peran, dan karakter dari setiap anggota kelas yang membuat LEVANTRA menjadi satu kesatuan keluarga yang solid dan tangguh.</p>
-                <a href="siswa.html" class="btn-student-modern">
+                <a class="btn-student-modern" href="siswa.html">
                     <i class="fa-solid fa-address-book"></i>
                     <span>Lihat Data Siswa Lengkap</span>
                 </a>
@@ -250,13 +258,13 @@
         </div>
     </section>
 
-    <section id="momen" class="section">
+    <section class="section" id="momen">
         <h2 class="section-title"><i class="fa-solid fa-camera"></i>Momen Kelas</h2>
     
         <div class="moment-header">
             <div class="search-container">
                 <i class="fa-solid fa-search"></i>
-                <input type="text" id="searchMoment" placeholder="Cari momen..." onkeyup="searchMoments()">
+                <input id="searchMoment" type="text" placeholder="Cari momen..." onkeyup="searchMoments()">
             </div>
             <button class="upload-btn" onclick="openUploadModal()">
                 <i class="fa-solid fa-plus"></i>
@@ -264,36 +272,36 @@
             </button>
         </div>
 
-        <div id="uploadModal" class="black-overlay" aria-hidden="true" tabindex="-1" onclick="closeModal('uploadModal', event)">
+        <div class="black-overlay" id="uploadModal" aria-hidden="true" tabindex="-1" onclick="closeModal('uploadModal', event)">
             <div class="modal-content" onclick="event.stopPropagation()">
                 <div class="modal-header">
                     <h3>Upload Momen Baru</h3>
                     <button class="close-btn" onclick="closeModal('uploadModal')"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <input type="text" id="momentTitle" placeholder="Judul Momen" autocomplete="off">
+                <input id="momentTitle" type="text" placeholder="Judul Momen" autocomplete="off">
                 <textarea id="momentDesc" placeholder="Ceritakan momen ini..." rows="3"></textarea>
-                <input type="file" id="momentImage" accept="image/*" multiple>
+                <input id="momentImage" type="file" accept="image/*" multiple>
                 <small>*Anda bisa memilih lebih dari satu gambar sekaligus</small>
                 <button class="modal-action-btn" onclick="uploadMoment()">Upload</button>
             </div>
         </div>
 
-        <div id="editModal" class="black-overlay" aria-hidden="true" tabindex="-1" onclick="closeModal('editModal', event)">
+        <div class="black-overlay" id="editModal" aria-hidden="true" tabindex="-1" onclick="closeModal('editModal', event)">
             <div class="modal-content" onclick="event.stopPropagation()">
                 <div class="modal-header">
                     <h3>Edit Momen</h3>
                     <button class="close-btn" onclick="closeModal('editModal')"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <input type="hidden" id="editMomentId">
-                <input type="text" id="editMomentTitle" placeholder="Judul Momen" autocomplete="off">
+                <input id="editMomentId" type="hidden">
+                <input id="editMomentTitle" type="text" placeholder="Judul Momen" autocomplete="off">
                 <textarea id="editMomentDesc" placeholder="Ceritakan momen ini..." rows="3"></textarea>
                 <small>*Biarkan file kosong jika tidak ingin mengganti gambar. Jika Anda memilih gambar baru, gambar lama akan tertimpa.</small>
-                <input type="file" id="editMomentImage" accept="image/*" multiple>
-                <button class="modal-action-btn" onclick="saveEditMoment()" id="saveEditBtn">Simpan Perubahan</button>
+                <input id="editMomentImage" type="file" accept="image/*" multiple>
+                <button class="modal-action-btn" id="saveEditBtn" onclick="saveEditMoment()">Simpan Perubahan</button>
             </div>
         </div>
 
-        <div id="detailModal" class="black-overlay" aria-hidden="true" tabindex="-1" onclick="closeModal('detailModal', event)">
+        <div class="black-overlay" id="detailModal" aria-hidden="true" tabindex="-1" onclick="closeModal('detailModal', event)">
             <div class="modal-content detail-content" onclick="event.stopPropagation()">
                 <button class="close-btn detail-close" onclick="closeModal('detailModal')"><i class="fa-solid fa-xmark"></i></button>
                 <div class="detail-left">
@@ -311,9 +319,9 @@
                     </div>
                     <div class="comments-section">
                         <h4>Komentar</h4>
-                        <div id="commentsList" class="comments-list"></div>
+                        <div class="comments-list" id="commentsList"></div>
                         <div class="comment-input-area">
-                            <input type="text" id="commentInput" placeholder="Tulis komentar..." autocomplete="off">
+                            <input id="commentInput" type="text" placeholder="Tulis komentar..." autocomplete="off">
                             <button onclick="postComment()"><i class="fa-solid fa-paper-plane"></i></button>
                         </div>
                     </div>
@@ -321,7 +329,7 @@
             </div>
         </div>
 
-        <div id="loginPromptModal" class="black-overlay" aria-hidden="true" tabindex="-1" onclick="closeModal('loginPromptModal', event)">
+        <div class="black-overlay" id="loginPromptModal" aria-hidden="true" tabindex="-1" onclick="closeModal('loginPromptModal', event)">
             <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center; max-width: 350px;">
                 <div class="modal-header">
                     <h3 style="margin: 0 auto;">Login Diperlukan</h3>
@@ -337,7 +345,7 @@
             </div>
         </div>
 
-        <div id="momentGallery" class="moment-grid"></div>
+        <div class="moment-grid" id="momentGallery"></div>
     </section>
 
     <footer class="footer">

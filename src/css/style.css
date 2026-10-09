@@ -293,6 +293,77 @@ nav {
   box-shadow: var(--shadow-sm);
 }
 
+.cash-nav-dropdown {
+  position: relative;
+}
+
+.cash-nav-toggle {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 600;
+  font-size: 1.05rem;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cash-nav-toggle:hover,
+.cash-nav-toggle:focus-visible,
+.cash-nav-toggle[aria-expanded="true"] {
+  color: var(--text-white);
+  background: var(--primary-gold);
+  outline: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.cash-nav-chevron {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.cash-nav-toggle[aria-expanded="true"] .cash-nav-chevron {
+  transform: rotate(180deg);
+}
+
+.cash-nav-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 1100;
+  display: none;
+  flex-direction: column;
+  min-width: 170px;
+  padding: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.cash-nav-menu.active {
+  display: flex;
+}
+
+.cash-nav-menu a {
+  padding: 10px 12px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+}
+
+.cash-nav-menu a:hover,
+.cash-nav-menu a:focus-visible {
+  color: var(--text-white);
+  background: var(--primary-gold);
+  outline: none;
+}
+
 .nav-icon {
   display: none !important;
 }
@@ -910,38 +981,47 @@ html.dark-mode .hero-content h1 {
 /* ===== CLASS CASH LEDGER ===== */
 
 /* Cash Toolbar */
-.cash-toolbar {
+.cash-income-toolbar {
   display: flex;
   gap: 12px;
-  min-height: 40px;
+  align-items: flex-end;
   margin-bottom: 8px;
   color: var(--text-primary);
 }
 
-.cash-month-control {
+.month-select-wrap {
   display: flex;
-  gap: 4px;
-  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  min-width: min(300px, 44vw);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 0.86rem;
 }
 
-.cash-month-control select {
-  min-width: 180px;
-  padding: 10px 12px;
-  color: var(--text-primary);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
+.month-select-control {
+  position: relative;
+}
+
+.month-select-control .styled-select {
+  min-height: 48px;
+  padding-right: 46px;
+  font-size: 0.98rem;
+}
+
+.month-select-control .select-icon {
+  right: 16px;
 }
 
 .cash-icon-button {
   display: grid;
   padding: 10px 12px;
   place-items: center;
+  min-height: 48px;
   color: var(--text-primary);
   background: var(--bg-surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
   cursor: pointer;
 }
 
@@ -1665,10 +1745,6 @@ textarea:focus {
 }
 
 /* Expense Modal Card */
-.modal-header-icon {
-  margin-right: 8px;
-}
-
 .expense-modal-card {
   max-width: 440px;
 }
@@ -2356,6 +2432,37 @@ html.dark-mode input[type="date"],
     color: var(--text-white);
   }
 
+  .cash-nav-dropdown {
+    width: 150px;
+  }
+
+  .cash-nav-toggle {
+    width: 100%;
+    justify-content: flex-start;
+    padding: var(--spacing-sm);
+    font-size: 1.15rem;
+    border-bottom: 2px solid rgb(255 255 255 / 30%);
+  }
+
+  .cash-nav-menu {
+    position: static;
+    min-width: 0;
+    margin: 4px 0 0 28px;
+    padding: 0 0 0 8px;
+    background: transparent;
+    border: 0;
+    border-left: 2px solid var(--primary-gold);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .cash-nav-menu a {
+    width: 100%;
+    padding: 8px 10px;
+    color: var(--text-primary);
+    font-size: 1rem;
+  }
+
   .nav-icon {
     display: block !important;
   }
@@ -2669,16 +2776,11 @@ html.dark-mode input[type="date"],
   /* ===== CLASS CASH LEDGER ===== */
 
   /* Cash Toobar */
-  .cash-toolbar {
+  .cash-income-toolbar {
     gap: 8px;
   }
 
-  .cash-month-control {
-    flex: 1 1 150px;
-    min-width: 0;
-  }
-
-  .cash-month-control select {
+  .month-select-wrap {
     width: 100%;
     min-width: 0;
   }

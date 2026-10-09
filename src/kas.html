@@ -45,7 +45,7 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div id="toastContainer" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="toast-container" id="toastContainer" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="black-overlay" onclick="closeBlackOverlay()"></div>
     <nav>
         <button class="hamburger" type="button" aria-label="Buka menu" aria-controls="site-navigation" aria-expanded="false" onclick="toggleHamburgerMenu()">
@@ -54,7 +54,7 @@
             <span></span>
         </button>
         <div class="logo-container">
-            <img src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" class="logo-img" width="50" height="50">
+            <img class="logo-img" src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" width="50" height="50">
             <span class="logo-text">LEVANTRA</span>
         </div>
         <ul class="nav-links" id="site-navigation">
@@ -62,14 +62,22 @@
             <li><a href="index.html#pengurus" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
             <li><a href="siswa.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
             <li><a href="jadwal.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
-            <li><a href="#kas" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
+            <li class="cash-nav-dropdown">
+                <button class="cash-nav-toggle" type="button" aria-controls="cash-nav-menu" aria-expanded="false" onclick="toggleCashMenu()">
+                    <i class="fa-solid fa-money-check-alt nav-icon"></i>Kas<i class="fa-solid fa-chevron-down cash-nav-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="cash-nav-menu" id="cash-nav-menu">
+                    <a href="#pemasukan" onclick="closeCashMenu(); toggleHamburgerMenu()">Pemasukan</a>
+                    <a href="#pengeluaran" onclick="closeCashMenu(); toggleHamburgerMenu()">Pengeluaran</a>
+                </div>
+            </li>
             <li><a href="index.html#momen" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
         </ul>
         <div class="account-menu-wrapper">
-            <button id="accountButton" class="account-menu-toggle" onclick="toggleAccountMenu()">
-                <i id="accountIcon" class="fa-regular fa-circle-user"></i>
+            <button class="account-menu-toggle" id="accountButton" onclick="toggleAccountMenu()">
+                <i class="fa-regular fa-circle-user" id="accountIcon"></i>
             </button>
-            <div id="accountMenu" class="account-menu">
+            <div class="account-menu" id="accountMenu">
                 <a id="loginMenuItem" onclick="login(); toggleAccountMenu()">
                     <i class="fa-solid fa-right-to-bracket"></i>Masuk
                 </a>
@@ -83,23 +91,27 @@
         </div>
     </nav>
 
-    <section id="kas" class="section">
-        <h1 class="section-title"><i class="fa-solid fa-money-check-alt"></i>Kas Kelas</h1>
+    <section class="section" id="pemasukan">
+        <h1 class="section-title"><i class="fa-solid fa-hand-holding-dollar"></i>Pemasukan Kas</h1>
 
-        <div class="cash-toolbar">
-            <div class="cash-month-control">
-                <label for="cashMonth">Bulan:</label>
-                <select id="cashMonth" aria-label="Pilih bulan kas"></select>
-            </div>
-            <button id="cashGoogleConnect" class="cash-icon-button" type="button" aria-label="Hubungkan akun admin untuk mengedit Google Sheets" title="Hubungkan akun Google">
+        <div class="cash-income-toolbar">
+            <label class="month-select-wrap" for="cashMonth">
+                <span>Bulan</span>
+                <span class="month-select-control">
+                    <select class="styled-select" id="cashMonth" aria-label="Pilih bulan kas"></select>
+                    <i class="fa-solid fa-chevron-down select-icon" aria-hidden="true"></i>
+                </span>
+            </label>
+            <button class="cash-icon-button" id="cashGoogleConnect" type="button" title="Hubungkan akun Google" aria-label="Hubungkan akun admin untuk mengedit Google Sheets">
                 <i class="fa-brands fa-google" aria-hidden="true"></i>
             </button>
-            <button id="cashRefresh" class="cash-icon-button" type="button" aria-label="Muat ulang data kas" title="Muat ulang data kas">
+            <button class="cash-icon-button" id="cashRefresh" type="button" title="Muat ulang data kas" aria-label="Muat ulang data kas">
                 <i class="fa-solid fa-rotate" aria-hidden="true"></i>
             </button>
         </div>
-        <span id="cashAccess" class="cash-access"></span>
-        <p id="cashStatus" class="cash-status" role="status" aria-live="polite">Memuat Google Sheets...</p>
+        <span class="cash-access" id="cashAccess"></span>
+        <p class="cash-status" id="cashStatus" role="status" aria-live="polite">Memuat Google Sheets...</p>
+
         <div class="cash-table-scroll" tabindex="0" aria-label="Tabel pembayaran kas untuk bulan yang dipilih">
             <table class="cash-table">
                 <thead id="cashTableHead"></thead>
@@ -107,76 +119,77 @@
                 <tfoot id="cashTableFoot"></tfoot>
             </table>
         </div>
+    </section>
 
-        <div class="expense-section" id="expenseSection">
-            <div class="expense-header">
-                <h2 class="section-title"><i class="fa-solid fa-file-invoice-dollar"></i>Pengeluaran Kas</h2>
-                <button id="addExpenseBtn" class="btn-add-expense" type="button" hidden>
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Tambah Pengeluaran</span>
-                </button>
+    <section class="section" id="pengeluaran">
+        <h1 class="section-title"><i class="fa-solid fa-receipt"></i>Pengeluaran Kas</h1>
+
+        <div class="expense-header">
+            <button class="btn-add-expense" id="addExpenseBtn" type="button" hidden>
+                <i class="fa-solid fa-plus"></i>
+                <span>Tambah Pengeluaran</span>
+            </button>
+        </div>
+
+        <div class="cash-summary-cards">
+            <div class="summary-card">
+                <h3>Total Pemasukan</h3>
+                <p id="summaryIncome">Rp 0</p>
             </div>
-
-            <div class="cash-summary-cards">
-                <div class="summary-card">
-                    <h3>Total Pemasukan</h3>
-                    <p id="summaryIncome">Rp 0</p>
-                </div>
-                <div class="summary-card">
-                    <h3>Total Pengeluaran</h3>
-                    <p id="summarySpending" class="text-danger">Rp 0</p>
-                </div>
-                <div class="summary-card">
-                    <h3>Sisa Kas Saat Ini</h3>
-                    <p id="summaryCashBalance">Rp 0</p>
-                </div>
+            <div class="summary-card">
+                <h3>Total Pengeluaran</h3>
+                <p class="text-danger" id="summarySpending">Rp 0</p>
             </div>
+            <div class="summary-card">
+                <h3>Sisa Kas Saat Ini</h3>
+                <p id="summaryCashBalance">Rp 0</p>
+            </div>
+        </div>
 
-            <div class="cash-table-scroll" tabindex="0" aria-label="Tabel pengeluaran kas">
-                <table class="cash-table expense-table">
-                    <thead>
-                        <tr>
-                            <th style="min-width: 120px;">Tanggal</th>
-                            <th style="text-align: left; width: 100%;">Nama Pengeluaran</th>
-                            <th style="min-width: 150px;">Jumlah (Rp)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="expenseTableBody">
-                        <tr><td colspan="3" style="text-align: center;">Memuat data...</td></tr>
-                    </tbody>
-                </table>
+        <div class="cash-table-scroll" tabindex="0" aria-label="Tabel pengeluaran kas">
+            <table class="cash-table expense-table">
+                <thead>
+                    <tr>
+                        <th style="min-width: 120px;">Tanggal</th>
+                        <th style="text-align: left; width: 100%;">Nama Pengeluaran</th>
+                        <th style="min-width: 150px;">Jumlah (Rp)</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseTableBody">
+                    <tr><td colspan="3" style="text-align: center;">Memuat data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="black-overlay" id="expenseModal" aria-hidden="true" tabindex="-1" onclick="closeModal('expenseModal', event)">
+            <div class="modal-content expense-modal-card" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3>Tambah Pengeluaran</h3>
+                    <button class="close-btn" type="button" onclick="closeModal('expenseModal')" aria-label="Tutup modal">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <form class="expense-form" id="expenseForm">
+                    <div class="form-group">
+                        <label for="expenseDate">Tanggal</label>
+                        <input id="expenseDate" type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseDesc">Nama Pengeluaran</label>
+                        <input id="expenseDesc" type="text" placeholder="Contoh: Beli spidol kelas" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseAmount">Jumlah Uang (Rp)</label>
+                        <input id="expenseAmount" type="number" placeholder="Contoh: 15000" min="100" step="100" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-cancel" id="closeExpenseModal" type="button" onclick="closeModal('expenseModal')">Batal</button>
+                        <button class="modal-action-btn" id="saveExpenseBtn" type="submit">Simpan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </section>
-
-    <div id="expenseModal" class="black-overlay" aria-hidden="true" tabindex="-1" onclick="closeModal('expenseModal', event)">
-        <div class="modal-content expense-modal-card" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-file-invoice-dollar modal-header-icon"></i>Tambah Pengeluaran</h3>
-                <button type="button" class="close-btn" onclick="closeModal('expenseModal')" aria-label="Tutup modal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <form id="expenseForm" class="expense-form">
-                <div class="form-group">
-                    <label for="expenseDate">Tanggal</label>
-                    <input type="date" id="expenseDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="expenseDesc">Nama Pengeluaran</label>
-                    <input type="text" id="expenseDesc" required placeholder="Contoh: Beli spidol kelas" autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label for="expenseAmount">Jumlah Uang (Rp)</label>
-                    <input type="number" id="expenseAmount" required min="100" step="100" placeholder="Contoh: 15000">
-                </div>
-                <div class="modal-actions">
-                    <button type="button" id="closeExpenseModal" class="btn-cancel" onclick="closeModal('expenseModal')">Batal</button>
-                    <button type="submit" class="modal-action-btn" id="saveExpenseBtn">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <footer class="footer">
         <div class="footer-container">

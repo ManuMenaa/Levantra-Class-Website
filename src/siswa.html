@@ -44,7 +44,7 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div id="toastContainer" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="toast-container" id="toastContainer" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="black-overlay" onclick="closeBlackOverlay()"></div>
     <nav>
         <button class="hamburger" type="button" aria-label="Buka menu" aria-controls="site-navigation" aria-expanded="false" onclick="toggleHamburgerMenu()">
@@ -53,7 +53,7 @@
             <span></span>
         </button>
         <div class="logo-container">
-            <img src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" class="logo-img" width="50" height="50">
+            <img class="logo-img" src="/img/misc/LevantraLogo.jpg" alt="Logo Levantra" width="50" height="50">
             <span class="logo-text">LEVANTRA</span>
         </div>
         <ul class="nav-links" id="site-navigation">
@@ -61,14 +61,22 @@
             <li><a href="index.html#pengurus" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-sitemap nav-icon"></i>Pengurus</a></li>
             <li><a href="#siswa" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-user-group nav-icon"></i>Siswa</a></li>
             <li><a href="jadwal.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-calendar-alt nav-icon"></i>Jadwal</a></li>
-            <li><a href="kas.html" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-money-check-alt nav-icon"></i>Kas</a></li>
+            <li class="cash-nav-dropdown">
+                <button class="cash-nav-toggle" type="button" aria-controls="cash-nav-menu" aria-expanded="false" onclick="toggleCashMenu()">
+                    <i class="fa-solid fa-money-check-alt nav-icon"></i>Kas<i class="fa-solid fa-chevron-down cash-nav-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="cash-nav-menu" id="cash-nav-menu">
+                    <a href="kas.html#pemasukan" onclick="closeCashMenu(); toggleHamburgerMenu()">Pemasukan</a>
+                    <a href="kas.html#pengeluaran" onclick="closeCashMenu(); toggleHamburgerMenu()">Pengeluaran</a>
+                </div>
+            </li>
             <li><a href="index.html#momen" onclick="toggleHamburgerMenu()"><i class="fa-solid fa-camera nav-icon"></i>Momen</a></li>
         </ul>
         <div class="account-menu-wrapper">
-            <button id="accountButton" class="account-menu-toggle" onclick="toggleAccountMenu()">
-                <i id="accountIcon" class="fa-regular fa-circle-user"></i>
+            <button class="account-menu-toggle" id="accountButton" onclick="toggleAccountMenu()">
+                <i class="fa-regular fa-circle-user" id="accountIcon"></i>
             </button>
-            <div id="accountMenu" class="account-menu">
+            <div class="account-menu" id="accountMenu">
                 <a id="loginMenuItem" onclick="login(); toggleAccountMenu()">
                     <i class="fa-solid fa-right-to-bracket"></i>Masuk
                 </a>
@@ -82,19 +90,19 @@
         </div>
     </nav>
 
-    <section id="siswa" class="section">
+    <section class="section" id="siswa">
         <h1 class="section-title"><i class="fa-solid fa-user-group"></i>Direktori Siswa</h1>
         <div class="student-grid" id="studentGrid"></div>
     </section>
 
-    <div id="studentModal" class="black-overlay" aria-hidden="true" tabindex="-1" onclick="closeModal('studentModal', event)">
+    <div class="black-overlay" id="studentModal" aria-hidden="true" tabindex="-1" onclick="closeModal('studentModal', event)">
         <div class="modal-content detail-content" onclick="event.stopPropagation()">
             <button class="close-btn detail-close" onclick="closeModal('studentModal')">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="detail-left">
                 <div class="detail-slider">
-                    <img id="modalStudentAvatar" src="/img/LevantraLogo.jpg" alt="Foto Siswa" class="student-avatar" style="width: 100%; max-height: 80vh; object-fit: contain;">
+                    <img class="student-avatar" id="modalStudentAvatar" src="/img/LevantraLogo.jpg" alt="Foto Siswa" style="width: 100%; max-height: 80vh; object-fit: contain;">
                 </div>
             </div>
             <div class="detail-right">

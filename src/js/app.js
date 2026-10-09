@@ -840,6 +840,36 @@ function closeAccountMenu() {
     if (accountMenu) accountMenu.classList.remove('active');
 }
 
+function toggleCashMenu() {
+    const toggle = document.querySelector('.cash-nav-toggle');
+    const menu = document.querySelector('.cash-nav-menu');
+
+    const isOpen = menu.classList.toggle('active');
+    toggle.setAttribute('aria-expanded', String(isOpen));
+}
+
+function closeCashMenu() {
+    const toggle = document.querySelector('.cash-nav-toggle');
+    const menu = document.querySelector('.cash-nav-menu');
+
+    if (menu) menu.classList.remove('active');
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+}
+
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.cash-nav-dropdown')) closeCashMenu();
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        const toggle = document.querySelector('.cash-nav-toggle');
+        const wasOpen = toggle?.getAttribute('aria-expanded') === 'true';
+
+        closeCashMenu();
+        if (wasOpen) toggle.focus();
+    }
+});
+
 function toggleBlackOverlay() {
     const blackOverlay = document.querySelector('.black-overlay');
 
@@ -891,5 +921,7 @@ window.toggleHamburgerMenu = toggleHamburgerMenu;
 window.closeHamburgerMenu = closeHamburgerMenu;
 window.toggleAccountMenu = toggleAccountMenu;
 window.closeAccountMenu = closeAccountMenu;
+window.toggleCashMenu = toggleCashMenu;
+window.closeCashMenu = closeCashMenu;
 window.toggleBlackOverlay = toggleBlackOverlay;
 window.closeBlackOverlay = closeBlackOverlay;
