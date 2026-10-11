@@ -799,7 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // =============================================
 
 function toggleHamburgerMenu() {
-    if (!window.matchMedia('(max-width: 768px)').matches) return;
+    if (!window.matchMedia('(width <= 768px)').matches) return;
 
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
