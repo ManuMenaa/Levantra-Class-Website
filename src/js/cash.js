@@ -124,28 +124,33 @@ function render() {
     }
 }
 
-function fetchPublicSheet(monthPeriods, month) {
-    if (!SHEET_ID) return Promise.reject(new Error('VITE_GOOGLE_SHEET_ID belum dikonfigurasi.'));
-    const sheetName = monthSheetName(month);
+function fetchSheetJsonp(sheetName, range, scriptError) {
     return new Promise((resolve, reject) => {
-        const callback = `kasSheet_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const callback = `sheet_${Date.now()}_${Math.random().toString(36).slice(2)}`;
         const script = document.createElement('script');
-        const timeout = setTimeout(() => finish(new Error('Waktu membaca Google Sheets habis.')), 15000);
+        const timeout = setTimeout(() => finish(new Error(`Waktu membaca ${sheetName} habis.`)), 15000);
         function finish(error, data) {
             clearTimeout(timeout);
             delete window[callback];
             script.remove();
             error ? reject(error) : resolve(data);
         }
-        window[callback] = response => {
-            if (!response.table) return finish(new Error(`Tab ${sheetName} belum tersedia atau tidak dapat dibaca.`));
-            finish(null, response.table.rows.map(row => (row.c || []).map(cell => cell?.v ?? '')));
-        };
-        script.onerror = () => finish(new Error(`Tab ${sheetName} belum tersedia atau spreadsheet belum dibagikan sebagai Viewer.`));
-        const lastColumn = sheetColumn(monthPeriods.length + 2);
-        script.src = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&range=A1:${lastColumn}${STUDENT_DATA.length + 2}&headers=0&tqx=${encodeURIComponent(`out:json;responseHandler:${callback}`)}&cache=${Date.now()}`;
+        window[callback] = response => finish(null, response);
+        script.onerror = () => finish(scriptError);
+        script.src = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&range=${encodeURIComponent(range)}&headers=0&tqx=${encodeURIComponent(`out:json;responseHandler:${callback}`)}&cache=${Date.now()}`;
         document.head.append(script);
     });
+}
+
+function fetchPublicSheet(monthPeriods, month) {
+    if (!SHEET_ID) return Promise.reject(new Error('VITE_GOOGLE_SHEET_ID belum dikonfigurasi.'));
+    const sheetName = monthSheetName(month);
+    const lastColumn = sheetColumn(monthPeriods.length + 2);
+    return fetchSheetJsonp(sheetName, `A1:${lastColumn}${STUDENT_DATA.length + 2}`, new Error(`Tab ${sheetName} belum tersedia atau spreadsheet belum dibagikan sebagai Viewer.`))
+        .then(response => {
+            if (!response.table) throw new Error(`Tab ${sheetName} belum tersedia atau tidak dapat dibaca.`);
+            return response.table.rows.map(row => (row.c || []).map(cell => cell?.v ?? ''));
+        });
 }
 
 async function loadSheet(showLoading = true) {
@@ -211,34 +216,17 @@ async function loadSheet(showLoading = true) {
 async function fetchExpenses() {
     if (!SHEET_ID) return [];
     const sheetName = 'Pengeluaran';
-    return new Promise((resolve, reject) => {
-        const callback = `expenseSheet_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-        const script = document.createElement('script');
-        const timeout = setTimeout(() => finish(new Error('Waktu membaca Pengeluaran habis.')), 15000);
-        function finish(error, data) {
-            clearTimeout(timeout);
-            delete window[callback];
-            script.remove();
-            error ? reject(error) : resolve(data);
-        }
-        window[callback] = response => {
-            if (!response.table) {
-                // If sheet doesn't exist, just resolve with empty
-                return finish(null, []);
-            }
-            const data = response.table.rows.map(row => {
-                const c = row.c || [];
-                return {
-                    date: c[0]?.f || c[0]?.v || '',
-                    desc: c[1]?.v || '',
-                    amount: Number(c[2]?.v) || 0
-                };
-            });
-            finish(null, data);
-        };
-        script.onerror = () => finish(null, []); // Silent fail if doesn't exist yet
-        script.src = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&range=A2:C&headers=0&tqx=${encodeURIComponent(`out:json;responseHandler:${callback}`)}&cache=${Date.now()}`;
-        document.head.append(script);
+    return fetchSheetJsonp(sheetName, 'A2:C', null).then(response => {
+        if (!response?.table) return [];
+        const data = response.table.rows.map(row => {
+            const c = row.c || [];
+            return {
+                date: c[0]?.f || c[0]?.v || '',
+                desc: c[1]?.v || '',
+                amount: Number(c[2]?.v) || 0
+            };
+        });
+        return data;
     });
 }
 

@@ -16,6 +16,7 @@ let currentUser = null;
 let currentDetailImages = [];
 let currentDetailImageIndex = 0;
 let currentDetailMomentId = null;
+let currentDetailMoment = null;
 let activeModal = null;
 let modalTrigger = null;
 
@@ -60,6 +61,8 @@ function initApp() {
     if (window.loadMoments) {
         window.loadMoments();
     }
+
+    initMomentActions();
 }
 
 // =============================================
@@ -135,9 +138,10 @@ function loadMoments() {
     const gallery = document.getElementById('momentGallery');
     if (!gallery || !db) {
         console.log('loadMoments: Gallery element not found or db not available');
-    } else {
-        console.log('loadMoments: Gallery loaded successful');
+        return;
     }
+
+    console.log('loadMoments: Gallery loaded successful');
 
     const momentsRef = ref(db, 'moments');
 
@@ -176,26 +180,13 @@ function loadMoments() {
 function renderMomentToGrid(moment) {
     const gallery = document.getElementById('momentGallery');
 
-    const isAdmin = currentUser && ADMIN_EMAILS.includes(currentUser.email);
-    const isOwner = currentUser && currentUser.email === moment.authorEmail;
-    const canEditDelete = isOwner || isAdmin;
+    const canEditDelete = canManageMoment(moment);
 
-    const imagesArray = moment.images || (moment.image ? [moment.image] : []);
+    const imagesArray = getMomentImages(moment);
     const thumbUrl = imagesArray.length > 0 ? imagesArray[0] : '';
 
     const multiIndicator = imagesArray.length > 1 ? 
         `<div class="multi-image-indicator" title="Momen ini berisi banyak gambar"><i class="fa-solid fa-images"></i></div>` : '';
-
-    const actionButtons = canEditDelete ? `
-        <div class="moment-actions">
-            <button class="moment-action-btn edit" onclick="event.stopPropagation(); openEditModal('${moment.id}', '${moment.title.replace(/'/g, "\\'")}', '${(moment.description || '').replace(/'/g, "\\'")}')" title="Edit">
-                <i class="fa-solid fa-pen"></i>
-            </button>
-            <button class="moment-action-btn delete" onclick="event.stopPropagation(); deleteMoment('${moment.id}')" title="Hapus">
-                <i class="fa-solid fa-trash"></i>
-            </button>
-        </div>
-    ` : '';
 
     const momentCard = document.createElement('div');
     momentCard.className = 'moment-card';
@@ -206,12 +197,142 @@ function renderMomentToGrid(moment) {
     momentCard.innerHTML = `
         ${multiIndicator}
         <img src="${thumbUrl}" alt="${moment.title}" class="moment-img">
-        ${actionButtons}
+        <div class="moment-actions">
+            <div class="moment-action-menu">
+                <button class="moment-action-btn moment-menu-toggle" type="button" aria-label="Aksi ${moment.title}" aria-expanded="false">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+                <div class="moment-action-menu-panel" hidden>
+                    <button type="button" data-moment-action="download"><i class="fa-solid fa-download"></i> Unduh</button>
+                    ${canEditDelete ? '<button type="button" data-moment-action="edit"><i class="fa-solid fa-pen"></i> Edit</button><button type="button" data-moment-action="delete"><i class="fa-solid fa-trash"></i> Hapus</button>' : ''}
+                </div>
+            </div>
+        </div>
         <div class="moment-info">
             <h4>${moment.title}</h4>
         </div>
     `;
+    momentCard.querySelector('.moment-menu-toggle').addEventListener('click', (event) => {
+        event.stopPropagation();
+        toggleMomentMenu(event.currentTarget);
+    });
+    momentCard.querySelectorAll('[data-moment-action]').forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const action = event.currentTarget.dataset.momentAction;
+            closeMomentMenus();
+            if (action === 'download') downloadMomentImage(moment.title, imagesArray[0], 0);
+            if (action === 'edit') openEditModal(moment.id, moment.title, moment.description || '');
+            if (action === 'delete') deleteMoment(moment.id);
+        });
+    });
     gallery.appendChild(momentCard); 
+}
+
+function getMomentImages(moment) {
+    const images = moment.images || (moment.image ? [moment.image] : []);
+    return (Array.isArray(images) ? images : Object.values(images)).filter(Boolean);
+}
+
+function canManageMoment(moment) {
+    return Boolean(currentUser && (
+        currentUser.email === moment?.authorEmail || ADMIN_EMAILS.includes(currentUser.email)
+    ));
+}
+
+function initMomentActions() {
+    document.getElementById('detailMomentMenuToggle')?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        toggleMomentMenu(event.currentTarget);
+    });
+
+    document.querySelectorAll('#detailMomentMenu [data-detail-action]').forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const action = event.currentTarget.dataset.detailAction;
+            closeMomentMenus();
+            if (action === 'download') downloadCurrentMomentImage();
+            if (action === 'edit') {
+                if (!canManageMoment(currentDetailMoment)) return;
+                const title = document.getElementById('detailTitle').textContent;
+                const desc = document.getElementById('detailDesc').textContent;
+                openEditModal(currentDetailMomentId, title, desc);
+            }
+            if (action === 'delete' && canManageMoment(currentDetailMoment)) deleteMoment(currentDetailMomentId);
+        });
+    });
+
+    document.getElementById('detailLightboxToggle')?.addEventListener('click', openDetailLightbox);
+    document.getElementById('detailLightboxClose')?.addEventListener('click', closeDetailLightbox);
+    document.getElementById('detailLightboxDownload')?.addEventListener('click', downloadCurrentMomentImage);
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.moment-action-menu')) closeMomentMenus();
+    });
+}
+
+function toggleMomentMenu(toggle) {
+    const panel = toggle.parentElement.querySelector('.moment-action-menu-panel');
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    closeMomentMenus();
+    if (panel && !isOpen) {
+        panel.hidden = false;
+        toggle.setAttribute('aria-expanded', 'true');
+    }
+}
+
+function closeMomentMenus() {
+    document.querySelectorAll('.moment-action-menu-panel:not([hidden])').forEach((panel) => {
+        panel.hidden = true;
+        panel.parentElement.querySelector('[aria-expanded]')?.setAttribute('aria-expanded', 'false');
+    });
+}
+
+async function downloadMomentImage(title, imageUrl, index) {
+    if (!imageUrl) return;
+    try {
+        const response = await fetch(imageUrl);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const blobUrl = URL.createObjectURL(await response.blob());
+        const extension = new URL(imageUrl).pathname.match(/\.(avif|jpe?g|png|webp|gif)$/i)?.[1] || 'jpg';
+        const cleanName = title.replace(/[^a-zA-Z0-9_-]/g, '_') || 'momen-levantra';
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = `${cleanName}${index > 0 ? `-${index + 1}` : ''}.${extension}`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    } catch (error) {
+        console.warn('Direct moment download failed, opening image instead:', error);
+        window.open(imageUrl, '_blank', 'noopener');
+    }
+}
+
+function downloadCurrentMomentImage() {
+    const title = document.getElementById('detailTitle').textContent;
+    downloadMomentImage(title, currentDetailImages[currentDetailImageIndex], currentDetailImageIndex);
+}
+
+function openDetailLightbox() {
+    if (!currentDetailImages[currentDetailImageIndex]) return;
+    const lightbox = document.getElementById('detailLightbox');
+    lightbox.hidden = false;
+    updateDetailLightbox();
+    document.getElementById('detailLightboxClose').focus();
+}
+
+function closeDetailLightbox() {
+    document.getElementById('detailLightbox').hidden = true;
+    document.getElementById('detailLightboxToggle').focus();
+}
+
+function updateDetailLightbox() {
+    const image = currentDetailImages[currentDetailImageIndex];
+    const lightboxImage = document.getElementById('detailLightboxImage');
+    if (image && lightboxImage) {
+        lightboxImage.src = image;
+        lightboxImage.alt = document.getElementById('detailTitle').textContent;
+    }
 }
 
 async function uploadMoment() {
@@ -220,7 +341,7 @@ async function uploadMoment() {
     const titleInput = document.getElementById('momentTitle');
     const descInput = document.getElementById('momentDesc');
     const fileInput = document.getElementById('momentImage');
-    const uploadBtn = document.querySelector('#uploadModal button');
+    const uploadBtn = document.getElementById('uploadMomentBtn');
     
     const files = fileInput.files;
     const title = titleInput.value;
@@ -421,6 +542,10 @@ function openDetailModal(moment) {
         currentDetailImages = Array.isArray(imagesData) ? imagesData : Object.values(imagesData);
         currentDetailImages = currentDetailImages.filter(url => url);
         currentDetailImageIndex = 0;
+        currentDetailMoment = moment;
+        document.querySelector('#detailMomentMenu [data-detail-action="edit"]').hidden = !canManageMoment(moment);
+        document.querySelector('#detailMomentMenu [data-detail-action="delete"]').hidden = !canManageMoment(moment);
+        document.getElementById('detailLightbox').hidden = true;
         
         if (currentDetailImages.length > 1) {
             currentDetailImages.forEach(url => {
@@ -482,6 +607,7 @@ function updateDetailSlider() {
             };
             
             tempImg.src = currentDetailImages[currentDetailImageIndex];
+            updateDetailLightbox();
         }
 
         const hasMultiple = currentDetailImages.length > 1;
@@ -588,6 +714,11 @@ function closeModal(modalId, event) {
 document.addEventListener('keydown', (event) => {
     if (!activeModal) return;
     if (event.key === 'Escape') {
+        if (!document.getElementById('detailLightbox')?.hidden) {
+            closeDetailLightbox();
+            event.stopPropagation();
+            return;
+        }
         closeModal(activeModal.id);
         return;
     }
@@ -622,7 +753,8 @@ function loadComments(momentId) {
     const commentsRef = ref(db, `moments/${momentId}/comments`);
     
     onValue(commentsRef, (snapshot) => {
-        
+        commentsList.replaceChildren();
+
         if (!snapshot.exists()) {
             commentsList.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.9rem;">Belum ada komentar. Jadilah yang pertama!</p>';
             return;
@@ -924,9 +1056,7 @@ window.openStudentModal = openStudentModal;
 
 // Global menu functions
 window.toggleHamburgerMenu = toggleHamburgerMenu;
-window.closeHamburgerMenu = closeHamburgerMenu;
 window.toggleAccountMenu = toggleAccountMenu;
-window.closeAccountMenu = closeAccountMenu;
 window.toggleCashMenu = toggleCashMenu;
 window.closeCashMenu = closeCashMenu;
 window.toggleBlackOverlay = toggleBlackOverlay;

@@ -539,11 +539,3 @@ async function downloadCurrentSchedule() {
         showToast('Gambar dibuka di tab baru untuk disimpan.', 'info');
     }
 }
-
-// Export for window if needed
-window.selectSchedule = selectSchedule;
-window.openScheduleUploadModal = openScheduleUploadModal;
-window.openScheduleEditModal = openScheduleEditModal;
-window.openLightbox = openLightbox;
-window.deleteCurrentSchedule = deleteCurrentSchedule;
-window.downloadCurrentSchedule = downloadCurrentSchedule;

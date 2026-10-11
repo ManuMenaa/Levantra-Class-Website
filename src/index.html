@@ -274,7 +274,7 @@
 
         <div class="black-overlay" id="uploadModal" aria-hidden="true" tabindex="-1" onclick="closeModal('uploadModal', event)">
             <div class="modal-content" onclick="event.stopPropagation()">
-                <div class="modal-header">
+                <div class="modal-header moment-modal-header">
                     <h3>Upload Momen Baru</h3>
                     <button class="close-btn" onclick="closeModal('uploadModal')">
                         <i class="fa-solid fa-xmark"></i>
@@ -284,13 +284,13 @@
                 <textarea id="momentDesc" placeholder="Ceritakan momen ini..." rows="3"></textarea>
                 <input id="momentImage" type="file" accept="image/*" multiple>
                 <small>*Anda bisa memilih lebih dari satu gambar sekaligus</small>
-                <button class="modal-action-btn" onclick="uploadMoment()">Upload</button>
+                <button class="modal-action-btn" id="uploadMomentBtn" onclick="uploadMoment()">Upload</button>
             </div>
         </div>
 
         <div class="black-overlay" id="editModal" aria-hidden="true" tabindex="-1" onclick="closeModal('editModal', event)">
             <div class="modal-content" onclick="event.stopPropagation()">
-                <div class="modal-header">
+                <div class="modal-header moment-modal-header">
                     <h3>Edit Momen</h3>
                     <button class="close-btn" onclick="closeModal('editModal')">
                         <i class="fa-solid fa-xmark"></i>
@@ -309,6 +309,21 @@
             <div class="modal-content detail-content" onclick="event.stopPropagation()">
                 <button class="close-btn detail-close" onclick="closeModal('detailModal')"><i class="fa-solid fa-xmark"></i></button>
                 <div class="detail-left">
+                    <div class="detail-image-actions">
+                        <div class="moment-action-menu">
+                            <button class="moment-action-btn" id="detailMomentMenuToggle" type="button" aria-label="Aksi momen" aria-expanded="false" aria-controls="detailMomentMenu">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                            <div class="moment-action-menu-panel" id="detailMomentMenu" hidden>
+                                <button type="button" data-detail-action="download"><i class="fa-solid fa-download"></i> Unduh</button>
+                                <button type="button" data-detail-action="edit"><i class="fa-solid fa-pen"></i> Edit</button>
+                                <button type="button" data-detail-action="delete"><i class="fa-solid fa-trash"></i> Hapus</button>
+                            </div>
+                        </div>
+                        <button class="moment-action-btn" id="detailLightboxToggle" type="button" aria-label="Buka lightbox" title="Buka lightbox">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                    </div>
                     <div class="detail-slider">
                         <button class="slider-btn prev" onclick="changeDetailSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
                         <img id="detailImage" src="" alt="Detail Momen">
@@ -330,6 +345,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="detail-lightbox" id="detailLightbox" hidden>
+                <button class="detail-lightbox-close" id="detailLightboxClose" type="button" aria-label="Tutup lightbox"><i class="fa-solid fa-xmark"></i></button>
+                <button class="detail-lightbox-download" id="detailLightboxDownload" type="button"><i class="fa-solid fa-download"></i> Unduh</button>
+                <img id="detailLightboxImage" src="" alt="">
             </div>
         </div>
 

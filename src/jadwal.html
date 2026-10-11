@@ -128,7 +128,6 @@
             <article class="schedule-image-card" id="scheduleCard" hidden>
                 <div class="schedule-image-frame">
                     <img id="scheduleImg" src="" alt="" loading="eager" decoding="async">
-                    <span class="schedule-image-badge"><i class="fa-solid fa-image" aria-hidden="true"></i>Jadwal kelas</span>
                 </div>
                 <div class="schedule-card-content">
                     <div>
@@ -157,7 +156,7 @@
             </article>
         </div>
 
-        <div class="schedule-modal" id="scheduleUploadModal" aria-hidden="true">
+        <div class="schedule-modal" id="scheduleUploadModal" aria-hidden="true" onclick="closeModal('scheduleUploadModal', event)">
             <div class="modal-content schedule-modal-content" role="dialog" aria-modal="true" aria-labelledby="scheduleUploadTitle">
                 <div class="schedule-modal-header">
                     <h2 id="scheduleUploadTitle">Tambah Jadwal</h2>
@@ -183,7 +182,7 @@
             </div>
         </div>
 
-        <div class="schedule-modal" id="scheduleEditModal" aria-hidden="true">
+        <div class="schedule-modal" id="scheduleEditModal" aria-hidden="true" onclick="closeModal('scheduleEditModal', event)">
             <div class="modal-content schedule-modal-content" role="dialog" aria-modal="true" aria-labelledby="scheduleEditTitle">
                 <div class="schedule-modal-header">
                     <h2 id="scheduleEditTitle">Edit Jadwal</h2>
