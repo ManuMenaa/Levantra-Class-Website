@@ -261,7 +261,7 @@
     <section class="section" id="momen">
         <h2 class="section-title"><i class="fa-solid fa-camera"></i>Momen Kelas</h2>
     
-        <div class="moment-header">
+        <div class="moment-toolbar">
             <div class="search-container">
                 <i class="fa-solid fa-search"></i>
                 <input id="searchMoment" type="text" placeholder="Cari momen..." onkeyup="searchMoments()">
@@ -276,7 +276,9 @@
             <div class="modal-content" onclick="event.stopPropagation()">
                 <div class="modal-header">
                     <h3>Upload Momen Baru</h3>
-                    <button class="close-btn" onclick="closeModal('uploadModal')"><i class="fa-solid fa-xmark"></i></button>
+                    <button class="close-btn" onclick="closeModal('uploadModal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
                 <input id="momentTitle" type="text" placeholder="Judul Momen" autocomplete="off">
                 <textarea id="momentDesc" placeholder="Ceritakan momen ini..." rows="3"></textarea>
@@ -290,7 +292,9 @@
             <div class="modal-content" onclick="event.stopPropagation()">
                 <div class="modal-header">
                     <h3>Edit Momen</h3>
-                    <button class="close-btn" onclick="closeModal('editModal')"><i class="fa-solid fa-xmark"></i></button>
+                    <button class="close-btn" onclick="closeModal('editModal')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
                 <input id="editMomentId" type="hidden">
                 <input id="editMomentTitle" type="text" placeholder="Judul Momen" autocomplete="off">
@@ -333,7 +337,9 @@
             <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center; max-width: 350px;">
                 <div class="modal-header">
                     <h3 style="margin: 0 auto;">Login Diperlukan</h3>
-                    <button class="close-btn" onclick="closeModal('loginPromptModal')" style="position: absolute; right: 15px;"><i class="fa-solid fa-xmark"></i></button>
+                    <button class="close-btn" onclick="closeModal('loginPromptModal')" style="position: absolute; right: 15px;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
                 <div style="margin: 15px 0;">
                     <i class="fa-brands fa-google" style="font-size: 3rem; color: var(--primary-gold); margin-bottom: 15px;"></i>

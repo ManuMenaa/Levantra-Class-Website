@@ -1306,9 +1306,8 @@ html.dark-mode input[type="date"],
 }
 
 /* ===== MOMENT GALLERY ===== */
-
-/* Moment Header */
-.moment-header {
+/* Moment Toolbar */
+.moment-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
