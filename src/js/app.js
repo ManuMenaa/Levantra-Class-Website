@@ -891,6 +891,9 @@ function closeBlackOverlay() {
 // EXPORT FUNCTIONS
 // =============================================
 
+// Export for ES modules
+export { showToast, openModal, closeModal, ADMIN_EMAILS, IMGBB_API_KEY };
+
 // Authentication functions
 window.login = login;
 window.logout = logout;
@@ -905,6 +908,9 @@ window.deleteMoment = deleteMoment;
 window.loadComments = loadComments;
 window.searchMoments = searchMoments;
 window.postComment = postComment;
+
+// Toast function
+window.showToast = showToast;
 
 // Modal functions
 window.openModal = openModal;

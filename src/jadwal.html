@@ -38,6 +38,7 @@
 
     <script src="/js/theme-init.js"></script>
     <script type="module" src="/js/app.js"></script>
+    <script type="module" src="/js/schedule.js"></script>
 
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"></noscript>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -90,8 +91,132 @@
         </div>
     </nav>
 
-    <section id="jadwal" class="section">
+    <section class="section" id="jadwal">
         <h1 class="section-title"><i class="fa-solid fa-calendar-alt"></i>Jadwal Kelas</h1>
+
+        <div class="schedule-toolbar" aria-label="Kontrol jadwal">
+            <label class="schedule-select-wrap" for="scheduleSelect">
+                <span>Pilih jadwal</span>
+                <span class="schedule-select-control">
+                    <select class="styled-select" id="scheduleSelect" aria-label="Pilih jadwal" disabled>
+                        <option value="">Memuat jadwal...</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-icon" aria-hidden="true"></i>
+                </span>
+            </label>
+            <button class="schedule-primary-btn" id="addScheduleBtn" type="button" hidden>
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>Tambah Jadwal
+            </button>
+        </div>
+
+        <div class="schedule-display-area" id="scheduleDisplayArea">
+            <div class="schedule-state schedule-loading-state" id="scheduleLoadingState" role="status" aria-live="polite">
+                <span class="schedule-loading-spinner" aria-hidden="true"></span>
+                <strong>Memuat jadwal...</strong>
+                <span>Menyiapkan informasi terbaru untuk Anda.</span>
+            </div>
+
+            <div class="schedule-state schedule-empty-state" id="scheduleEmptyState" hidden>
+                <span class="schedule-empty-icon"><i class="fa-regular fa-calendar-days" aria-hidden="true"></i></span>
+                <h2>Belum Ada Jadwal</h2>
+                <p>Admin belum mengunggah jadwal untuk kelas ini.</p>
+                <button class="schedule-secondary-btn" id="emptyAddScheduleBtn" type="button" hidden>
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i>Tambah Jadwal
+                </button>
+            </div>
+
+            <article class="schedule-image-card" id="scheduleCard" hidden>
+                <div class="schedule-image-frame">
+                    <img id="scheduleImg" src="" alt="" loading="eager" decoding="async">
+                    <span class="schedule-image-badge"><i class="fa-solid fa-image" aria-hidden="true"></i>Jadwal kelas</span>
+                </div>
+                <div class="schedule-card-content">
+                    <div>
+                        <p class="schedule-card-label">Jadwal pilihan</p>
+                        <h2 id="scheduleTitle"></h2>
+                    </div>
+                    <div class="schedule-actions" aria-label="Aksi jadwal">
+                        <button class="schedule-action-btn schedule-action-zoom" id="zoomScheduleBtn" type="button" data-tooltip="Pratinjau layar penuh" disabled>
+                            <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
+                            <span>Zoom</span>
+                        </button>
+                        <button class="schedule-action-btn schedule-action-download" id="downloadScheduleBtn" type="button" data-tooltip="Unduh gambar" disabled>
+                            <i class="fa-solid fa-download" aria-hidden="true"></i>
+                            <span>Unduh</span>
+                        </button>
+                        <button class="schedule-action-btn schedule-action-edit" id="editScheduleBtn" type="button" data-tooltip="Edit judul atau gambar" hidden disabled>
+                            <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                            <span>Edit</span>
+                        </button>
+                        <button class="schedule-action-btn schedule-action-delete" id="deleteScheduleBtn" type="button" data-tooltip="Hapus jadwal" hidden disabled>
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                            <span>Hapus</span>
+                        </button>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div class="schedule-modal" id="scheduleUploadModal" aria-hidden="true">
+            <div class="modal-content schedule-modal-content" role="dialog" aria-modal="true" aria-labelledby="scheduleUploadTitle">
+                <div class="schedule-modal-header">
+                    <h2 id="scheduleUploadTitle">Tambah Jadwal</h2>
+                    <button class="close-btn" type="button" onclick="closeModal('scheduleUploadModal')" aria-label="Tutup modal">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <form class="schedule-form" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="newScheduleTitle">Nama jadwal</label>
+                        <input id="newScheduleTitle" type="text" maxlength="120" autocomplete="off" placeholder="Contoh: Jadwal Pelajaran" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newScheduleFile">Gambar jadwal</label>
+                        <input id="newScheduleFile" type="file" accept="image/jpeg,image/png,image/webp" required>
+                        <small>JPG, PNG, atau WebP. Maksimal 5 MB.</small>
+                    </div>
+                    <div class="schedule-modal-actions">
+                        <button class="btn-cancel" type="button" onclick="closeModal('scheduleUploadModal')">Batal</button>
+                        <button id="uploadScheduleSubmitBtn" class="modal-action-btn" type="button">Unggah Jadwal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="schedule-modal" id="scheduleEditModal" aria-hidden="true">
+            <div class="modal-content schedule-modal-content" role="dialog" aria-modal="true" aria-labelledby="scheduleEditTitle">
+                <div class="schedule-modal-header">
+                    <h2 id="scheduleEditTitle">Edit Jadwal</h2>
+                    <button class="close-btn" type="button" onclick="closeModal('scheduleEditModal')" aria-label="Tutup modal">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <form class="schedule-form" onsubmit="return false;">
+                    <input id="editScheduleId" type="hidden">
+                    <div class="form-group">
+                        <label for="editScheduleTitle">Nama jadwal</label>
+                        <input id="editScheduleTitle" type="text" maxlength="120" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editScheduleFile">Gambar baru <span>(opsional)</span></label>
+                        <input id="editScheduleFile" type="file" accept="image/jpeg,image/png,image/webp">
+                        <small>Biarkan kosong jika tidak ingin mengganti gambar.</small>
+                    </div>
+                    <div class="schedule-modal-actions">
+                        <button class="btn-cancel" type="button" onclick="closeModal('scheduleEditModal')">Batal</button>
+                        <button id="saveScheduleSubmitBtn" class="modal-action-btn" type="button">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="schedule-modal schedule-lightbox-modal" id="scheduleLightboxModal" aria-hidden="true">
+            <div class="schedule-lightbox-content" role="dialog" aria-modal="true" aria-labelledby="lightboxCaption">
+                <button class="schedule-lightbox-close close-btn" type="button" onclick="closeModal('scheduleLightboxModal')" aria-label="Tutup pratinjau"><i class="fa-solid fa-xmark"></i></button>
+                <img id="lightboxImg" src="" alt="">
+                <p id="lightboxCaption"></p>
+            </div>
+        </div>
     </section>
 
     <footer class="footer">
