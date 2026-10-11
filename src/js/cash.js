@@ -1,7 +1,9 @@
 /**
  * LEVANTRA - Unified Cash JS
  * Features:
- * - Class Cash System (Integrated with Google Sheets)
+ * - Google Sheets sync and admin editing
+ * - Weekly payment tracking
+ * - Expense management and cash summaries
  */
 
 // =============================================
@@ -49,7 +51,7 @@ let pendingRefresh = false;
 let localEditRevision = 0;
 
 // =============================================
-// CLASS CASH SYSTEM
+// CASH SYSTEM
 // =============================================
 
 function fillMonths() {

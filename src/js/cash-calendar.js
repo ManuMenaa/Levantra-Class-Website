@@ -1,3 +1,11 @@
+/**
+ * LEVANTRA - Unified Cash Calender JS
+ * Features:
+ * - Weekly period generation
+ * - Month sheet naming
+ * - Spreadsheet column conversion
+ */
+
 const START = new Date(2025, 6, 21);
 
 export function periodsFromStart(now = new Date()) {

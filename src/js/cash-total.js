@@ -1,3 +1,10 @@
+/**
+ * LEVANTRA - Unified Cash Total JS
+ * Features:
+ * - Payment status normalization
+ * - Paid total calculation
+ */
+
 export function isPaid(value) {
     return value === true || ['TRUE', 'SUDAH'].includes(String(value).trim().toUpperCase());
 }

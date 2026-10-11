@@ -967,6 +967,7 @@ html.dark-mode .hero-content h1 {
   color: var(--text-primary);
 }
 
+/* Cash Month Select */
 .month-select-wrap {
   display: flex;
   flex-direction: column;
@@ -991,6 +992,7 @@ html.dark-mode .hero-content h1 {
   right: 16px;
 }
 
+/* Cash Income Toolbar Button */
 .cash-icon-button {
   display: grid;
   padding: 10px 12px;
@@ -1007,6 +1009,7 @@ html.dark-mode .hero-content h1 {
   display: none;
 }
 
+/* Cash Access */
 .cash-access {
   color: var(--text-muted);
   font-size: 0.9rem;
@@ -1017,6 +1020,7 @@ html.dark-mode .hero-content h1 {
   font-weight: 600;
 }
 
+/* Cash Status */
 .cash-status {
   min-height: 1.5em;
   margin-bottom: 10px;
@@ -1096,6 +1100,25 @@ html.dark-mode .hero-content h1 {
   background: color-mix(in srgb, var(--primary-gold) 8%, var(--bg-surface));
 }
 
+.cash-table tfoot {
+  font-weight: 600;
+  background: var(--bg-primary);
+}
+
+.cash-table tfoot td {
+  min-width: 130px;
+}
+
+.cash-table tfoot th {
+  text-align: left;
+}
+
+.cash-table .cash-grand-total th,
+.cash-table .cash-grand-total td {
+  border-top: 2px solid var(--primary-gold);
+}
+
+/* Cash Check */
 .cash-check {
   display: inline-flex;
   gap: 7px;
@@ -1122,26 +1145,8 @@ html.dark-mode .hero-content h1 {
   font-weight: 600;
 }
 
-.cash-table tfoot {
-  font-weight: 600;
-  background: var(--bg-primary);
-}
-
-.cash-table tfoot td {
-  min-width: 130px;
-}
-
-.cash-table tfoot th {
-  text-align: left;
-}
-
-.cash-table .cash-grand-total th,
-.cash-table .cash-grand-total td {
-  border-top: 2px solid var(--primary-gold);
-}
-
-/* Cash Expense Table */
-.expense-header {
+/* Cash Expense Toolbar */
+.expense-toolbar {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -1150,6 +1155,7 @@ html.dark-mode .hero-content h1 {
   margin-bottom: 1.5rem;
 }
 
+/* Add Cash Expense Button */
 .btn-add-expense {
   display: inline-flex;
   gap: 8px;
@@ -1182,6 +1188,7 @@ html.dark-mode .hero-content h1 {
   display: none !important;
 }
 
+/* Cash Summary Cards */
 .cash-summary-cards {
   display: flex;
   flex-wrap: wrap;
@@ -1218,6 +1225,7 @@ html.dark-mode .hero-content h1 {
   color: #e74c3c !important;
 }
 
+/* Cash Expense Table */
 .expense-table th {
   position: sticky;
   top: 0;
@@ -1227,6 +1235,74 @@ html.dark-mode .hero-content h1 {
 
 .expense-table td {
   background: var(--bg-surface);
+}
+
+/* Add Cash Expense Modal Card */
+.expense-modal-card {
+  max-width: 440px;
+}
+
+/* Add Cash Expense Form */
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.form-group label {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Add Cash Expense Modal Action Button */
+.expense-modal-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.expense-modal-actions .modal-action-btn {
+  width: auto;
+  min-width: 110px;
+  margin-top: 0;
+}
+
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-cancel:hover {
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  border-color: var(--text-muted);
+}
+
+html.dark-mode input[type="date"],
+:root[theme="dark"] input[type="date"] {
+  color-scheme: dark;
 }
 
 /* ===== MOMENT GALLERY ===== */
@@ -1712,72 +1788,6 @@ textarea:focus {
   margin-top: var(--spacing-sm);
   color: var(--text-muted);
   font-size: 0.95rem;
-}
-
-/* Expense Modal Card */
-.expense-modal-card {
-  max-width: 440px;
-}
-
-.expense-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  margin-top: 0.5rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-align: left;
-}
-
-.form-group label {
-  color: var(--text-primary);
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: flex-end;
-  margin-top: 0.5rem;
-}
-
-.modal-actions .modal-action-btn {
-  width: auto;
-  min-width: 110px;
-  margin-top: 0;
-}
-
-.btn-cancel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 20px;
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 1rem;
-  font-family: inherit;
-  background: var(--bg-surface);
-  border: 1.5px solid var(--border-light);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.btn-cancel:hover {
-  color: var(--text-primary);
-  background: var(--bg-primary);
-  border-color: var(--text-muted);
-}
-
-html.dark-mode input[type="date"],
-:root[theme="dark"] input[type="date"] {
-  color-scheme: dark;
 }
 
 /* Moment Detail & Comments Modal Card */
@@ -2632,37 +2642,26 @@ html.dark-mode input[type="date"],
     font-size: 0.92rem;
   }
 
+  /* ===== CLASS CASH LEDGER ===== */
+  /* Add Cash Expense Modal Action Button */
+  .expense-modal-actions {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .expense-modal-actions .btn-cancel,
+  .expense-modal-actions .modal-action-btn {
+    flex: 1;
+    text-align: center;
+  }
+
   /* ===== MOMENT GALLERY ===== */
+  /* Moment Gallery Grid */
   .moment-grid {
     grid-template-columns: 1fr;
   }
 
-  /* Detail Modal */
-  .detail-content {
-    flex-direction: column;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .detail-left {
-    min-height: 250px;
-  }
-
-  #detailImage {
-    max-height: 350px;
-  }
-
-  .detail-right {
-    max-height: none;
-    overflow: visible;
-  }
-
-  .comments-list {
-    min-height: 200px;
-  }
-
   /* ===== MODAL STYLE ===== */
-
   /* Student Modal Card */
   .student-modal-card {
     display: flex;
@@ -2714,17 +2713,28 @@ html.dark-mode input[type="date"],
     font-size: 0.88rem;
   }
 
-
-  /* Expense Modal Card */
-  .modal-actions {
-    flex-direction: row;
-    width: 100%;
+  /* Moment Detail & Comment Modal Card */
+  .detail-content {
+    flex-direction: column;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
-  .modal-actions .btn-cancel,
-  .modal-actions .modal-action-btn {
-    flex: 1;
-    text-align: center;
+  .detail-left {
+    min-height: 250px;
+  }
+
+  #detailImage {
+    max-height: 350px;
+  }
+
+  .detail-right {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .comments-list {
+    min-height: 200px;
   }
 
   /* ===== FOOTER ===== */
@@ -2744,18 +2754,18 @@ html.dark-mode input[type="date"],
 
 @media (width <= 600px) {
   /* ===== CLASS CASH LEDGER ===== */
-
-  /* Cash Toobar */
+  /* Cash Income Toolbar */
   .cash-income-toolbar {
     gap: 8px;
   }
 
+  /* Cash Month Select */
   .month-select-wrap {
     width: 100%;
     min-width: 0;
   }
 
-  /* Cash Table */
+  /* Cash Income Table */
   .cash-table th,
   .cash-table td {
     min-width: 92px;
@@ -2779,17 +2789,18 @@ html.dark-mode input[type="date"],
     background: transparent;
   }
 
-  .cash-check input {
-    width: 22px;
-    height: 22px;
-  }
-
   .cash-table tfoot .cash-total-label {
     display: block;
     box-sizing: border-box;
     width: 150px;
     padding: 10px 8px;
     background: var(--bg-primary);
+  }
+
+  /* Cash Check */
+  .cash-check input {
+    width: 22px;
+    height: 22px;
   }
 
   /* ===== SETTINGS ===== */

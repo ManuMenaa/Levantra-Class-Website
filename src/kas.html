@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Halaman kas Levantra Class website yang digunakan untuk mendapatkan informasi kas Levantra">
-    <meta name="keyword" content="Levantra, pengurus kelas, siswa, jadwal, kas, momen, kelas XI.7, kelas XII.7, website kelas, toska, sma negeri 2 kuta selatan">
+    <meta name="description" content="Halaman kas Levantra Class website yang digunakan untuk mendapatkan informasi tentang pemasukan dan pengeluaran kas Levantra">
+    <meta name="keyword" content="Levantra, kas, kelas XI.7, kelas XII.7, website kelas, toska, sma negeri 2 kuta selatan">
     <meta name="author" content="Levantra Class, inimanumenaa">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian, English">
@@ -14,13 +14,13 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://levantraclass.web.app/kas">
     <meta property="og:title" content="Kas Kelas">
-    <meta property="og:description" content="Halaman kas Levantra Class website yang digunakan untuk mendapatkan informasi kas Levantra">
+    <meta property="og:description" content="Halaman kas Levantra Class website yang digunakan untuk mendapatkan informasi tentang pemasukan dan pengeluaran kas Levantra">
     <meta property="og:image" content="/img/misc/LevantraLogo.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://levantraclass.web.app/kas">
     <meta property="twitter:title" content="Kas Kelas">
-    <meta property="twitter:description" content="Halaman kas Levantra Class website yang digunakan untuk mendapatkan informasi kas Levantra">
+    <meta property="twitter:description" content="Halaman kas Levantra Class website yang digunakan untuk mendapatkan informasi tentang pemasukan dan pengeluaran kas Levantra">
     <meta property="twitter:image" content="/img/misc/LevantraLogo.jpg">
 
     <link rel="icon" type="image/jpeg" href="/img/misc/LevantraLogo.jpg">
@@ -124,7 +124,7 @@
     <section class="section" id="pengeluaran">
         <h1 class="section-title"><i class="fa-solid fa-receipt"></i>Pengeluaran Kas</h1>
 
-        <div class="expense-header">
+        <div class="expense-toolbar">
             <button class="btn-add-expense" id="addExpenseBtn" type="button" hidden>
                 <i class="fa-solid fa-plus"></i>
                 <span>Tambah Pengeluaran</span>
@@ -182,7 +182,7 @@
                         <label for="expenseAmount">Jumlah Uang (Rp)</label>
                         <input id="expenseAmount" type="number" placeholder="Contoh: 15000" min="100" step="100" required>
                     </div>
-                    <div class="modal-actions">
+                    <div class="expense-modal-actions">
                         <button class="btn-cancel" id="closeExpenseModal" type="button" onclick="closeModal('expenseModal')">Batal</button>
                         <button class="modal-action-btn" id="saveExpenseBtn" type="submit">Simpan</button>
                     </div>
